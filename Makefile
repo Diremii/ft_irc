@@ -1,9 +1,10 @@
 NAME=ircserv
 
+OBJ_DIR=./.obj
 MY_SOURCES= sources/main.cpp \
 			sources/Server.cpp \
 
-MY_OBJECTS=$(MY_SOURCES:.cpp=.o)
+MY_OBJECTS=$(MY_SOURCES:%.cpp=$(OBJ_DIR)/%.o)
 
 # ====================
 #      COMMANDS
@@ -40,9 +41,10 @@ RED=\033[0;31m
 # ====================
 all: $(NAME)
 
-%.o: %.cpp
+$(OBJ_DIR)/%.o: %.cpp
 	@clear
 	@echo "$(CYAN)Compiling $<...$(RESET)"
+	@mkdir -p $(dir $@)
 	@$(CC) $(STANDARD_FLAGS) -c $< -o $@
 	@$(eval COMPILED_FILES += "$< $(GREEN)🗹\n$(RESET)")
 	@clear
