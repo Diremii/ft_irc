@@ -22,5 +22,6 @@
 # include <unistd.h>
 # include <fcntl.h>
 # include <stdexcept>
+# include <vector>
 
 #endif
