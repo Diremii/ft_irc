@@ -25,6 +25,13 @@ class User
         bool		_authenticated;
 
         User(void);
+    public:
+        User(int socketFd);
+        ~User();
+		User(const User &other);
+
+		User	&operator=(const User &other);
+
 		int			get_user_fd(void) const;
 		std::string	get_nick_name(void) const;
 		std::string	get_user_name(void) const;
@@ -37,13 +44,6 @@ class User
 		void	set_host_name(std::string &host_name);
 		void	set_authenticated(bool auth);
 		
-    public:
-        User(int socketFd);
-        ~User();
-		User(const User &other);
-
-		User	&operator=(const User &other);
-
 };
 
 #endif
