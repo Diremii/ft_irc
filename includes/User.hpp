@@ -1,28 +1,32 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Includes.hpp                                       :+:      :+:    :+:   */
+/*   User.hpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: humontas <humontas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/05/22 10:43:11 by humontas          #+#    #+#             */
-/*   Updated: 2026/05/22 10:43:11 by humontas         ###   ########.fr       */
+/*   Created: 2026/05/22 21:46:48 by humontas          #+#    #+#             */
+/*   Updated: 2026/05/22 21:46:48 by humontas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef INCLUDES_HPP
-# define INCLUDES_HPP
+#ifndef USER_HPP
+# define USER_HPP
 
-# include <iostream>
-# include <string>
-# include <sys/socket.h>
-# include <netinet/in.h>
-# include <arpa/inet.h>
-# include <poll.h>
-# include <unistd.h>
-# include <fcntl.h>
-# include <vector>
-# include <stdexct>
-# include <cstdlib>
+# include "Includes.hpp"
+
+class User
+{
+    private:
+        int         _userFd;
+        std::string _nickName;
+        std::string _userName;
+        std::string _hostName;
+        bool       _authenticated;
+
+    public:
+        User(int socketFd);
+        ~User();
+};
 
 #endif

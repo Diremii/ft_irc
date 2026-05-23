@@ -14,6 +14,7 @@
 # define SERVER_HPP
 
 # include "Includes.hpp"
+# include "User.hpp"
 
 class Server
 {
@@ -22,6 +23,7 @@ class Server
         int                         _serverPort;
         std::string                 _serverPassword;
         std::vector<struct pollfd>  _pollFds;
+        std::vector<User>           _users;
 
         void        createSocket();
         void        bindSocket();
@@ -32,6 +34,11 @@ class Server
         void        acceptClient();
         void        handleClient(int clientFd);
         void        removeClient(int clientFd);
+        std::pair<std::string, std::string> parseMessage(const std::string &message);
+        void                                handleCommand(int clientFd, const std::string &command, const std::string &args);
+
+        bool    passCommand(int clientFd, const std::string &password);
+
 
     public:
         Server(int port, std::string password);

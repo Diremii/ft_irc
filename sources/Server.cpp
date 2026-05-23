@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/Server.hpp"
+#include "Server.hpp"
 
 // Creation du socket, fonctionne comme un fd, IPv4/TCP, protocole auto
 void    Server::createSocket()
@@ -60,6 +60,7 @@ void    Server::acceptClient()
     clientPollFd.events = POLLIN; // On veut être notifié des événements de lecture (données du client)
     clientPollFd.revents = 0;
     _pollFds.push_back(clientPollFd);
+    _users.push_back(User(clientSocket));
 }
 
 void    Server::removeClient(int clientFd)
@@ -70,9 +71,34 @@ void    Server::removeClient(int clientFd)
         if (_pollFds[i].fd == clientFd)
         {
             _pollFds.erase(_pollFds.begin() + i);
-            break;
+            break ;
         }
     }
+
+    // for (size_t i = 0; i < _users.size(); i++)
+    // {
+    //     if (_users[i].getFd() == clientFd)
+    //     {
+    //         _users.erase(_users.begin() + i);
+    //         break ;
+    //     }
+    // }
+}
+
+std::pair<std::string, std::string> Server::parseMessage(const std::string &message)
+{
+    size_t space = message.find(' ');
+    if (space == std::string::npos)
+        return (std::make_pair(message, ""));
+    std::string command = message.substr(0, space);
+    std::string args = message.substr(space + 1);
+    return (std::make_pair(command, args));
+}
+
+void    Server::handleCommand(int clientFd, const std::string &command, const std::string &args)
+{
+    if (command == "PASS")
+        passCommand(clientFd, args);
 }
 
 void    Server::handleClient(int clientFd)
@@ -82,7 +108,14 @@ void    Server::handleClient(int clientFd)
     if (bytes <= 0)
         removeClient(clientFd);
     else
-        std::cout << buffer << std::endl;
+    {
+        std::string message(buffer, bytes);
+        message.erase(message.find_last_not_of("\r\n") + 1);
+        std::pair<std::string, std::string> parsed = parseMessage(message);
+        std::string command = parsed.first;
+        std::string args = parsed.second;
+        handleCommand(clientFd, command, args);
+    }
 }
 
 void    Server::handleEvents()
