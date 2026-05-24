@@ -83,17 +83,17 @@ void User::setFd(int userFd)
     this->_userFd = userFd;
 }
 
-void User::setNickname(std::string &nickname)
+void User::setNickname(const std::string &nickname)
 {
     this->_nickName = nickname;
 }
 
-void User::setUsername(std::string &username)
+void User::setUsername(const std::string &username)
 {
     this->_userName = username;
 }
 
-void User::setHostname(std::string &hostname)
+void User::setHostname(const std::string &hostname)
 {
     this->_hostName = hostname;
 }

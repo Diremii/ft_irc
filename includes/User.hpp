@@ -42,9 +42,9 @@ class User
 		bool		getRegistered(void) const;
 		
 		void	setFd(int userFd);
-		void	setNickname(std::string &nickName);
-		void	setUsername(std::string &userName);
-		void	setHostname(std::string &hostName);
+		void	setNickname(const std::string &nickName);
+		void	setUsername(const std::string &userName);
+		void	setHostname(const std::string &hostName);
 		void	setAuthenticated(bool auth);
 		void	setRegistered(bool reg);
 		
