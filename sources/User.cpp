@@ -40,6 +40,10 @@ User &User::operator=(const User &other)
     return (*this);
 }
 
+// -------------------------//
+/*          GETTER          */
+// -------------------------//
+
 int User::getFd(void) const
 {
     return (this->_userFd);
@@ -69,6 +73,10 @@ bool	User::getRegistered(void) const
 {
 	return (this->_registered);
 }
+
+// -------------------------//
+/*          SETTER          */
+// -------------------------//
 
 void User::setFd(int userFd)
 {
