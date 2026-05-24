@@ -3,12 +3,16 @@ NAME=ircserv
 OBJ_DIR=./.obj
 MY_SOURCES= sources/main.cpp \
 			sources/Server.cpp \
+			sources/User.cpp \
+			sources/Commands.cpp \
+			sources/Utils.cpp \
 
 MY_OBJECTS=$(MY_SOURCES:%.cpp=$(OBJ_DIR)/%.o)
 
 # ====================
 #      COMMANDS
 # ====================
+
 RM=rm -f
 CC=c++
 STANDARD_FLAGS=-Wall -Werror -Wextra -g -std=c++98 -I./includes
@@ -16,6 +20,7 @@ STANDARD_FLAGS=-Wall -Werror -Wextra -g -std=c++98 -I./includes
 # ====================
 #        HEADER
 # ====================
+
 define HEADER
 	$(CYAN) _____     __     ______     ______     __    __
 	$(CYAN)/\  __-.  /\ \   /\  == \   /\  ___\   /\ "-./  \\
@@ -27,18 +32,17 @@ endef
 export HEADER
 
 # ====================
-#     COLORS
+#       COLORS
 # ====================
+
 RESET=\033[0m
 GREEN=\033[0;32m
 CYAN=\033[0;36m
-BLUE=\033[0;34m
-YELLOW=\033[0;33m
-RED=\033[0;31m
 
 # ====================
 #     COMPILATION
 # ====================
+
 all: $(NAME)
 
 $(OBJ_DIR)/%.o: %.cpp

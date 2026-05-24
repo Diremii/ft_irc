@@ -10,91 +10,92 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-# include "../includes/User.hpp"
+# include "User.hpp"
 
 User::User(void) {}
+
 User::~User(void) {}
 
 User::User(int socketFd) :
     _userFd(socketFd),
-    _authenticated(false) {}
+    _authenticated(false),
+	_registered(false) {}
 
 User::User(const User &other)
 {
-	*this = other;
+    *this = other;
 }
 
-User	&User::operator=(const User &other)
+User &User::operator=(const User &other)
 {
-	if (this != &other)
-	{
-		this->_userFd = other._userFd;
-		this->_hostName = other._hostName;
-		this->_userName = other._userName;
-		this->_authenticated = other._authenticated;
-		this->_nickName = other._nickName;
-	}
-	return (*this);
+    if (this != &other)
+    {
+        this->_userFd = other._userFd;
+        this->_nickName = other._nickName;
+        this->_userName = other._userName;
+        this->_hostName = other._hostName;
+        this->_authenticated = other._authenticated;
+		this->_registered = other._registered;
+    }
+    return (*this);
 }
 
-// ---------------------------------------------------------------------//
-/*                                                                      */
-/*                               GETTER                                 */
-/*                                                                      */
-// ---------------------------------------------------------------------//
-
-int	User::get_user_fd(void) const
+int User::getFd(void) const
 {
-	return (this->_userFd);
+    return (this->_userFd);
 }
 
-std::string	User::get_nick_name(void) const
+std::string User::getNickname(void) const
 {
-	return (this->_nickName);
+    return (this->_nickName);
 }
 
-std::string	User::get_user_name(void) const
+std::string User::getUsername(void) const
 {
-	return (this->_userName);
+    return (this->_userName);
 }
 
-std::string	User::get_host_name(void) const
+std::string User::getHostname(void) const
 {
-	return (this->_hostName);
+    return (this->_hostName);
 }
 
-bool	User::get_authenticated(void) const
+bool User::getAuthenticated(void) const
 {
-	return (this->_authenticated);
+    return (this->_authenticated);
 }
 
-// ---------------------------------------------------------------------//
-/*                                                                      */
-/*                               SETTER                                 */
-/*                                                                      */
-// ---------------------------------------------------------------------//
-
-void	User::set_user_fd(int user_fd)
+bool	User::getRegistered(void) const
 {
-	this->_userFd = user_fd;
+	return (this->_registered);
 }
 
-void	User::set_nick_name(std::string &nick_name)
+void User::setFd(int userFd)
 {
-	this->_nickName = nick_name;
+    this->_userFd = userFd;
 }
 
-void	User::set_user_name(std::string &user_name)
+void User::setNickname(std::string &nickname)
 {
-	this->_userName = user_name;
+    this->_nickName = nickname;
 }
 
-void	User::set_host_name(std::string &host_name)
+void User::setUsername(std::string &username)
 {
-	this->_hostName = host_name;
+    this->_userName = username;
 }
 
-void	User::set_authenticated(bool auth)
+void User::setHostname(std::string &hostname)
 {
-	this->_authenticated = auth;
+    this->_hostName = hostname;
+}
+
+void User::setAuthenticated(bool auth)
+{
+    this->_authenticated = auth;
+}
+
+void	User::setRegistered(bool reg)
+{
+	this->_registered = reg;
 }

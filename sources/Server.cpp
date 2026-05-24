@@ -75,14 +75,14 @@ void    Server::removeClient(int clientFd)
         }
     }
 
-    // for (size_t i = 0; i < _users.size(); i++)
-    // {
-    //     if (_users[i].getFd() == clientFd)
-    //     {
-    //         _users.erase(_users.begin() + i);
-    //         break ;
-    //     }
-    // }
+    for (size_t i = 0; i < _users.size(); i++)
+    {
+        if (_users[i].getFd() == clientFd)
+        {
+            _users.erase(_users.begin() + i);
+            break ;
+        }
+    }
 }
 
 std::pair<std::string, std::string> Server::parseMessage(const std::string &message)
@@ -99,6 +99,17 @@ void    Server::handleCommand(int clientFd, const std::string &command, const st
 {
     if (command == "PASS")
         passCommand(clientFd, args);
+    else if (command == "NICK")
+        nickCommand(clientFd, args);
+    else if (command == "USER")
+        userCommand(clientFd, args);
+
+    User    &user = getUser(clientFd);
+    if (!user.getRegistered() && user.getAuthenticated() && !user.getNickname().empty() && !user.getUsername().empty())
+    {
+        user.setRegistered(true);
+        sendMessage(clientFd, ":server 001 " + user.getNickname() + " :Welcome to the Internet Relay Network " + user.getNickname() + "!" + user.getUsername() + "@localhost\r\n");
+    }
 }
 
 void    Server::handleClient(int clientFd)

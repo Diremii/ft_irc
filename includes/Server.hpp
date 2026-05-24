@@ -37,7 +37,12 @@ class Server
         std::pair<std::string, std::string> parseMessage(const std::string &message);
         void                                handleCommand(int clientFd, const std::string &command, const std::string &args);
 
-        bool    passCommand(int clientFd, const std::string &password);
+        void    passCommand(int clientFd, const std::string &password);
+        void    nickCommand(int clientFd, const std::string &nickName);
+        void    userCommand(int clientFd, const std::string &userName);
+
+        User    &getUser(int clientFd);  
+        void    sendMessage(int clientFd, const std::string &message);
 
 
     public:

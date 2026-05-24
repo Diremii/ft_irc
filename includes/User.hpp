@@ -13,7 +13,7 @@
 #ifndef USER_HPP
 # define USER_HPP
 
-# include "./Includes.hpp"
+# include "Includes.hpp"
 
 class User
 {
@@ -23,8 +23,10 @@ class User
         std::string	_userName;
         std::string	_hostName;
         bool		_authenticated;
+		bool		_registered;
 
         User(void);
+
     public:
         User(int socketFd);
         ~User();
@@ -37,12 +39,14 @@ class User
 		std::string	getUsername(void) const;
 		std::string	getHostname(void) const;
 		bool		getAuthenticated(void) const;
+		bool		getRegistered(void) const;
 		
 		void	setFd(int userFd);
-		void	setNickname(std::string &nickname);
-		void	setUsername(std::string &username);
-		void	setHostname(std::string &hostname);
+		void	setNickname(std::string &nickName);
+		void	setUsername(std::string &userName);
+		void	setHostname(std::string &hostName);
 		void	setAuthenticated(bool auth);
+		void	setRegistered(bool reg);
 		
 };
 
