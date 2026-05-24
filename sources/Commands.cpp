@@ -14,6 +14,11 @@
 
 void    Server::passCommand(int clientFd, const std::string &password)
 {
+    if (getUser(clientFd).getAuthenticated())
+    {
+        sendMessage(clientFd, ":server 462 * :You may not reregister\r\n");
+        return ;
+    }
     if (password.empty())
     {
         sendMessage(clientFd, ":server 464 * :Password incorrect\r\n");
