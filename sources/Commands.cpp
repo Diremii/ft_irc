@@ -12,24 +12,6 @@
 
 #include "Server.hpp"
 
-void    Server::passCommand(int clientFd, const std::string &password)
-{
-    if (getUser(clientFd).getAuthenticated())
-    {
-        sendMessage(clientFd, ":server 462 * :You may not reregister\r\n");
-        return ;
-    }
-    if (password.empty())
-    {
-        sendMessage(clientFd, ":server 464 * :Password incorrect\r\n");
-        return ;
-    }
-    if (password == _serverPassword)
-        getUser(clientFd).setAuthenticated(true);
-    else
-        sendMessage(clientFd, ":server 464 * :Password incorrect\r\n");
-}
-
 static int    isValidName(const std::string &name, size_t maxLen, const std::string &forbidden)
 {
     if (name.empty())
@@ -44,6 +26,22 @@ static int    isValidName(const std::string &name, size_t maxLen, const std::str
     }
     return (0);
 }
+
+void    Server::passCommand(int clientFd, const std::string &password)
+{
+    if (getUser(clientFd).getAuthenticated())
+    {
+        sendMessage(clientFd, ":server 462 * :You may not reregister\r\n");
+        return ;
+    }
+    if (password.empty() || password != _serverPassword)
+    {
+        sendMessage(clientFd, ":server 464 * :Password incorrect\r\n");
+        return ;
+    }
+    getUser(clientFd).setAuthenticated(true);
+}
+
 
 void   Server::nickCommand(int clientFd, const std::string &nickName)
 {
@@ -65,10 +63,21 @@ void   Server::nickCommand(int clientFd, const std::string &nickName)
 
 void   Server::userCommand(int clientFd, const std::string &userName)
 {
+    if (getUser(clientFd).getRegistered())
+    {
+        sendMessage(clientFd, ":server 462 * :You may not reregister\r\n");
+        return ;
+    }
     switch (isValidName(userName, 10, " @\r\n"))
     {
         case 1: sendMessage(clientFd, ":server 461 * USER :Not enough parameters\r\n"); return ;
         case 2: sendMessage(clientFd, ":server 461 * " + userName + " :Erroneous username\r\n"); return ;
     }
     getUser(clientFd).setUsername(userName);
+}
+
+void    Server::quitCommand(int clientFd)
+{
+    removeClient(clientFd);
+    //ajouter broadcast
 }

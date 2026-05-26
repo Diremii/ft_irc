@@ -24,6 +24,7 @@ class User
         std::string	_hostName;
         bool		_authenticated;
 		bool		_registered;
+		std::string	_buffer;
 
         User(void);
 
@@ -40,6 +41,7 @@ class User
 		std::string	getHostname(void) const;
 		bool		getAuthenticated(void) const;
 		bool		getRegistered(void) const;
+		std::string	getBuffer(void) const:
 		
 		void	setFd(int userFd);
 		void	setNickname(const std::string &nickName);
@@ -47,6 +49,7 @@ class User
 		void	setHostname(const std::string &hostName);
 		void	setAuthenticated(bool auth);
 		void	setRegistered(bool reg);
+		void	setBuffer(const std::string &buffer);
 		
 };
 

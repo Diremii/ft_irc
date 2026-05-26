@@ -25,24 +25,30 @@ class Server
         std::vector<struct pollfd>  _pollFds;
         std::vector<User>           _users;
 
-        void        createSocket();
-        void        bindSocket();
-        void        listenSocket();
-        void        initPollFds();
+        /* SERVER */
+        void    createSocket();
+        void    bindSocket();
+        void    listenSocket();
+        void    initPollFds();
     
-        void        handleEvents();
-        void        acceptClient();
-        void        handleClient(int clientFd);
-        void        removeClient(int clientFd);
-        std::pair<std::string, std::string> parseMessage(const std::string &message);
-        void                                handleCommand(int clientFd, const std::string &command, const std::string &args);
-
+        /* EVENTHANDLER */
+        void    acceptClient();
+        void    handleEvents();
+        void    removeClient(int clientFd);
+        void    handleClient(int clientFd);
+        void    handleCommand(int clientFd, const std::string &command, const std::string &args);
+        
+        /* COMMANDS */
         void    passCommand(int clientFd, const std::string &password);
         void    nickCommand(int clientFd, const std::string &nickName);
         void    userCommand(int clientFd, const std::string &userName);
-
-        User    &getUser(int clientFd);  
-        void    sendMessage(int clientFd, const std::string &message);
+        void    quitCommand(int clientFd);
+        
+        /* UTILS */
+        std::pair<std::string, std::string> parseMessage(const std::string &message);
+        User                                &getUser(int clientFd);  
+        void                                checkRegistration(int clientFd);
+        void                                sendMessage(int clientFd, const std::string &message);
 
 
     public:

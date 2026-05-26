@@ -74,6 +74,11 @@ bool	User::getRegistered(void) const
 	return (this->_registered);
 }
 
+std::string User::getBuffer(void) const
+{
+    return (this->_buffer);
+}
+
 // -------------------------//
 /*          SETTER          */
 // -------------------------//
@@ -106,4 +111,9 @@ void User::setAuthenticated(bool auth)
 void	User::setRegistered(bool reg)
 {
 	this->_registered = reg;
+}
+
+void    User::setBuffer(const std::string &buffer)
+{
+    this->_buffer = buffer;
 }
