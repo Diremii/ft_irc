@@ -79,6 +79,7 @@ void    Server::handleClient(int clientFd)
     if (bytes <= 0)
         removeClient(clientFd);
     else
+ 
     {
         std::string message(buffer, bytes);
         message.erase(message.find_last_not_of("\r\n") + 1);
