@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "Server.hpp"
+#include "../includes/Server.hpp"
 
 // Creation du socket, fonctionne comme un fd, IPv4/TCP, protocole auto
 void    Server::createSocket()

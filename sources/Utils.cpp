@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "Server.hpp"
+#include "../includes/Server.hpp"
 
 std::pair<std::string, std::string> Server::parseMessage(const std::string &message)
 {

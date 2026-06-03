@@ -10,8 +10,8 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "Includes.hpp"
-#include "Server.hpp"
+#include "../includes/Includes.hpp"
+#include "../includes/Server.hpp"
 
 int main(int argc, char **argv)
 {

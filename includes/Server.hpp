@@ -43,6 +43,10 @@ class Server
         void    nickCommand(int clientFd, const std::string &nickName);
         void    userCommand(int clientFd, const std::string &userName);
         void    quitCommand(int clientFd);
+        void    kickCommand(int clientFd, int clientToKick);
+        void    inviteCommand(int clientFd);
+        void    topicCommand(int clientFd);
+        void    modeCommand(int clientFd);
         
         /* UTILS */
         std::pair<std::string, std::string> parseMessage(const std::string &message);

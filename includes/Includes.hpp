@@ -24,5 +24,6 @@
 # include <vector>
 # include <cstdlib>
 # include <stdexcept>
+# include <stack>
 
 #endif

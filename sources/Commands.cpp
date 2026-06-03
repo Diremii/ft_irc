@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "Server.hpp"
+#include "../includes/Server.hpp"
 
 static int    isValidName(const std::string &name, size_t maxLen, const std::string &forbidden)
 {
@@ -80,4 +80,25 @@ void    Server::quitCommand(int clientFd)
 {
     removeClient(clientFd);
     //ajouter broadcast
+}
+
+
+void    Server::kickCommand(int clientFd, int clientToKick)
+{
+    removeClient(clientToKick);
+}
+
+void    Server::inviteCommand(int clientFd)
+{
+
+}
+
+void    Server::topicCommand(int clientFd)
+{
+
+}
+
+void    Server::modeCommand(int clientFd)
+{
+
 }

@@ -6,6 +6,7 @@ MY_SOURCES= sources/main.cpp \
 			sources/User.cpp \
 			sources/Commands.cpp \
 			sources/Utils.cpp \
+			sources/EventHandler.cpp \
 
 MY_OBJECTS=$(MY_SOURCES:%.cpp=$(OBJ_DIR)/%.o)
 

@@ -41,7 +41,7 @@ class User
 		std::string	getHostname(void) const;
 		bool		getAuthenticated(void) const;
 		bool		getRegistered(void) const;
-		std::string	getBuffer(void) const:
+		std::string	getBuffer(void) const;
 		
 		void	setFd(int userFd);
 		void	setNickname(const std::string &nickName);
