@@ -84,20 +84,21 @@ void    Server::quitCommand(int clientFd)
 
 void    Server::kickCommand(int clientFd, int clientToKick)
 {
+	(void)clientFd;
     removeClient(clientToKick);
 }
 
 void    Server::inviteCommand(int clientFd)
 {
-
+	(void)clientFd;
 }
 
 void    Server::topicCommand(int clientFd)
 {
-
+	(void)clientFd;
 }
 
 void    Server::modeCommand(int clientFd)
 {
-
+	(void)clientFd;
 }

@@ -6,7 +6,7 @@
 /*   By: ttremel <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/03 15:27:57 by ttremel           #+#    #+#             */
-/*   Updated: 2026/06/04 18:39:52 by ttremel          ###   ########.fr       */
+/*   Updated: 2026/06/04 18:56:19 by ttremel          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,22 +66,22 @@ class	Channel
 		class	NotAnOperator : public std::exception
 		{
 			public:
-				const char	*what() const noexcept { return ("Client is not a channel operator"); }
+				const char	*what() const throw() { return ("Client is not a channel operator"); }
 		};
 		class	InvalidLimit : public std::exception
 		{
 			public:
-				const char	*what() const noexcept { return ("Invalid user limit"); }
+				const char	*what() const throw() { return ("Invalid user limit"); }
 		};
 		class	UserLimitReach : public std::exception
 		{
 			public:
-				const char	*what() const noexcept { return ("User limit reached"); }
+				const char	*what() const throw() { return ("User limit reached"); }
 		};
 		class	IsInviteOnly : public std::exception
 		{
 			public:
-				const char	*what() const noexcept { return ("Channel is invite nly"); }
+				const char	*what() const throw() { return ("Channel is invite nly"); }
 		};
 };
 
