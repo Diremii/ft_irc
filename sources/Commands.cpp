@@ -82,7 +82,6 @@ void    Server::quitCommand(int clientFd)
     //ajouter broadcast
 }
 
-
 void    Server::kickCommand(int clientFd, int clientToKick)
 {
     removeClient(clientToKick);
