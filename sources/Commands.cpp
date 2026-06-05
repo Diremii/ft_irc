@@ -76,19 +76,17 @@ void   Server::userCommand(int clientFd, const std::string &userName)
 	getUser(clientFd).setUsername(userName);
 }
 
-void	Server::joinChannel(int clientFd, const std::string &channelName)
+void Server::joinChannel(int clientFd, const std::string &channelName)
 {
-	Channel	*channel = getChannel(channelName);
-
-	if (channel)
-		channel->addUser(getUser(clientFd));
-	else
-		_channels.push_back(Channel(channelName, getUser(clientFd)));
-
-	std::string msg = ":" + getUser(clientFd).getNickname()
-					+ " JOIN " + channelName + "\r\n";
-
-	broadcast(channel, msg);
+    Channel *channel = getChannel(channelName);
+    if (!channel)
+    {
+        _channels.push_back(Channel(channelName, getUser(clientFd)));
+        channel = getChannel(channelName);
+    }
+    else
+        channel->addUser(getUser(clientFd));
+    broadcast(channel, ":" + getUser(clientFd).getNickname() + " JOIN " + channelName + "\r\n");
 }
 
 void Server::quitCommand(int clientFd, const std::string &reason)
