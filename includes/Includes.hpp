@@ -25,5 +25,6 @@
 # include <cstdlib>
 # include <stdexcept>
 # include <stack>
+# include <fstream>
 
 #endif
