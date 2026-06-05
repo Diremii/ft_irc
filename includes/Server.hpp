@@ -54,7 +54,7 @@ class Server
 		/* UTILS */
 		std::pair<std::string, std::string>	parseMessage(const std::string &message);
 		User								&getUser(int clientFd);  
-		void								checkRegistration(int clientFd);
+		void								tryRegister(int clientFd);
 		void								sendMessage(int clientFd, const std::string &message);
 		void								broadcast(Channel *channel, const std::string &message);
 		void								broadcastUserChannels(int clientFd, const std::string &message);

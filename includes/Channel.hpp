@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ttremel <marvin@42.fr>                     +#+  +:+       +#+        */
+/*   By: humontas <humontas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/03 15:27:57 by ttremel           #+#    #+#             */
-/*   Updated: 2026/06/05 17:50:00 by ttremel          ###   ########.fr       */
+/*   Updated: 2026/06/05 17:40:31 by humontas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,6 @@
 
 # include "Includes.hpp"
 # include "User.hpp"
-# include "File.hpp"
 
 class	Channel
 {
@@ -25,7 +24,6 @@ class	Channel
 		std::string				_topic;
 		std::vector<User>		_operators;
 		std::vector<User>		_users;
-		std::vector<File>		_files;
 		std::stack<std::string>	_msgs;
 		std::size_t				_userLimit;
 		bool					_isInviteOnly;
@@ -46,11 +44,9 @@ class	Channel
 
 		std::stack<std::string>	getMessages(void);
 		std::vector<User>		getUsers(void);
-		std::vector<File>		getFiles(void);
 		std::string				getPassword(int clientFd);
 		std::string				getName(void);
 		std::string				viewTopic(void);
-		File					&getFile(const std::string &fileName);
 		User					&getUser(int clientFd);
 		void					addUser(User &newUser);
 		void					kickClient(int clientFd, int targetFd);
