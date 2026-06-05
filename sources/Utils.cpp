@@ -12,7 +12,7 @@
 
 #include "../includes/Server.hpp"
 
-std::pair<std::string, std::string> Server::parseMessage(const std::string &message)
+std::pair<std::string, std::string>	Server::parseMessage(const std::string &message)
 {
 	size_t space = message.find(' ');
 	if (space == std::string::npos)
@@ -22,9 +22,9 @@ std::pair<std::string, std::string> Server::parseMessage(const std::string &mess
 	return (std::make_pair(command, args));
 }
 
-void    Server::checkRegistration(int clientFd)
+void	Server::checkRegistration(int clientFd)
 {
-	User    &user = getUser(clientFd);
+	User	&user = getUser(clientFd);
 	if (!user.getRegistered() && user.getAuthenticated() && !user.getNickname().empty() && !user.getUsername().empty())
 	{
 		user.setRegistered(true);
@@ -32,7 +32,7 @@ void    Server::checkRegistration(int clientFd)
 	}
 }
 
-User    &Server::getUser(int clientFd)
+User	&Server::getUser(int clientFd)
 {
 	for (size_t i = 0; i < _users.size(); i++)
 	{
@@ -42,20 +42,29 @@ User    &Server::getUser(int clientFd)
 	throw std::runtime_error("User not found");
 }
 
-void    Server::sendMessage(int clientFd, const std::string &message)
+void	Server::sendMessage(int clientFd, const std::string &message)
 {
 	send(clientFd, message.c_str(), message.size(), 0);
 }
 
 void	Server::broadcast(Channel *channel, const std::string &message)
 {
-	std::vector<User> users = channel->getUsers();
+	const std::vector<User> &users = channel->getUsers();
 
 	for (size_t i = 0; i < users.size(); i++)
-		send(users[i].getFd(), message.c_str(), message.size(), 0);
+		sendMessage(users[i].getFd(), message);
 }
 
-Channel *Server::getChannel(const std::string &channelName)
+void	Server::broadcastUserChannels(int clientFd, const std::string &message)
+{
+	for (size_t i = 0; i < _channels.size(); i++)
+	{
+		if (_channels[i].isUserExist(clientFd))
+			broadcast(&_channels[i], message);
+	}
+}
+
+Channel	*Server::getChannel(const std::string &channelName)
 {
 	for (size_t i = 0; i < _channels.size(); i++)
 	{

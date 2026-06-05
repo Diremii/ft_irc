@@ -58,7 +58,7 @@ void    Server::handleCommand(int clientFd, const std::string &command, const st
         userCommand(clientFd, args);
     else if (command == "QUIT")
     {
-        quitCommand(clientFd);
+        quitCommand(clientFd, args);
         return ;
     }
     else

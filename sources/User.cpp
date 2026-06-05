@@ -17,56 +17,56 @@ User::User(void) {}
 User::~User(void) {}
 
 User::User(int socketFd) :
-    _userFd(socketFd),
-    _authenticated(false),
+	_userFd(socketFd),
+	_authenticated(false),
 	_registered(false) {}
 
 User::User(const User &other)
 {
-    *this = other;
+	*this = other;
 }
 
-User &User::operator=(const User &other)
+User	&User::operator=(const User &other)
 {
-    if (this != &other)
-    {
-        this->_userFd = other._userFd;
-        this->_nickName = other._nickName;
-        this->_userName = other._userName;
-        this->_hostName = other._hostName;
-        this->_authenticated = other._authenticated;
+	if (this != &other)
+	{
+		this->_userFd = other._userFd;
+		this->_nickName = other._nickName;
+		this->_userName = other._userName;
+		this->_hostName = other._hostName;
+		this->_authenticated = other._authenticated;
 		this->_registered = other._registered;
-    }
-    return (*this);
+	}
+	return (*this);
 }
 
 // -------------------------//
 /*          GETTER          */
 // -------------------------//
 
-int User::getFd(void) const
+int	User::getFd(void) const
 {
-    return (this->_userFd);
+	return (this->_userFd);
 }
 
-std::string User::getNickname(void) const
+std::string	User::getNickname(void) const
 {
-    return (this->_nickName);
+	return (this->_nickName);
 }
 
-std::string User::getUsername(void) const
+std::string	User::getUsername(void) const
 {
-    return (this->_userName);
+	return (this->_userName);
 }
 
-std::string User::getHostname(void) const
+std::string	User::getHostname(void) const
 {
-    return (this->_hostName);
+	return (this->_hostName);
 }
 
-bool User::getAuthenticated(void) const
+bool	User::getAuthenticated(void) const
 {
-    return (this->_authenticated);
+	return (this->_authenticated);
 }
 
 bool	User::getRegistered(void) const
@@ -74,38 +74,38 @@ bool	User::getRegistered(void) const
 	return (this->_registered);
 }
 
-std::string User::getBuffer(void) const
+std::string	User::getBuffer(void) const
 {
-    return (this->_buffer);
+	return (this->_buffer);
 }
 
 // -------------------------//
 /*          SETTER          */
 // -------------------------//
 
-void User::setFd(int userFd)
+void	User::setFd(int userFd)
 {
-    this->_userFd = userFd;
+	this->_userFd = userFd;
 }
 
-void User::setNickname(const std::string &nickname)
+void	User::setNickname(const std::string &nickname)
 {
-    this->_nickName = nickname;
+	this->_nickName = nickname;
 }
 
-void User::setUsername(const std::string &username)
+void	User::setUsername(const std::string &username)
 {
-    this->_userName = username;
+	this->_userName = username;
 }
 
-void User::setHostname(const std::string &hostname)
+void	User::setHostname(const std::string &hostname)
 {
-    this->_hostName = hostname;
+	this->_hostName = hostname;
 }
 
-void User::setAuthenticated(bool auth)
+void	User::setAuthenticated(bool auth)
 {
-    this->_authenticated = auth;
+	this->_authenticated = auth;
 }
 
 void	User::setRegistered(bool reg)
@@ -113,7 +113,7 @@ void	User::setRegistered(bool reg)
 	this->_registered = reg;
 }
 
-void    User::setBuffer(const std::string &buffer)
+void	User::setBuffer(const std::string &buffer)
 {
-    this->_buffer = buffer;
+	this->_buffer = buffer;
 }

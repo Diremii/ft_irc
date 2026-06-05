@@ -12,7 +12,7 @@
 
 #include "Server.hpp"
 
-static int    isValidName(const std::string &name, size_t maxLen, const std::string &forbidden)
+static int	isValidName(const std::string &name, size_t maxLen, const std::string &forbidden)
 {
 	if (name.empty())
 		return (1);
@@ -84,12 +84,21 @@ void	Server::joinChannel(int clientFd, const std::string &channelName)
 		channel->addUser(getUser(clientFd));
 	else
 		_channels.push_back(Channel(channelName, getUser(clientFd)));
+
+	std::string msg = ":" + getUser(clientFd).getNickname()
+					+ " JOIN " + channelName + "\r\n";
+
+	broadcast(channel, msg);
 }
 
-void    Server::quitCommand(int clientFd)
+void Server::quitCommand(int clientFd, const std::string &reason)
 {
+	std::string msg = ":" + getUser(clientFd).getNickname()
+					+ " QUIT :" + (reason.empty() ? "Client Quit" : reason)
+					+ "\r\n";
+
+	broadcastUserChannels(clientFd, msg);
 	removeClient(clientFd);
-	//ajouter broadcast
 }
 
 void	Server::kickCommand(int clientFd, int targetFd, const std::string &channelName, std::string &reason)
@@ -100,27 +109,26 @@ void	Server::kickCommand(int clientFd, int targetFd, const std::string &channelN
 
 	if (reason.empty())
 		reason = "Kicked";
-
 	std::string msg = ":" + getUser(clientFd).getNickname()
 				+ " KICK " + channelName + " "
 				+ getUser(targetFd).getNickname()
 				+ " :" + reason + "\r\n";
 
-	broadcast(channel, msg);
 	channel->kickClient(clientFd, targetFd);
+	broadcast(channel, msg);
 }
 
-void    Server::inviteCommand(int clientFd)
+void	Server::inviteCommand(int clientFd)
 {
 	(void)clientFd;
 }
 
-void    Server::topicCommand(int clientFd)
+void	Server::topicCommand(int clientFd)
 {
 	(void)clientFd;
 }
 
-void    Server::modeCommand(int clientFd)
+void	Server::modeCommand(int clientFd)
 {
 	(void)clientFd;
 }
