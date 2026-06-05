@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ttremel <marvin@42.fr>                     +#+  +:+       +#+        */
+/*   By: humontas <humontas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/03 15:27:57 by ttremel           #+#    #+#             */
-/*   Updated: 2026/06/04 18:56:19 by ttremel          ###   ########.fr       */
+/*   Updated: 2026/06/05 16:02:05 by humontas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,18 +15,17 @@
 
 # include "Includes.hpp"
 # include "User.hpp"
-# include "Server.hpp"
 
 class	Channel
 {
 	private:
-		std::stack<std::string>	_msgs;
-		std::vector<User>		_users;
-		std::vector<User>		_operators;
-		std::string				_topic;
 		std::string				_name;
 		std::string				_password;
-		std::size_t				_limit;
+		std::string				_topic;
+		std::vector<User>		_operators;
+		std::vector<User>		_users;
+		std::stack<std::string>	_msgs;
+		std::size_t				_userLimit;
 		bool					_isInviteOnly;
 		bool					_isTopicRestricted;
 		int						_channelCreatorFd;
@@ -36,9 +35,9 @@ class	Channel
 		void	_removeUser(int clientFd);
 		bool	_isOperator(int clientFd);
 		bool	_isUserExist(int clientFd);
+	
 	public:
-
-		Channel(const std::string &name, const std::string &topic, User &channelCreator);
+		Channel(const std::string &name, User &channelCreator);
 		Channel(const Channel &other);
 		~Channel(void);
 	
@@ -81,7 +80,7 @@ class	Channel
 		class	IsInviteOnly : public std::exception
 		{
 			public:
-				const char	*what() const throw() { return ("Channel is invite nly"); }
+				const char	*what() const throw() { return ("Channel is invite only"); }
 		};
 };
 

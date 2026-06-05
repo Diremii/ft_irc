@@ -30,7 +30,10 @@ void    Server::bindSocket()
 
     // Attache le socket au port et a l'IP definis dans addr
     if (bind(_serverSocket, (struct sockaddr *)&addr, sizeof(addr)) == -1)
+    {
+        close(_serverSocket);
         throw std::runtime_error("Failed to bind socket");
+    }
 }
 
 void    Server::listenSocket()

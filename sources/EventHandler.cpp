@@ -68,6 +68,8 @@ void    Server::handleCommand(int clientFd, const std::string &command, const st
             sendMessage(clientFd, ":server 451 * :You have not registered\r\n");
             return ;
         }
+        if (command == "JOIN")
+            joinChannel(clientFd, args);
     }
     checkRegistration(clientFd);
 }

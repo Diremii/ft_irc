@@ -15,6 +15,7 @@
 
 # include "Includes.hpp"
 # include "User.hpp"
+# include "Channel.hpp"
 
 class Server
 {
@@ -24,6 +25,7 @@ class Server
         std::string                 _serverPassword;
         std::vector<struct pollfd>  _pollFds;
         std::vector<User>           _users;
+        std::vector<Channel>        _channels;
 
         /* SERVER */
         void    createSocket();
@@ -43,6 +45,7 @@ class Server
         void    nickCommand(int clientFd, const std::string &nickName);
         void    userCommand(int clientFd, const std::string &userName);
         void    quitCommand(int clientFd);
+        void    joinChannel(int clientFd, const std::string &channelName);
         void    kickCommand(int clientFd, int clientToKick);
         void    inviteCommand(int clientFd);
         void    topicCommand(int clientFd);
@@ -53,6 +56,7 @@ class Server
         User                                &getUser(int clientFd);  
         void                                checkRegistration(int clientFd);
         void                                sendMessage(int clientFd, const std::string &message);
+        Channel                             *getChannel(const std::string &channelName);
 
 
     public:

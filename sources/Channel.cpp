@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ttremel <marvin@42.fr>                     +#+  +:+       +#+        */
+/*   By: humontas <humontas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/03 15:34:40 by ttremel           #+#    #+#             */
-/*   Updated: 2026/06/04 18:49:47 by ttremel          ###   ########.fr       */
+/*   Updated: 2026/06/05 16:02:29 by humontas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,14 +15,13 @@
 Channel::Channel(void) {}
 Channel::~Channel(void) {}
 
-Channel::Channel(const std::string &name, const std::string &topic, User &channelCreator)
+Channel::Channel(const std::string &name, User &channelCreator)
 {
 	this->_name = name;
-	this->_topic = topic;
 	this->_users.push_back(channelCreator);
 	this->_operators.push_back(channelCreator);
 	this->_channelCreatorFd = channelCreator.getFd();
-	this->_limit = (size_t)-1;
+	this->_userLimit = (size_t)-1;
 	this->_isInviteOnly = false;
 	this->_isTopicRestricted = false;
 
@@ -43,7 +42,7 @@ Channel	&Channel::operator=(const Channel &other)
 		this->_operators = other._operators;
 		this->_topic = other._topic;
 		this->_isInviteOnly = other._isInviteOnly;
-		this->_limit = other._limit;
+		this->_userLimit = other._userLimit;
 	}
 	return (*this);
 }
@@ -137,7 +136,7 @@ void	Channel::addUser(User &newUser)
 {
 	if (_isInviteOnly)
 		throw (Channel::IsInviteOnly());
-	if (_limit == _users.size())
+	if (_userLimit == _users.size())
 		throw (Channel::UserLimitReach());
 	if (!_isUserExist(newUser.getFd()))
 		_users.push_back(newUser);
@@ -147,7 +146,7 @@ void	Channel::inviteClient(int clientFd, User &userToInvite)
 {
 	if (!_isOperator(clientFd))
 		throw (Channel::NotAnOperator());
-	if (_limit == _users.size())
+	if (_userLimit == _users.size())
 		throw (Channel::UserLimitReach());
 	if (!_isUserExist(userToInvite.getFd()))
 		_users.push_back(userToInvite);
@@ -164,7 +163,7 @@ void	Channel::removeUserLimit(int clientFd)
 {
 	if (!_isOperator(clientFd))
 		throw (Channel::NotAnOperator());
-	_limit = -1;
+	_userLimit = -1;
 }
 
 void	Channel::setUserLimit(int clientFd, std::size_t newUserLimit)
@@ -173,7 +172,7 @@ void	Channel::setUserLimit(int clientFd, std::size_t newUserLimit)
 		throw (Channel::NotAnOperator());
 	if (newUserLimit < 2 || newUserLimit < _users.size())
 		throw (Channel::InvalidLimit());
-	_limit = newUserLimit;
+	_userLimit = newUserLimit;
 }
 
 // ----------------//
