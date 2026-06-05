@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: humontas <humontas@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ttremel <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/03 15:34:40 by ttremel           #+#    #+#             */
-/*   Updated: 2026/06/05 16:31:37 by humontas         ###   ########.fr       */
+/*   Updated: 2026/06/05 17:32:57 by ttremel          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -231,3 +231,21 @@ void	Channel::changeName(int clientFd, const std::string &newName)
 	_name = newName;
 }
 
+// ----------------//
+//       Name      //
+// ----------------//
+
+std::vector<File>	Channel::getFiles(void)
+{
+	return (this->_files);
+}
+
+File	&Channel::getFile(const std::string &fileName)
+{
+	for (size_t	i = 0; i < _files.size(); i++)
+	{
+		if (_files[i].getFileName() == fileName)
+			return (_files[i]);
+	}
+	throw (File::FileNotFound());
+}
