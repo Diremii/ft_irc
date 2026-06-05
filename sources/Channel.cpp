@@ -6,7 +6,7 @@
 /*   By: ttremel <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/03 15:34:40 by ttremel           #+#    #+#             */
-/*   Updated: 2026/06/05 17:49:47 by ttremel          ###   ########.fr       */
+/*   Updated: 2026/06/05 18:05:26 by ttremel          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -234,6 +234,11 @@ void	Channel::changeName(int clientFd, const std::string &newName)
 // ----------------//
 //       Name      //
 // ----------------//
+
+void	Channel::storeFile(const File &file)
+{
+	_files.push_back(file);
+}
 
 std::vector<File>	Channel::getFiles(void)
 {
