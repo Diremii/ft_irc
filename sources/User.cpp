@@ -17,9 +17,10 @@ User::User(void) {}
 User::~User(void) {}
 
 User::User(int socketFd) :
-	_userFd(socketFd),
-	_authenticated(false),
-	_registered(false) {}
+    _userFd(socketFd),
+    _authenticated(false),
+    _registered(false),
+    _buffer("") {}
 
 User::User(const User &other)
 {
