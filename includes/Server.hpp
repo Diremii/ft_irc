@@ -44,7 +44,7 @@ class Server
 		void	passCommand(int clientFd, const std::string &password);
 		void	nickCommand(int clientFd, const std::string &nickName);
 		void	userCommand(int clientFd, const std::string &userName);
-		void	quitCommand(int clientFd);
+		void	quitCommand(int clientFd, const std::string &message);
 		void	joinChannel(int clientFd, const std::string &channelName);
 		void	kickCommand(int clientFd, int targetFd, const std::string &channelName, std::string &reason);
 		void	inviteCommand(int clientFd);
@@ -57,6 +57,7 @@ class Server
 		void								checkRegistration(int clientFd);
 		void								sendMessage(int clientFd, const std::string &message);
 		void								broadcast(Channel *channel, const std::string &message);
+		void								broadcastUserChannels(int clientFd, const std::string &message);
 		Channel								*getChannel(const std::string &channelName);
 
 

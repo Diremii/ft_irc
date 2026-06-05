@@ -6,7 +6,7 @@
 /*   By: ttremel <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/03 15:27:57 by ttremel           #+#    #+#             */
-/*   Updated: 2026/06/05 17:30:27 by ttremel          ###   ########.fr       */
+/*   Updated: 2026/06/05 17:50:00 by ttremel          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,6 @@ class	Channel
 		
 		void	removeUser(int clientFd);
 		bool	isOperator(int clientFd);
-		bool	isUserExist(int clientFd);
 	
 	public:
 		Channel(const std::string &name, User &channelCreator);
@@ -65,6 +64,7 @@ class	Channel
 		void					setUserLimit(int clientFd, std::size_t newUserLimit);
 		void					removeUserLimit(int clientFd);
 		void					storeMessages(const std::string &msg);
+		bool	isUserExist(int clientFd);
 
 		class	NotAnOperator : public std::exception
 		{

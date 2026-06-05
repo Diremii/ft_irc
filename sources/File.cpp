@@ -6,7 +6,7 @@
 /*   By: ttremel <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/05 15:33:17 by ttremel           #+#    #+#             */
-/*   Updated: 2026/06/05 16:46:44 by ttremel          ###   ########.fr       */
+/*   Updated: 2026/06/05 17:46:32 by ttremel          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ File::File(const std::string &filePath)
 	std::size_t		fileNamePos;
 	std::size_t		filePathEnd = filePath.size() - 1;
 	
-	input.open(filePath, std::ios::in);
+	input.open(filePath.c_str(), std::ios::in);
 	if (!input.is_open())
 		throw (File::FileNotFound());
 	this->_fileName = filePath;
@@ -65,7 +65,7 @@ void	File::createNewFile(const std::string &folderPath)
 	std::string		fullPath;
 
 	fullPath = folderPath + this->_fileName;
-	output.open(fullPath, std::ios::out | std::ios::trunc);
+	output.open(fullPath.c_str(), std::ios::out | std::ios::trunc);
 	if (!output.is_open())
 		throw (File::CantCreateFile());
 	output << this->_data;
