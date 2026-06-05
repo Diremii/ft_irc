@@ -6,7 +6,7 @@
 /*   By: humontas <humontas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/03 15:34:40 by ttremel           #+#    #+#             */
-/*   Updated: 2026/06/05 16:02:29 by humontas         ###   ########.fr       */
+/*   Updated: 2026/06/05 16:31:37 by humontas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,7 @@ User	&Channel::getUser(int clientFd)
 //      Utils      //
 // ----------------//
 
-bool	Channel::_isOperator(int clientFd)
+bool	Channel::isOperator(int clientFd)
 {
     for (size_t i = 0; i < _operators.size(); i++)
     {
@@ -81,7 +81,7 @@ bool	Channel::_isOperator(int clientFd)
 	return (false);
 }
 
-void	Channel::_removeUser(int clientFd)
+void	Channel::removeUser(int clientFd)
 {
     for (size_t i = 0; i < _users.size(); i++)
     {
@@ -90,7 +90,7 @@ void	Channel::_removeUser(int clientFd)
     }
 }
 
-bool	Channel::_isUserExist(int clientFd)
+bool	Channel::isUserExist(int clientFd)
 {
     for (size_t i = 0; i < _users.size(); i++)
     {
@@ -111,22 +111,21 @@ void	Channel::storeMessages(const std::string &msg)
 
 void	Channel::giveOperator(int clientFd, int clientFdToGive)
 {
-	if 	(!_isOperator(clientFd))
+	if 	(!isOperator(clientFd))
 		throw (Channel::NotAnOperator());
 	_operators.push_back(getUser(clientFdToGive));
 }
 
-void	Channel::removeOperator(int clientFd, int clientFdToRemove)
+void	Channel::removeOperator(int clientFd, int targetFd)
 {
-	if (!_isOperator(clientFd))
+	if (!isOperator(clientFd))
 		throw (Channel::NotAnOperator());
     for (size_t i = 0; i < _operators.size(); i++)
     {
-        if (_operators[i].getFd() == clientFdToRemove)
+        if (_operators[i].getFd() == targetFd)
 			_operators.erase(_operators.begin() + i);
     }
 }
-
 
 // ----------------//
 //   Users/Client  //
@@ -138,37 +137,37 @@ void	Channel::addUser(User &newUser)
 		throw (Channel::IsInviteOnly());
 	if (_userLimit == _users.size())
 		throw (Channel::UserLimitReach());
-	if (!_isUserExist(newUser.getFd()))
+	if (!isUserExist(newUser.getFd()))
 		_users.push_back(newUser);
 }
 
-void	Channel::inviteClient(int clientFd, User &userToInvite)
+void	Channel::inviteClient(int clientFd, User &targetFd)
 {
-	if (!_isOperator(clientFd))
+	if (!isOperator(clientFd))
 		throw (Channel::NotAnOperator());
 	if (_userLimit == _users.size())
 		throw (Channel::UserLimitReach());
-	if (!_isUserExist(userToInvite.getFd()))
-		_users.push_back(userToInvite);
+	if (!isUserExist(targetFd.getFd()))
+		_users.push_back(targetFd);
 }
 
-void	Channel::kickClient(int clientFd, int clientFdToKick)
+void	Channel::kickClient(int clientFd, int targetFd)
 {
-	if (!_isOperator(clientFd))
+	if (!isOperator(clientFd))
 		throw (Channel::NotAnOperator());
-	_removeUser(clientFdToKick);
+	removeUser(targetFd);
 }
 
 void	Channel::removeUserLimit(int clientFd)
 {
-	if (!_isOperator(clientFd))
+	if (!isOperator(clientFd))
 		throw (Channel::NotAnOperator());
 	_userLimit = -1;
 }
 
 void	Channel::setUserLimit(int clientFd, std::size_t newUserLimit)
 {
-	if (!_isOperator(clientFd))
+	if (!isOperator(clientFd))
 		throw (Channel::NotAnOperator());
 	if (newUserLimit < 2 || newUserLimit < _users.size())
 		throw (Channel::InvalidLimit());
@@ -186,14 +185,14 @@ std::string	Channel::viewTopic(void)
 
 void	Channel::changeTopic(int clientFd, const std::string &newTopic)
 {
-	if (_isTopicRestricted && !_isOperator(clientFd))
+	if (_isTopicRestricted && !isOperator(clientFd))
 		throw (Channel::NotAnOperator());
 	_topic = newTopic;
 }
 
 void	Channel::setTopicRestriction(int clientFd, bool isRestricted)
 {
-	if (!_isOperator(clientFd))
+	if (!isOperator(clientFd))
 		throw (Channel::NotAnOperator());
 	_isTopicRestricted = isRestricted;
 }
@@ -204,14 +203,14 @@ void	Channel::setTopicRestriction(int clientFd, bool isRestricted)
 
 std::string	Channel::getPassword(int clientFd)
 {
-	if (!_isOperator(clientFd))
+	if (!isOperator(clientFd))
 		throw (Channel::NotAnOperator());
 	return (_password);
 }
 
 void	Channel::changePassword(int clientFd, const std::string &newPassword)
 {
-	if (!_isOperator(clientFd))
+	if (!isOperator(clientFd))
 		throw (Channel::NotAnOperator());
 	_password = newPassword;
 }
@@ -227,7 +226,7 @@ std::string	Channel::getName(void)
 
 void	Channel::changeName(int clientFd, const std::string &newName)
 {
-	if (!_isOperator(clientFd))
+	if (!isOperator(clientFd))
 		throw (Channel::NotAnOperator());
 	_name = newName;
 }

@@ -26,11 +26,11 @@ class User
 		bool		_registered;
 		std::string	_buffer;
 
-        User(void);
+		User(void);
 
     public:
-        User(int socketFd);
-        ~User();
+		User(int socketFd);
+		~User();
 		User(const User &other);
 
 		User	&operator=(const User &other);

@@ -92,10 +92,22 @@ void    Server::quitCommand(int clientFd)
 	//ajouter broadcast
 }
 
-void    Server::kickCommand(int clientFd, int clientToKick)
+void	Server::kickCommand(int clientFd, int targetFd, const std::string &channelName, std::string &reason)
 {
-	(void)clientFd;
-	removeClient(clientToKick);
+	Channel *channel = getChannel(channelName);
+	if (!channel)
+		return;
+
+	if (reason.empty())
+		reason = "Kicked";
+
+	std::string msg = ":" + getUser(clientFd).getNickname()
+				+ " KICK " + channelName + " "
+				+ getUser(targetFd).getNickname()
+				+ " :" + reason + "\r\n";
+
+	broadcast(channel, msg);
+	channel->kickClient(clientFd, targetFd);
 }
 
 void    Server::inviteCommand(int clientFd)

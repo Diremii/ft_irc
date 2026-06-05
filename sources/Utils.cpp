@@ -47,6 +47,14 @@ void    Server::sendMessage(int clientFd, const std::string &message)
 	send(clientFd, message.c_str(), message.size(), 0);
 }
 
+void	Server::broadcast(Channel *channel, const std::string &message)
+{
+	std::vector<User> users = channel->getUsers();
+
+	for (size_t i = 0; i < users.size(); i++)
+		send(users[i].getFd(), message.c_str(), message.size(), 0);
+}
+
 Channel *Server::getChannel(const std::string &channelName)
 {
 	for (size_t i = 0; i < _channels.size(); i++)
