@@ -22,14 +22,15 @@ std::pair<std::string, std::string>	Server::parseMessage(const std::string &mess
 	return (std::make_pair(command, args));
 }
 
-void	Server::tryRegister(int clientFd)
+void Server::tryRegister(int clientFd)
 {
-	User &user = getUser(clientFd);
-
-	if (!user.getRegistered() && user.getAuthenticated() && !user.getNickname().empty() && !user.getUsername().empty())
-		sendMessage(clientFd, ":server 001 " + user.getNickname() + " :Welcome to the Internet Relay Network " + user.getNickname() + "!" + user.getUsername() + "@localhost\r\n"), user.setRegistered(true);
+    User &user = getUser(clientFd);
+    if (!user.getRegistered() && user.getAuthenticated() && !user.getNickname().empty() && !user.getUsername().empty())
+    {
+        user.setRegistered(true);
+        sendMessage(clientFd, ":server 001 " + user.getNickname() + " :Welcome to the Internet Relay Network " + user.getNickname() + "!" + user.getUsername() + "@localhost\r\n");
+    }
 }
-
 User	&Server::getUser(int clientFd)
 {
 	for (size_t i = 0; i < _users.size(); i++)
