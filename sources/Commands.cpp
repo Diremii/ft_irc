@@ -27,6 +27,34 @@ static int	isValidName(const std::string &name, size_t maxLen, const std::string
 	return (0);
 }
 
+static std::vector<std::string>	splitArgs(const std::string &args)
+{
+    std::vector<std::string> result;
+    std::string word;
+
+    for (size_t i = 0; i < args.size(); i++)
+    {
+        if (args[i] == ':')
+        {
+            result.push_back(args.substr(i + 1));
+            return result;
+        }
+        if (args[i] == ' ')
+        {
+            if (!word.empty())
+            {
+                result.push_back(word);
+                word.clear();
+            }
+        }
+        else
+            word += args[i];
+    }
+    if (!word.empty())
+        result.push_back(word);
+    return result;
+}
+
 void Server::passCommand(int clientFd, const std::string &password)
 {
     if (getUser(clientFd).getAuthenticated())
@@ -117,19 +145,28 @@ void Server::quitCommand(int clientFd, const std::string &reason)
 	removeClient(clientFd);
 }
 
-void Server::kickCommand(int clientFd, int targetFd, const std::string &channelName, std::string &reason)
+void Server::kickCommand(int clientFd, const std::string &args)
 {
-    Channel *channel = getChannel(channelName);
-    if (!channel)
-        return ;
+    std::vector<std::string> params = splitArgs(args);
+    if (params.size() < 2)
+        return sendMessage(clientFd, IrcReply::notEnoughParams("KICK"));
 
-    if (!channel->kickClient(clientFd, targetFd))
-        return sendMessage(clientFd, IrcReply::chanOpPrivsNeeded(getUser(clientFd).getNickname(), channelName));
+    std::string channelName = params[0];
+    std::string targetNick = params[1];
+    std::string reason = params.size() > 2 ? params[2] : "Kicked";
 
-    if (reason.empty())
-        reason = "Kicked";
+	Channel *channel = getChannel(channelName);
+	if (!channel)
+	    return ;
 
-    broadcast(channel, IrcReply::kick(getUser(clientFd).getNickname(), getUser(clientFd).getUsername(), channelName, getUser(targetFd).getNickname(),reason));
+	User *target = getUserByNick(targetNick);
+	if (!target)
+	    return ;
+
+	if (!channel->isOperator(clientFd))
+		return sendMessage(clientFd, IrcReply::chanOpPrivsNeeded(getUser(clientFd).getNickname(), channelName));
+	broadcast(channel, IrcReply::kick(getUser(clientFd).getNickname(), getUser(clientFd).getUsername(), channelName, targetNick, reason));
+	channel->kickClient(clientFd, target->getFd());
 }
 
 void	Server::inviteCommand(int clientFd)

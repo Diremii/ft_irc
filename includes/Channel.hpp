@@ -6,7 +6,7 @@
 /*   By: humontas@student.42.fr <humontas>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/03 15:27:57 by ttremel           #+#    #+#             */
-/*   Updated: 2026/06/08 14:36:24 by humontas@st      ###   ########.fr       */
+/*   Updated: 2026/06/08 16:20:47 by humontas@st      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,6 @@ class Channel
 		Channel(void);
 
 		void	removeUser(int clientFd);
-		bool	isOperator(int clientFd);
 
 	public:
 		Channel(const std::string &name, User &channelCreator);
@@ -69,6 +68,7 @@ class Channel
 		void	storeMessages(const std::string &msg);
 
 		bool	isUserExist(int clientFd);
+		bool	isOperator(int clientFd);
 
 };
 

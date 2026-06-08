@@ -51,15 +51,22 @@ void	Server::removeClient(int clientFd)
 void	Server::handleCommand(int clientFd, const std::string &command, const std::string &args)
 {
 	if (command == "PASS")
-	    passCommand(clientFd, args);
+	passCommand(clientFd, args);
 	else if (command == "NICK")
-	    nickCommand(clientFd, args);
+	nickCommand(clientFd, args);
 	else if (command == "USER")
-	    userCommand(clientFd, args);
+	userCommand(clientFd, args);
+
+	else if (command == "QUIT")
+		return (quitCommand(clientFd, args));
+
 	else if (!getUser(clientFd).getRegistered())
 	    return (sendMessage(clientFd, IrcReply::notRegistered()));
+
 	else if (command == "JOIN")
 	    joinChannel(clientFd, args);
+	else if (command == "KICK")
+		kickCommand(clientFd, args);
 	else
 		return ;
 	tryRegister(clientFd);
