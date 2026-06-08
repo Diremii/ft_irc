@@ -50,43 +50,50 @@ void	Server::removeClient(int clientFd)
 
 void	Server::handleCommand(int clientFd, const std::string &command, const std::string &args)
 {
-	User &user = getUser(clientFd);
-
-	if (command == "QUIT")
-		return (quitCommand(clientFd, args));
 	if (command == "PASS")
-		return (passCommand(clientFd, args));
+	    passCommand(clientFd, args);
 	else if (command == "NICK")
-		return (nickCommand(clientFd, args));
+	    nickCommand(clientFd, args);
 	else if (command == "USER")
-		return (userCommand(clientFd, args));
-
-	if (!user.getRegistered())
-	{
-		sendMessage(clientFd, ":server 451 * :You have not registered\r\n");
+	    userCommand(clientFd, args);
+	else if (!getUser(clientFd).getRegistered())
+	    return (sendMessage(clientFd, IrcReply::notRegistered()));
+	else if (command == "JOIN")
+	    joinChannel(clientFd, args);
+	else
 		return ;
-	}
-
-	if (command == "JOIN")
-		joinChannel(clientFd, args);
-
 	tryRegister(clientFd);
 }
 
-void	Server::handleClient(int clientFd)
+void Server::handleClient(int clientFd)
 {
-	char buffer[1024];
-	int bytes = recv(clientFd, buffer, sizeof(buffer), 0); // Lecture des données envoyées par le client
-	if (bytes <= 0)
-		removeClient(clientFd);
-	else
+    char buffer[1024];
+    int bytes = recv(clientFd, buffer, sizeof(buffer), 0);
+    if (bytes <= 0)
+    {
+        removeClient(clientFd);
+        return ;
+    }
+    User &user = getUser(clientFd);
+    user.setBuffer(user.getBuffer() + std::string(buffer, bytes));
+    
+	size_t pos;
+	while (true)
 	{
-		std::string message(buffer, bytes);
-		message.erase(message.find_last_not_of("\r\n") + 1);
-		std::pair<std::string, std::string> parsed = parseMessage(message);
-		std::string command = parsed.first;
-		std::string args = parsed.second;
-		handleCommand(clientFd, command, args);
+	    size_t delimLen = 2;
+	    pos = user.getBuffer().find("\r\n");
+	    if (pos == std::string::npos)
+	    {
+	        pos = user.getBuffer().find("\n");
+	        delimLen = 1;
+	    }
+	    if (pos == std::string::npos)
+	        break ;
+	
+	    std::string line = user.getBuffer().substr(0, pos);
+	    user.setBuffer(user.getBuffer().substr(pos + delimLen));
+	    std::pair<std::string, std::string> parsed = parseMessage(line);
+	    handleCommand(clientFd, parsed.first, parsed.second);
 	}
 }
 

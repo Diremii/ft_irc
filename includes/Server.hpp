@@ -16,6 +16,7 @@
 # include "Includes.hpp"
 # include "User.hpp"
 # include "Channel.hpp"
+# include "Replies.hpp"
 
 class Server
 {

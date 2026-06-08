@@ -37,6 +37,7 @@ User	&User::operator=(const User &other)
 		this->_hostName = other._hostName;
 		this->_authenticated = other._authenticated;
 		this->_registered = other._registered;
+		this->_buffer = other._buffer;
 	}
 	return (*this);
 }

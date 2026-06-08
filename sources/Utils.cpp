@@ -31,6 +31,7 @@ void Server::tryRegister(int clientFd)
         sendMessage(clientFd, ":server 001 " + user.getNickname() + " :Welcome to the Internet Relay Network " + user.getNickname() + "!" + user.getUsername() + "@localhost\r\n");
     }
 }
+
 User	&Server::getUser(int clientFd)
 {
 	for (size_t i = 0; i < _users.size(); i++)
@@ -46,12 +47,12 @@ void	Server::sendMessage(int clientFd, const std::string &message)
 	send(clientFd, message.c_str(), message.size(), 0);
 }
 
-void	Server::broadcast(Channel *channel, const std::string &message)
+void Server::broadcast(Channel *channel, const std::string &message)
 {
-	const std::vector<User> &users = channel->getUsers();
+    const std::vector<int> &users = channel->getUsers();
 
-	for (size_t i = 0; i < users.size(); i++)
-		sendMessage(users[i].getFd(), message);
+    for (size_t i = 0; i < users.size(); i++)
+        sendMessage(users[i], message);
 }
 
 void	Server::broadcastUserChannels(int clientFd, const std::string &message)
@@ -59,7 +60,11 @@ void	Server::broadcastUserChannels(int clientFd, const std::string &message)
 	for (size_t i = 0; i < _channels.size(); i++)
 	{
 		if (_channels[i].isUserExist(clientFd))
-			broadcast(&_channels[i], message);
+		{
+			const std::vector<int> &users = _channels[i].getUsers();
+			for (size_t j = 0; j < users.size(); j++)
+				sendMessage(users[j], message);
+		}
 	}
 }
 

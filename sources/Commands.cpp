@@ -27,66 +27,84 @@ static int	isValidName(const std::string &name, size_t maxLen, const std::string
 	return (0);
 }
 
-void    Server::passCommand(int clientFd, const std::string &password)
+void Server::passCommand(int clientFd, const std::string &password)
 {
-	if (getUser(clientFd).getAuthenticated())
-	{
-		sendMessage(clientFd, ":server 462 * :You may not reregister\r\n");
-		return ;
-	}
-	if (password.empty() || password != _serverPassword)
-	{
-		sendMessage(clientFd, ":server 464 * :Password incorrect\r\n");
-		return ;
-	}
-	getUser(clientFd).setAuthenticated(true);
+    if (getUser(clientFd).getAuthenticated())
+        return sendMessage(clientFd, IrcReply::alreadyRegistered());
+
+    if (password.empty() || password != _serverPassword)
+        return sendMessage(clientFd, IrcReply::notAuthenticated());
+
+    getUser(clientFd).setAuthenticated(true);
 }
 
-
-void   Server::nickCommand(int clientFd, const std::string &nickName)
+void Server::nickCommand(int clientFd, const std::string &nickName)
 {
+	
 	switch (isValidName(nickName, 63, " ,*?!@"))
 	{
-		case 1: sendMessage(clientFd, ":server 431 * :No nickname given\r\n"); return ;
-		case 2: sendMessage(clientFd, ":server 432 * " + nickName + " :Erroneous nickname\r\n"); return ;
+		case 1:
+			return sendMessage(clientFd, IrcReply::noNick());
+		case 2:
+			return sendMessage(clientFd, IrcReply::badNick(nickName));
 	}
+
 	for (size_t i = 0; i < _users.size(); i++)
 	{
 		if (nickName == _users[i].getNickname())
-		{
-			sendMessage(clientFd, ":server 433 * " + nickName + " :Nickname is already in use\r\n");
-			return ;
-		}
+			return sendMessage(clientFd, IrcReply::nickInUse(nickName));
 	}
+
 	getUser(clientFd).setNickname(nickName);
 }
 
-void   Server::userCommand(int clientFd, const std::string &userName)
+void Server::userCommand(int clientFd, const std::string &userName)
 {
+	std::string username = userName.substr(0, userName.find(' '));
+
 	if (getUser(clientFd).getRegistered())
+		return sendMessage(clientFd, IrcReply::alreadyRegistered());
+
+	switch (isValidName(username, 10, " @\r\n"))
 	{
-		sendMessage(clientFd, ":server 462 * :You may not reregister\r\n");
-		return ;
+		case 1:
+			return sendMessage(clientFd, IrcReply::notEnoughParams("USER"));
+		case 2:
+			return sendMessage(clientFd, IrcReply::badUser(username));
 	}
-	switch (isValidName(userName, 10, " @\r\n"))
-	{
-		case 1: sendMessage(clientFd, ":server 461 * USER :Not enough parameters\r\n"); return ;
-		case 2: sendMessage(clientFd, ":server 461 * " + userName + " :Erroneous username\r\n"); return ;
-	}
-	getUser(clientFd).setUsername(userName);
+
+	getUser(clientFd).setUsername(username);
 }
 
-void Server::joinChannel(int clientFd, const std::string &channelName)
+void	Server::joinChannel(int clientFd, const std::string &channelName)
 {
-    Channel *channel = getChannel(channelName);
-    if (!channel)
-    {
-        _channels.push_back(Channel(channelName, getUser(clientFd)));
-        channel = getChannel(channelName);
-    }
-    else
-        channel->addUser(getUser(clientFd));
-    broadcast(channel, ":" + getUser(clientFd).getNickname() + " JOIN " + channelName + "\r\n");
+	Channel *channel = getChannel(channelName);
+	std::string nick = getUser(clientFd).getNickname();
+
+	if (channelName.empty() || channelName[0] != '#')
+    	return sendMessage(clientFd, IrcReply::badChannelMask(getUser(clientFd).getNickname(), channelName));
+
+	else if (!channel)
+	{
+		_channels.push_back(Channel(channelName, getUser(clientFd)));
+		channel = getChannel(channelName);
+	}
+
+	else
+	{
+		switch (channel->addUser(clientFd))
+		{
+			case 1:
+				return (sendMessage(clientFd, IrcReply::inviteOnlyChannel(nick, channelName)));
+			case 2:
+				return (sendMessage(clientFd, IrcReply::channelIsFull(nick, channelName)));
+		}
+	}
+
+	broadcast(channel, IrcReply::join(getUser(clientFd).getNickname(),getUser(clientFd).getUsername(),channelName));
+	sendMessage(clientFd, IrcReply::noTopic(nick, channelName));
+	sendMessage(clientFd, IrcReply::namesList(nick, channelName, nick));
+	sendMessage(clientFd, IrcReply::endOfNames(nick, channelName));
 }
 
 void Server::quitCommand(int clientFd, const std::string &reason)
@@ -99,21 +117,19 @@ void Server::quitCommand(int clientFd, const std::string &reason)
 	removeClient(clientFd);
 }
 
-void	Server::kickCommand(int clientFd, int targetFd, const std::string &channelName, std::string &reason)
+void Server::kickCommand(int clientFd, int targetFd, const std::string &channelName, std::string &reason)
 {
-	Channel *channel = getChannel(channelName);
-	if (!channel)
-		return;
+    Channel *channel = getChannel(channelName);
+    if (!channel)
+        return ;
 
-	if (reason.empty())
-		reason = "Kicked";
-	std::string msg = ":" + getUser(clientFd).getNickname()
-				+ " KICK " + channelName + " "
-				+ getUser(targetFd).getNickname()
-				+ " :" + reason + "\r\n";
+    if (!channel->kickClient(clientFd, targetFd))
+        return sendMessage(clientFd, IrcReply::chanOpPrivsNeeded(getUser(clientFd).getNickname(), channelName));
 
-	channel->kickClient(clientFd, targetFd);
-	broadcast(channel, msg);
+    if (reason.empty())
+        reason = "Kicked";
+
+    broadcast(channel, IrcReply::kick(getUser(clientFd).getNickname(), getUser(clientFd).getUsername(), channelName, getUser(targetFd).getNickname(),reason));
 }
 
 void	Server::inviteCommand(int clientFd)
