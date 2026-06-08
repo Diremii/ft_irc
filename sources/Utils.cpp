@@ -77,3 +77,13 @@ Channel	*Server::getChannel(const std::string &channelName)
 	}
 	return (NULL);
 }
+
+User *Server::getUserByNick(const std::string &nick)
+{
+    for (size_t i = 0; i < _users.size(); i++)
+    {
+        if (_users[i].getNickname() == nick)
+            return &_users[i];
+    }
+    return NULL;
+}

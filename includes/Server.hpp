@@ -47,7 +47,7 @@ class Server
 		void	userCommand(int clientFd, const std::string &userName);
 		void	quitCommand(int clientFd, const std::string &message);
 		void	joinChannel(int clientFd, const std::string &channelName);
-		void	kickCommand(int clientFd, int targetFd, const std::string &channelName, std::string &reason);
+		void	kickCommand(int clientFd, const std::string &args);
 		void	inviteCommand(int clientFd);
 		void	topicCommand(int clientFd);
 		void	modeCommand(int clientFd);
@@ -55,6 +55,7 @@ class Server
 		/* UTILS */
 		std::pair<std::string, std::string>	parseMessage(const std::string &message);
 		User								&getUser(int clientFd);  
+		User 								*getUserByNick(const std::string &nick);
 		void								tryRegister(int clientFd);
 		void								sendMessage(int clientFd, const std::string &message);
 		void								broadcast(Channel *channel, const std::string &message);
