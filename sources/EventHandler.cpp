@@ -20,7 +20,7 @@ void	Server::acceptClient()
 
 	struct pollfd clientPollFd;
 	clientPollFd.fd = clientSocket;
-	clientPollFd.events = POLLIN; // On veut être notifié des événements de lecture (données du client)
+	clientPollFd.events = POLLIN;
 	clientPollFd.revents = 0;
 	_pollFds.push_back(clientPollFd);
 	_users.push_back(User(clientSocket));
