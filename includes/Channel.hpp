@@ -6,7 +6,7 @@
 /*   By: humontas@student.42.fr <humontas>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/03 15:27:57 by ttremel           #+#    #+#             */
-/*   Updated: 2026/06/08 16:20:47 by humontas@st      ###   ########.fr       */
+/*   Updated: 2026/06/09 17:18:44 by humontas@st      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@ class Channel
 
 		std::vector<int>		_operators;
 		std::vector<int>		_users;
+		std::vector<int>		_inviteds;
 
 		std::stack<std::string>	_msgs;
 
@@ -54,7 +55,7 @@ class Channel
 		/* CORE */
 		int		addUser(int clientFd);
 		bool	kickClient(int clientFd, int targetFd);
-		bool	inviteClient(int clientFd, User &target);
+		bool	inviteClient(int clientFd, int targetFd);
 
 		/* CHANNEL SETTINGS */
 		bool	changeTopic(int clientFd, const std::string &newTopic);
@@ -67,6 +68,7 @@ class Channel
 		int		setUserLimit(int clientFd, std::size_t newUserLimit);
 		void	storeMessages(const std::string &msg);
 
+		bool	isInvited(int clientFd);
 		bool	isUserExist(int clientFd);
 		bool	isOperator(int clientFd);
 

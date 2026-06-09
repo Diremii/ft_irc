@@ -131,8 +131,7 @@ void	Server::joinChannel(int clientFd, const std::string &channelName)
 
 	broadcast(channel, IrcReply::join(getUser(clientFd).getNickname(),getUser(clientFd).getUsername(),channelName));
 	sendMessage(clientFd, IrcReply::noTopic(nick, channelName));
-	sendMessage(clientFd, IrcReply::namesList(nick, channelName, nick));
-	sendMessage(clientFd, IrcReply::endOfNames(nick, channelName));
+	sendNamesList(clientFd, channel);
 }
 
 void Server::quitCommand(int clientFd, const std::string &reason)
@@ -164,19 +163,54 @@ void Server::kickCommand(int clientFd, const std::string &args)
 	    return ;
 
 	if (!channel->isOperator(clientFd))
-		return sendMessage(clientFd, IrcReply::chanOpPrivsNeeded(getUser(clientFd).getNickname(), channelName));
+		return (sendMessage(clientFd, IrcReply::chanOpPrivsNeeded(getUser(clientFd).getNickname(), channelName)));
 	broadcast(channel, IrcReply::kick(getUser(clientFd).getNickname(), getUser(clientFd).getUsername(), channelName, targetNick, reason));
 	channel->kickClient(clientFd, target->getFd());
 }
 
-void	Server::inviteCommand(int clientFd)
+void Server::inviteCommand(int clientFd, const std::string &args)
 {
-	(void)clientFd;
+	std::vector<std::string> params = splitArgs(args);
+	if (params.size() < 2)
+		return sendMessage(clientFd, IrcReply::notEnoughParams("INVITE"));
+
+	std::string	targetNick = params[0];
+	std::string channelName = params[1];
+
+	Channel *channel = getChannel(channelName);
+	if (!channel)
+	    return ;
+
+	User *target = getUserByNick(targetNick);
+	if (!target)
+	    return ;
+
+	if (!channel->isOperator(clientFd))
+		return (sendMessage(clientFd, IrcReply::chanOpPrivsNeeded(getUser(clientFd).getNickname(), channelName)));
+	channel->inviteClient(clientFd, target->getFd());
+	sendMessage(target->getFd(), IrcReply::invite(getUser(clientFd).getNickname(), getUser(clientFd).getUsername(), targetNick, channelName));
 }
 
-void	Server::topicCommand(int clientFd)
+void	Server::topicCommand(int clientFd, const std::string &args)
 {
-	(void)clientFd;
+	std::vector<std::string> params = splitArgs(args);
+    if (params.size() < 1)
+        return sendMessage(clientFd, IrcReply::notEnoughParams("TOPIC"));
+
+    std::string channelName = params[0];
+
+	Channel *channel = getChannel(channelName);
+	if (!channel)
+	    return ;
+
+	if (params.size() == 1)
+        return sendMessage(clientFd, IrcReply::topic(getUser(clientFd).getNickname(), channelName, channel->viewTopic()));
+
+	std::string newTopic = params[1];
+	if (!channel->changeTopic(clientFd, newTopic))
+		return (sendMessage(clientFd, IrcReply::chanOpPrivsNeeded(getUser(clientFd).getNickname(), channelName)));
+
+	broadcast(channel, IrcReply::topicChanged(getUser(clientFd).getNickname(), getUser(clientFd).getUsername(), channelName, newTopic));
 }
 
 void	Server::modeCommand(int clientFd)

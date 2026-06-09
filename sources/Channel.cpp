@@ -6,7 +6,7 @@
 /*   By: humontas@student.42.fr <humontas>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/03 15:34:40 by ttremel           #+#    #+#             */
-/*   Updated: 2026/06/08 14:34:27 by humontas@st      ###   ########.fr       */
+/*   Updated: 2026/06/09 17:20:30 by humontas@st      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,7 @@ Channel &Channel::operator=(const Channel &other)
 		this->_topic = other._topic;
 		this->_operators = other._operators;
 		this->_users = other._users;
+		this->_inviteds = other._inviteds;
 		this->_msgs = other._msgs;
 		this->_userLimit = other._userLimit;
 		this->_isInviteOnly = other._isInviteOnly;
@@ -63,6 +64,16 @@ const std::vector<int> &Channel::getUsers(void) const
 // --------------------
 // utils
 // --------------------
+
+bool	Channel::isInvited(int clientFd)
+{
+	for (size_t i =0; i < _inviteds.size(); i++)
+	{
+		if (_inviteds[i] == clientFd)
+			return (true);
+	}
+	return (false);
+}
 
 bool Channel::isUserExist(int clientFd)
 {
@@ -102,7 +113,7 @@ void Channel::removeUser(int clientFd)
 
 int	Channel::addUser(int clientFd)
 {
-	if (_isInviteOnly)
+	if (_isInviteOnly && !isInvited(clientFd))
 		return (1);
 	if (_users.size() >= _userLimit)
 		return (2);
@@ -111,14 +122,13 @@ int	Channel::addUser(int clientFd)
 	return (0);
 }
 
-bool Channel::inviteClient(int clientFd, User &target)
+bool Channel::inviteClient(int clientFd, int targetFd)
 {
-	if (!isOperator(clientFd))
-		return (false);
-	int targetFd = target.getFd();
-	if (!isUserExist(targetFd))
-		_users.push_back(targetFd);
-	return (true);
+    if (!isOperator(clientFd))
+        return (false);
+    if (_isInviteOnly && !isInvited(targetFd))
+        _inviteds.push_back(targetFd);
+    return (true);
 }
 
 bool Channel::kickClient(int clientFd, int targetFd)

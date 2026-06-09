@@ -10,9 +10,17 @@ namespace IrcReply
     {
         return (":server 001 " + nick + " :Welcome to the Internet Relay Network " + nick + "!" + user + "@localhost\r\n");
     }
+    inline std::string topic(const std::string &nick, const std::string &channel, const std::string &topic)
+    {
+        return (":server 332 " + nick + " " + channel + " :" + topic + "\r\n");
+    }
     inline std::string noTopic(const std::string &nick, const std::string &channel)
     {
-        return (":server 332 " + nick + " " + channel + " :\r\n");
+        return (":server 331 " + nick + " " + channel + " :No topic is set\r\n");
+    }
+    inline std::string topicChanged(const std::string &nick, const std::string &user, const std::string &channel, const std::string &topic)
+    {
+        return (":" + nick + "!" + user + "@localhost TOPIC " + channel + " :" + topic + "\r\n");
     }
     inline std::string namesList(const std::string &nick, const std::string &channel, const std::string &users)
     {
@@ -29,6 +37,10 @@ namespace IrcReply
     inline std::string kick(const std::string &nick, const std::string &user, const std::string &channel, const std::string &target, const std::string &reason)
     {
         return (":" + nick + "!" + user + "@localhost KICK " + channel + " " + target + " :" + reason + "\r\n");
+    }
+    inline std::string invite(const std::string &nick, const std::string &user, const std::string &target, const std::string &channel)
+    {
+        return (":" + nick + "!" + user + "@localhost INVITE " + target + " " + channel + "\r\n");
     }
 
     /* ERRORS */

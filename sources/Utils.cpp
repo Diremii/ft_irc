@@ -87,3 +87,18 @@ User *Server::getUserByNick(const std::string &nick)
     }
     return NULL;
 }
+
+void	Server::sendNamesList(int clientFd, Channel *channel)
+{
+    std::string nick = getUser(clientFd).getNickname();
+    std::string usersList;
+    const std::vector<int> &users = channel->getUsers();
+    for (size_t i = 0; i < users.size(); i++)
+    {
+        if (i > 0)
+            usersList += " ";
+        usersList += getUser(users[i]).getNickname();
+    }
+    sendMessage(clientFd, IrcReply::namesList(nick, channel->getName(), usersList));
+    sendMessage(clientFd, IrcReply::endOfNames(nick, channel->getName()));
+}

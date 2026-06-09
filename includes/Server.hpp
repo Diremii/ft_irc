@@ -48,8 +48,8 @@ class Server
 		void	quitCommand(int clientFd, const std::string &message);
 		void	joinChannel(int clientFd, const std::string &channelName);
 		void	kickCommand(int clientFd, const std::string &args);
-		void	inviteCommand(int clientFd);
-		void	topicCommand(int clientFd);
+		void	inviteCommand(int clientFd, const std::string &args);
+		void	topicCommand(int clientFd, const std::string &args);
 		void	modeCommand(int clientFd);
 		
 		/* UTILS */
@@ -60,8 +60,9 @@ class Server
 		void								sendMessage(int clientFd, const std::string &message);
 		void								broadcast(Channel *channel, const std::string &message);
 		void								broadcastUserChannels(int clientFd, const std::string &message);
+		void								sendNamesList(int clientFd, Channel *channel);
 		Channel								*getChannel(const std::string &channelName);
-
+		
 
 	public:
 		Server(int port, std::string password);
