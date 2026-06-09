@@ -6,7 +6,7 @@
 /*   By: ttremel <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/03 15:34:40 by ttremel           #+#    #+#             */
-/*   Updated: 2026/06/09 23:26:33 by ttremel          ###   ########.fr       */
+/*   Updated: 2026/06/09 23:43:16 by ttremel          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,7 @@ Channel &Channel::operator=(const Channel &other)
 		this->_operators = other._operators;
 		this->_users = other._users;
 		this->_inviteds = other._inviteds;
+		this->_files = other._files;
 		this->_msgs = other._msgs;
 		this->_userLimit = other._userLimit;
 		this->_isInviteOnly = other._isInviteOnly;
