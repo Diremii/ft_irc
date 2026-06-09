@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ttremel <marvin@42.fr>                     +#+  +:+       +#+        */
+/*   By: humontas@student.42.fr <humontas>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/03 15:27:57 by ttremel           #+#    #+#             */
-/*   Updated: 2026/06/09 23:28:56 by ttremel          ###   ########.fr       */
+/*   Updated: 2026/06/09 17:18:44 by humontas@st      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,6 @@
 # define CHANNEL_HPP
 
 # include "Includes.hpp"
-# include "File.hpp"
 # include "User.hpp"
 
 class Channel
@@ -29,7 +28,6 @@ class Channel
 		std::vector<int>		_inviteds;
 
 		std::stack<std::string>	_msgs;
-		std::vector<File>		_files;
 
 		std::size_t				_userLimit;
 		bool					_isInviteOnly;
@@ -58,8 +56,6 @@ class Channel
 		int		addUser(int clientFd);
 		bool	kickClient(int clientFd, int targetFd);
 		bool	inviteClient(int clientFd, int targetFd);
-		File	&getFile(const std::string &fileName);
-		void	storeFile(const File &file);
 
 		/* CHANNEL SETTINGS */
 		bool	changeTopic(int clientFd, const std::string &newTopic);

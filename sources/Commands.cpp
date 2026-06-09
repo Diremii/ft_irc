@@ -12,6 +12,29 @@
 
 #include "Server.hpp"
 
+static void applyMode(Channel *channel, char sign, char mode, const std::string &param)
+{
+    bool activate = (sign == '+');
+    switch (mode)
+    {
+        case 'i':
+            break;
+        case 't':
+            break;
+        case 'k':
+            break;
+        case 'o':
+            break;
+        case 'l':
+            break;
+        default:
+            break;
+    }
+    (void)param;
+    (void)activate;
+    (void)channel;
+}
+
 static int	isValidName(const std::string &name, size_t maxLen, const std::string &forbidden)
 {
 	if (name.empty())
@@ -130,7 +153,10 @@ void	Server::joinChannel(int clientFd, const std::string &channelName)
 	}
 
 	broadcast(channel, IrcReply::join(getUser(clientFd).getNickname(),getUser(clientFd).getUsername(),channelName));
-	sendMessage(clientFd, IrcReply::noTopic(nick, channelName));
+	if (channel->viewTopic().empty())
+ 		sendMessage(clientFd, IrcReply::noTopic(nick, channelName));
+	else
+   		sendMessage(clientFd, IrcReply::topic(nick, channelName, channel->viewTopic()));
 	sendNamesList(clientFd, channel);
 }
 
@@ -213,7 +239,16 @@ void	Server::topicCommand(int clientFd, const std::string &args)
 	broadcast(channel, IrcReply::topicChanged(getUser(clientFd).getNickname(), getUser(clientFd).getUsername(), channelName, newTopic));
 }
 
-void	Server::modeCommand(int clientFd)
+void	Server::modeCommand(int clientFd, const std::string &args)
 {
-	(void)clientFd;
+    std::vector<std::string> params = splitArgs(args);
+    if (params.size() < 2)
+        return sendMessage(clientFd, IrcReply::notEnoughParams("MODE"));
+    std::string channelName = params[0];
+    std::string flag = params[1];
+    std::string optionalParam = params.size() > 2 ? params[2] : "";
+    Channel *channel = getChannel(channelName);
+    if (!channel)
+        return ;
+    applyMode(channel, flag[0], flag[1], optionalParam);
 }

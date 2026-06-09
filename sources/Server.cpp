@@ -53,8 +53,6 @@ void    Server::run()
     while (true)
     {
         int activity = poll(_pollFds.data(), _pollFds.size(), -1);
-		if (g_sig == SIGINT || g_sig == SIGQUIT)
-			return ;
         if (activity == -1)
             throw std::runtime_error("Poll error");
         handleEvents();
@@ -73,6 +71,5 @@ Server::Server(int port, std::string password) :
 
 Server::~Server()
 {
-	for (size_t i = 0; i < _pollFds.size(); i++)
-		close(_pollFds[i].fd);
+    close(_serverSocket);
 }

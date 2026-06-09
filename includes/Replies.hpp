@@ -10,13 +10,13 @@ namespace IrcReply
     {
         return (":server 001 " + nick + " :Welcome to the Internet Relay Network " + nick + "!" + user + "@localhost\r\n");
     }
-    inline std::string topic(const std::string &nick, const std::string &channel, const std::string &topic)
-    {
-        return (":server 332 " + nick + " " + channel + " :" + topic + "\r\n");
-    }
     inline std::string noTopic(const std::string &nick, const std::string &channel)
     {
         return (":server 331 " + nick + " " + channel + " :No topic is set\r\n");
+    }
+    inline std::string topic(const std::string &nick, const std::string &channel, const std::string &topic)
+    {
+        return (":server 332 " + nick + " " + channel + " :" + topic + "\r\n");
     }
     inline std::string topicChanged(const std::string &nick, const std::string &user, const std::string &channel, const std::string &topic)
     {
