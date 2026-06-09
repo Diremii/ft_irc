@@ -12,95 +12,108 @@
 
 #include "../includes/Server.hpp"
 
-void    Server::acceptClient()
+void	Server::acceptClient()
 {
-    int clientSocket = accept(_serverSocket, NULL, NULL);
-    if (clientSocket == -1)
-        throw std::runtime_error("accept() failed");
+	int clientSocket = accept(_serverSocket, NULL, NULL);
+	if (clientSocket == -1)
+		throw std::runtime_error("accept() failed");
 
-    struct pollfd clientPollFd;
-    clientPollFd.fd = clientSocket;
-    clientPollFd.events = POLLIN; // On veut être notifié des événements de lecture (données du client)
-    clientPollFd.revents = 0;
-    _pollFds.push_back(clientPollFd);
-    _users.push_back(User(clientSocket));
+	struct pollfd clientPollFd;
+	clientPollFd.fd = clientSocket;
+	clientPollFd.events = POLLIN;
+	clientPollFd.revents = 0;
+	_pollFds.push_back(clientPollFd);
+	_users.push_back(User(clientSocket));
 }
 
-void    Server::removeClient(int clientFd)
+void	Server::removeClient(int clientFd)
 {
-    close(clientFd);
-    for (size_t i = 0; i < _pollFds.size(); i++)
-    {
-        if (_pollFds[i].fd == clientFd)
-        {
-            _pollFds.erase(_pollFds.begin() + i);
-            break ;
-        }
-    }
+	close(clientFd);
+	for (size_t i = 0; i < _pollFds.size(); i++)
+	{
+		if (_pollFds[i].fd == clientFd)
+		{
+			_pollFds.erase(_pollFds.begin() + i);
+			break ;
+		}
+	}
 
-    for (size_t i = 0; i < _users.size(); i++)
-    {
-        if (_users[i].getFd() == clientFd)
-        {
-            _users.erase(_users.begin() + i);
-            break ;
-        }
-    }
+	for (size_t i = 0; i < _users.size(); i++)
+	{
+		if (_users[i].getFd() == clientFd)
+		{
+			_users.erase(_users.begin() + i);
+			break ;
+		}
+	}
 }
 
-void    Server::handleCommand(int clientFd, const std::string &command, const std::string &args)
+void	Server::handleCommand(int clientFd, const std::string &command, const std::string &args)
 {
-    if (command == "PASS")
-        passCommand(clientFd, args);
-    else if (command == "NICK")
-        nickCommand(clientFd, args);
-    else if (command == "USER")
-        userCommand(clientFd, args);
-    else if (command == "QUIT")
-    {
-        quitCommand(clientFd, args);
-        return ;
-    }
-    else
-    {
-        if (!getUser(clientFd).getRegistered())
-        {
-            sendMessage(clientFd, ":server 451 * :You have not registered\r\n");
-            return ;
-        }
-        if (command == "JOIN")
-            joinChannel(clientFd, args);
-    }
-    checkRegistration(clientFd);
+	if (command == "PASS")
+	passCommand(clientFd, args);
+	else if (command == "NICK")
+	nickCommand(clientFd, args);
+	else if (command == "USER")
+	userCommand(clientFd, args);
+
+	else if (command == "QUIT")
+		return (quitCommand(clientFd, args));
+
+	else if (!getUser(clientFd).getRegistered())
+	    return (sendMessage(clientFd, IrcReply::notRegistered()));
+
+	else if (command == "JOIN")
+	    joinChannel(clientFd, args);
+	else if (command == "KICK")
+		kickCommand(clientFd, args);
+	else
+		return ;
+	tryRegister(clientFd);
 }
 
-void    Server::handleClient(int clientFd)
+void Server::handleClient(int clientFd)
 {
     char buffer[1024];
-    int bytes = recv(clientFd, buffer, sizeof(buffer), 0); // Lecture des données envoyées par le client
+    int bytes = recv(clientFd, buffer, sizeof(buffer), 0);
     if (bytes <= 0)
-        removeClient(clientFd);
-    else
     {
-        std::string message(buffer, bytes);
-        message.erase(message.find_last_not_of("\r\n") + 1);
-        std::pair<std::string, std::string> parsed = parseMessage(message);
-        std::string command = parsed.first;
-        std::string args = parsed.second;
-        handleCommand(clientFd, command, args);
+        removeClient(clientFd);
+        return ;
     }
+    User &user = getUser(clientFd);
+    user.setBuffer(user.getBuffer() + std::string(buffer, bytes));
+    
+	size_t pos;
+	while (true)
+	{
+	    size_t delimLen = 2;
+	    pos = user.getBuffer().find("\r\n");
+	    if (pos == std::string::npos)
+	    {
+	        pos = user.getBuffer().find("\n");
+	        delimLen = 1;
+	    }
+	    if (pos == std::string::npos)
+	        break ;
+	
+	    std::string line = user.getBuffer().substr(0, pos);
+	    user.setBuffer(user.getBuffer().substr(pos + delimLen));
+	    std::pair<std::string, std::string> parsed = parseMessage(line);
+	    handleCommand(clientFd, parsed.first, parsed.second);
+	}
 }
 
-void    Server::handleEvents()
+void	Server::handleEvents()
 {
-    for (size_t i = 0; i < _pollFds.size(); ++i)
-    {
-        if (_pollFds[i].revents & POLLIN)
-        {
-            if (_pollFds[i].fd == _serverSocket)
-                acceptClient();
-            else
-                handleClient(_pollFds[i].fd);
-        }
-    }
+	for (size_t i = 0; i < _pollFds.size(); ++i)
+	{
+		if (_pollFds[i].revents & POLLIN)
+		{
+			if (_pollFds[i].fd == _serverSocket)
+				acceptClient();
+			else
+				handleClient(_pollFds[i].fd);
+		}
+	}
 }

@@ -26,5 +26,8 @@
 # include <stdexcept>
 # include <stack>
 # include <fstream>
+# include <csignal>
+
+extern int	g_sig;
 
 #endif

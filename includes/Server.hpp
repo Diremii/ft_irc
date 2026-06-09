@@ -16,6 +16,7 @@
 # include "Includes.hpp"
 # include "User.hpp"
 # include "Channel.hpp"
+# include "Replies.hpp"
 
 class Server
 {
@@ -46,20 +47,22 @@ class Server
 		void	userCommand(int clientFd, const std::string &userName);
 		void	quitCommand(int clientFd, const std::string &message);
 		void	joinChannel(int clientFd, const std::string &channelName);
-		void	kickCommand(int clientFd, int targetFd, const std::string &channelName, std::string &reason);
-		void	inviteCommand(int clientFd);
-		void	topicCommand(int clientFd);
+		void	kickCommand(int clientFd, const std::string &args);
+		void	inviteCommand(int clientFd, const std::string &args);
+		void	topicCommand(int clientFd, const std::string &args);
 		void	modeCommand(int clientFd);
 		
 		/* UTILS */
 		std::pair<std::string, std::string>	parseMessage(const std::string &message);
 		User								&getUser(int clientFd);  
-		void								checkRegistration(int clientFd);
+		User 								*getUserByNick(const std::string &nick);
+		void								tryRegister(int clientFd);
 		void								sendMessage(int clientFd, const std::string &message);
 		void								broadcast(Channel *channel, const std::string &message);
 		void								broadcastUserChannels(int clientFd, const std::string &message);
+		void								sendNamesList(int clientFd, Channel *channel);
 		Channel								*getChannel(const std::string &channelName);
-
+		
 
 	public:
 		Server(int port, std::string password);
