@@ -5,10 +5,13 @@ MY_SOURCES= sources/main.cpp \
 			sources/Server.cpp \
 			sources/User.cpp \
 			sources/Commands.cpp \
-			sources/Utils.cpp \
 			sources/EventHandler.cpp \
 			sources/Channel.cpp \
 			sources/File.cpp
+
+MY_SOURCES+=utils/Utils.cpp \
+			utils/CommandUtils.cpp 
+
 
 MY_OBJECTS=$(MY_SOURCES:%.cpp=$(OBJ_DIR)/%.o)
 

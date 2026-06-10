@@ -3,252 +3,225 @@
 /*                                                        :::      ::::::::   */
 /*   Commands.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: humontas <humontas@student.42.fr>          +#+  +:+       +#+        */
+/*   By: humontas@student.42.fr <humontas>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/05/23 10:44:23 by humontas          #+#    #+#             */
-/*   Updated: 2026/05/23 10:44:23 by humontas         ###   ########.fr       */
+/*   Created: 2026/06/10 12:10:12 by humontas@st       #+#    #+#             */
+/*   Updated: 2026/06/10 12:10:12 by humontas@st      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Server.hpp"
 
-static void applyMode(Channel *channel, char sign, char mode, const std::string &param)
+void	Server::passCommand(int clientFd, const std::string &password)
 {
-    bool activate = (sign == '+');
-    switch (mode)
-    {
-        case 'i':
-            break;
-        case 't':
-            break;
-        case 'k':
-            break;
-        case 'o':
-            break;
-        case 'l':
-            break;
-        default:
-            break;
-    }
-    (void)param;
-    (void)activate;
-    (void)channel;
+	User &caller = getUser(clientFd);
+
+	if (caller.getAuthenticated())
+		return (sendMessage(clientFd, IrcReply::alreadyRegistered()));
+	if (password.empty() || password != _serverPassword)
+		return (sendMessage(clientFd, IrcReply::notAuthenticated()));
+
+	caller.setAuthenticated(true);
 }
 
-static int	isValidName(const std::string &name, size_t maxLen, const std::string &forbidden)
+void	Server::nickCommand(int clientFd, const std::string &nickName)
 {
-	if (name.empty())
-		return (1);
-	else if (name.size() > maxLen)
-		return (2);
-
-	for (size_t i = 0; i < name.size(); i++)
-	{
-		if (forbidden.find(name[i]) != std::string::npos)
-			return (2);
-	}
-	return (0);
-}
-
-static std::vector<std::string>	splitArgs(const std::string &args)
-{
-    std::vector<std::string> result;
-    std::string word;
-
-    for (size_t i = 0; i < args.size(); i++)
-    {
-        if (args[i] == ':')
-        {
-            result.push_back(args.substr(i + 1));
-            return result;
-        }
-        if (args[i] == ' ')
-        {
-            if (!word.empty())
-            {
-                result.push_back(word);
-                word.clear();
-            }
-        }
-        else
-            word += args[i];
-    }
-    if (!word.empty())
-        result.push_back(word);
-    return result;
-}
-
-void Server::passCommand(int clientFd, const std::string &password)
-{
-    if (getUser(clientFd).getAuthenticated())
-        return sendMessage(clientFd, IrcReply::alreadyRegistered());
-
-    if (password.empty() || password != _serverPassword)
-        return sendMessage(clientFd, IrcReply::notAuthenticated());
-
-    getUser(clientFd).setAuthenticated(true);
-}
-
-void Server::nickCommand(int clientFd, const std::string &nickName)
-{
-	
 	switch (isValidName(nickName, 63, " ,*?!@"))
 	{
 		case 1:
-			return sendMessage(clientFd, IrcReply::noNick());
+			return (sendMessage(clientFd, IrcReply::noNick()));
 		case 2:
-			return sendMessage(clientFd, IrcReply::badNick(nickName));
+			return (sendMessage(clientFd, IrcReply::badNick(nickName)));
 	}
 
 	for (size_t i = 0; i < _users.size(); i++)
 	{
 		if (nickName == _users[i].getNickname())
-			return sendMessage(clientFd, IrcReply::nickInUse(nickName));
+			return (sendMessage(clientFd, IrcReply::nickInUse(nickName)));
 	}
 
 	getUser(clientFd).setNickname(nickName);
 }
 
-void Server::userCommand(int clientFd, const std::string &userName)
+void	Server::userCommand(int clientFd, const std::string &userName)
 {
+	User &caller = getUser(clientFd);
 	std::string username = userName.substr(0, userName.find(' '));
 
-	if (getUser(clientFd).getRegistered())
-		return sendMessage(clientFd, IrcReply::alreadyRegistered());
+	if (caller.getRegistered())
+		return (sendMessage(clientFd, IrcReply::alreadyRegistered()));
 
 	switch (isValidName(username, 10, " @\r\n"))
 	{
 		case 1:
-			return sendMessage(clientFd, IrcReply::notEnoughParams("USER"));
+			return (sendMessage(clientFd, IrcReply::notEnoughParams("USER")));
 		case 2:
-			return sendMessage(clientFd, IrcReply::badUser(username));
+			return (sendMessage(clientFd, IrcReply::badUser(username)));
 	}
 
-	getUser(clientFd).setUsername(username);
+	caller.setUsername(username);
 }
 
 void	Server::joinChannel(int clientFd, const std::string &channelName)
 {
-	Channel *channel = getChannel(channelName);
-	std::string nick = getUser(clientFd).getNickname();
+	User &caller = getUser(clientFd);
 
 	if (channelName.empty() || channelName[0] != '#')
-    	return sendMessage(clientFd, IrcReply::badChannelMask(getUser(clientFd).getNickname(), channelName));
+		return (sendMessage(clientFd, IrcReply::badChannelMask(caller.getNickname(), channelName)));
 
-	else if (!channel)
+	Channel *channel = getChannel(channelName);
+	if (!channel)
 	{
 		_channels.push_back(Channel(channelName, getUser(clientFd)));
 		channel = getChannel(channelName);
 	}
-
 	else
 	{
 		switch (channel->addUser(clientFd))
 		{
 			case 1:
-				return (sendMessage(clientFd, IrcReply::inviteOnlyChannel(nick, channelName)));
+				return (sendMessage(clientFd, IrcReply::inviteOnlyChannel(caller.getNickname(), channelName)));
 			case 2:
-				return (sendMessage(clientFd, IrcReply::channelIsFull(nick, channelName)));
+				return (sendMessage(clientFd, IrcReply::channelIsFull(caller.getNickname(), channelName)));
 		}
 	}
 
-	broadcast(channel, IrcReply::join(getUser(clientFd).getNickname(),getUser(clientFd).getUsername(),channelName));
+	broadcast(channel, IrcReply::join(caller.getNickname(), caller.getUsername(), channelName));
 	if (channel->viewTopic().empty())
- 		sendMessage(clientFd, IrcReply::noTopic(nick, channelName));
+		sendMessage(clientFd, IrcReply::noTopic(caller.getNickname(), channelName));
 	else
-   		sendMessage(clientFd, IrcReply::topic(nick, channelName, channel->viewTopic()));
+		sendMessage(clientFd, IrcReply::topic(caller.getNickname(), channelName, channel->viewTopic()));
 	sendNamesList(clientFd, channel);
 }
 
-void Server::quitCommand(int clientFd, const std::string &reason)
+void	Server::quitCommand(int clientFd, const std::string &reason)
 {
-	std::string msg = ":" + getUser(clientFd).getNickname()
-					+ " QUIT :" + (reason.empty() ? "Client Quit" : reason)
-					+ "\r\n";
+	User &caller = getUser(clientFd);
 
-	broadcastUserChannels(clientFd, msg);
+	broadcastUserChannels(clientFd, IrcReply::quit(caller.getNickname(), caller.getUsername(), reason.empty() ? "Client Quit" : reason));
 	removeClient(clientFd);
 }
 
-void Server::kickCommand(int clientFd, const std::string &args)
-{
-    std::vector<std::string> params = splitArgs(args);
-    if (params.size() < 2)
-        return sendMessage(clientFd, IrcReply::notEnoughParams("KICK"));
-
-    std::string channelName = params[0];
-    std::string targetNick = params[1];
-    std::string reason = params.size() > 2 ? params[2] : "Kicked";
-
-	Channel *channel = getChannel(channelName);
-	if (!channel)
-	    return ;
-
-	User *target = getUserByNick(targetNick);
-	if (!target)
-	    return ;
-
-	if (!channel->isOperator(clientFd))
-		return (sendMessage(clientFd, IrcReply::chanOpPrivsNeeded(getUser(clientFd).getNickname(), channelName)));
-	broadcast(channel, IrcReply::kick(getUser(clientFd).getNickname(), getUser(clientFd).getUsername(), channelName, targetNick, reason));
-	channel->kickClient(clientFd, target->getFd());
-}
-
-void Server::inviteCommand(int clientFd, const std::string &args)
+void	Server::kickCommand(int clientFd, const std::string &args)
 {
 	std::vector<std::string> params = splitArgs(args);
 	if (params.size() < 2)
-		return sendMessage(clientFd, IrcReply::notEnoughParams("INVITE"));
+		return (sendMessage(clientFd, IrcReply::notEnoughParams("KICK")));
 
-	std::string	targetNick = params[0];
-	std::string channelName = params[1];
+	User &caller = getUser(clientFd);
+	std::string targetNick = params[1];
+	std::string reason = params.size() > 2 ? params[2] : "Kicked";
 
-	Channel *channel = getChannel(channelName);
+	Channel *channel = getOperatorChannel(clientFd, params[0]);
 	if (!channel)
-	    return ;
+		return ;
 
 	User *target = getUserByNick(targetNick);
 	if (!target)
-	    return ;
+		return ;
 
-	if (!channel->isOperator(clientFd))
-		return (sendMessage(clientFd, IrcReply::chanOpPrivsNeeded(getUser(clientFd).getNickname(), channelName)));
-	channel->inviteClient(clientFd, target->getFd());
-	sendMessage(target->getFd(), IrcReply::invite(getUser(clientFd).getNickname(), getUser(clientFd).getUsername(), targetNick, channelName));
+	broadcast(channel, IrcReply::kick(caller.getNickname(), caller.getUsername(), params[0], targetNick, reason));
+	channel->kickClient(target->getFd());
+}
+
+void	Server::inviteCommand(int clientFd, const std::string &args)
+{
+	std::vector<std::string> params = splitArgs(args);
+	if (params.size() < 2)
+		return (sendMessage(clientFd, IrcReply::notEnoughParams("INVITE")));
+
+	User &caller = getUser(clientFd);
+	std::string targetNick = params[0];
+
+	Channel *channel = getOperatorChannel(clientFd, params[1]);
+	if (!channel)
+		return ;
+
+	User *target = getUserByNick(targetNick);
+	if (!target)
+		return ;
+
+	channel->inviteClient(target->getFd());
+	sendMessage(target->getFd(), IrcReply::invite(caller.getNickname(), caller.getUsername(), targetNick, params[1]));
 }
 
 void	Server::topicCommand(int clientFd, const std::string &args)
 {
 	std::vector<std::string> params = splitArgs(args);
-    if (params.size() < 1)
-        return sendMessage(clientFd, IrcReply::notEnoughParams("TOPIC"));
+	if (params.size() < 1)
+		return (sendMessage(clientFd, IrcReply::notEnoughParams("TOPIC")));
 
-    std::string channelName = params[0];
+	User &caller = getUser(clientFd);
+	std::string channelName = params[0];
 
 	Channel *channel = getChannel(channelName);
 	if (!channel)
-	    return ;
+		return ;
 
 	if (params.size() == 1)
-        return sendMessage(clientFd, IrcReply::topic(getUser(clientFd).getNickname(), channelName, channel->viewTopic()));
+		return (sendMessage(clientFd, IrcReply::topic(caller.getNickname(), channelName, channel->viewTopic())));
 
 	std::string newTopic = params[1];
+	if (newTopic.size() > MAX_TOPIC_LEN)
+		return (sendMessage(clientFd, IrcReply::topicTooLong(caller.getNickname(), channelName)));
 	if (!channel->changeTopic(clientFd, newTopic))
-		return (sendMessage(clientFd, IrcReply::chanOpPrivsNeeded(getUser(clientFd).getNickname(), channelName)));
+		return (sendMessage(clientFd, IrcReply::chanOpPrivsNeeded(caller.getNickname(), channelName)));
 
-	broadcast(channel, IrcReply::topicChanged(getUser(clientFd).getNickname(), getUser(clientFd).getUsername(), channelName, newTopic));
+	broadcast(channel, IrcReply::topicChanged(caller.getNickname(), caller.getUsername(), channelName, newTopic));
 }
 
 void	Server::modeCommand(int clientFd, const std::string &args)
 {
-    std::vector<std::string> params = splitArgs(args);
-    if (params.size() < 2)
-        return sendMessage(clientFd, IrcReply::notEnoughParams("MODE"));
-    std::string channelName = params[0];
-    std::string flag = params[1];
-    std::string optionalParam = params.size() > 2 ? params[2] : "";
-    Channel *channel = getChannel(channelName);
-    if (!channel)
-        return ;
-    applyMode(channel, flag[0], flag[1], optionalParam);
+	std::vector<std::string> params = splitArgs(args);
+	if (params.size() < 2)
+		return (sendMessage(clientFd, IrcReply::notEnoughParams("MODE")));
+
+	std::string flag = params[1];
+	if (flag.size() < 2)
+    	return (sendMessage(clientFd, IrcReply::notEnoughParams("MODE")));
+
+	std::string optionalParam = params.size() > 2 ? params[2] : "";
+
+	Channel *channel = getOperatorChannel(clientFd, params[0]);
+	if (!channel)
+		return ;
+
+	bool activate = flag[0] == '+';
+	switch (flag[1])
+	{
+		case 'i':
+		{
+			channel->setInviteOnly(activate);
+			break;
+		}	
+		case 't':
+		{
+			channel->setTopicRestriction(activate);
+			break;
+		}
+		case 'k':
+		{
+			if (activate && optionalParam.empty())
+				return (sendMessage(clientFd, IrcReply::notEnoughParams("MODE")));
+			channel->changePassword(optionalParam);
+			break;
+		}
+		case 'o':
+		{
+			if (optionalParam.empty())
+				return (sendMessage(clientFd, IrcReply::notEnoughParams("MODE")));
+			User *target = getUserByNick(optionalParam);
+			if (!target)
+				return ;
+			channel->setOperator(target->getFd(), activate);
+			break;
+		}
+		case 'l':
+		{
+			if (activate && optionalParam.empty())
+				return (sendMessage(clientFd, IrcReply::notEnoughParams("MODE")));
+			channel->setUserLimit(activate, (size_t)atoi(optionalParam.c_str()));
+			break;
+		}
+	}
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ttremel <marvin@42.fr>                     +#+  +:+       +#+        */
+/*   By: humontas@student.42.fr <humontas>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/03 15:27:57 by ttremel           #+#    #+#             */
-/*   Updated: 2026/06/10 00:35:22 by ttremel          ###   ########.fr       */
+/*   Updated: 2026/06/10 12:31:16 by humontas@st      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,18 +56,18 @@ class Channel
 
 		/* CORE */
 		int		addUser(int clientFd);
-		bool	kickClient(int clientFd, int targetFd);
-		bool	inviteClient(int clientFd, int targetFd);
+		void	kickClient(int targetFd);
+		void	inviteClient(int targetFd);
 
 		/* CHANNEL SETTINGS */
 		bool	changeTopic(int clientFd, const std::string &newTopic);
-		bool	changePassword(int clientFd, const std::string &newPassword);
+		void	changePassword(const std::string &newPassword);
 		bool	changeName(int clientFd, const std::string &newName);
-		int		removeOperator(int clientFd, int targetFd);
 		bool	removeUserLimit(int clientFd);
-		bool	setOperator(int clientFd, int targetFd);
-		bool	setTopicRestriction(int clientFd, bool isRestricted);
-		int		setUserLimit(int clientFd, std::size_t newUserLimit);
+		void	setOperator(int targetFd, bool activate);
+		void	setTopicRestriction(bool activate);
+		void    setInviteOnly(bool activate);
+		void	setUserLimit(bool activate, size_t newLimit);
 		void	storeMessages(const std::string &msg);
 		File	&getFile(const std::string &fileName);
 		void	storeFile(const File &file);

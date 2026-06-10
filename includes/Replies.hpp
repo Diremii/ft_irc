@@ -10,6 +10,10 @@ namespace IrcReply
     {
         return (":server 001 " + nick + " :Welcome to the Internet Relay Network " + nick + "!" + user + "@localhost\r\n");
     }
+    inline std::string quit(const std::string &nick, const std::string &user, const std::string &reason)
+    {
+        return (":" + nick + "!" + user + "@localhost QUIT :" + reason + "\r\n");
+    }
     inline std::string noTopic(const std::string &nick, const std::string &channel)
     {
         return (":server 331 " + nick + " " + channel + " :No topic is set\r\n");
@@ -44,6 +48,10 @@ namespace IrcReply
     }
 
     /* ERRORS */
+    inline std::string topicTooLong(const std::string &nick, const std::string &channel)
+    {
+        return (":server 416 " + nick + " " + channel + " :Topic too long\r\n");
+    }
     inline std::string noNick()
     {
         return (":server 431 * :No nickname given\r\n");

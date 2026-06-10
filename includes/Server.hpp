@@ -62,7 +62,10 @@ class Server
 		void								broadcastUserChannels(int clientFd, const std::string &message);
 		void								sendNamesList(int clientFd, Channel *channel);
 		Channel								*getChannel(const std::string &channelName);
-		
+		Channel								*getOperatorChannel(int clientFd, const std::string &channelName);
+		std::vector<std::string>			splitArgs(const std::string &args);
+		int									isValidName(const std::string &name, size_t maxLen, const std::string &forbidden);
+
 
 	public:
 		Server(int port, std::string password);

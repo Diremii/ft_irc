@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ttremel <marvin@42.fr>                     +#+  +:+       +#+        */
+/*   By: humontas@student.42.fr <humontas>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/03 15:34:40 by ttremel           #+#    #+#             */
-/*   Updated: 2026/06/10 00:33:56 by ttremel          ###   ########.fr       */
+/*   Updated: 2026/06/10 12:30:49 by humontas@st      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -138,49 +138,41 @@ int	Channel::addUser(int clientFd)
 	return (0);
 }
 
-bool Channel::inviteClient(int clientFd, int targetFd)
+void	Channel::inviteClient(int targetFd)
 {
-    if (!isOperator(clientFd))
-        return (false);
     if (_isInviteOnly && !isInvited(targetFd))
         _inviteds.push_back(targetFd);
-    return (true);
 }
 
-bool Channel::kickClient(int clientFd, int targetFd)
+void	Channel::kickClient(int targetFd)
 {
-    if (!isOperator(clientFd))
-        return (false);
     removeUser(targetFd);
-    return (true);
 }
 
 // --------------------
 // operators
 // --------------------
 
-bool Channel::setOperator(int clientFd, int targetFd)
+void	Channel::setOperator(int targetFd, bool activate)
 {
-	if (!isOperator(clientFd))
-		return (false);
-	_operators.push_back(targetFd);
-	return (true);
-}
-
-int Channel::removeOperator(int clientFd, int targetFd)
-{
-	if (!isOperator(clientFd))
-		return (1);
-
-	for (size_t i = 0; i < _operators.size(); i++)
+	if (activate)
+		_operators.push_back(targetFd);
+	else
 	{
-		if (_operators[i] == targetFd)
+		for (size_t i = 0; i < _operators.size(); i++)
 		{
-			_operators.erase(_operators.begin() + i);
-			return (0);
+			if (_operators[i] == targetFd)
+			{
+				_operators.erase(_operators.begin() + i);
+				return ;
+			}
 		}
 	}
-	return (2);
+}
+
+void	Channel::setInviteOnly(bool activate)
+{
+	_isInviteOnly = activate;
 }
 
 // --------------------
@@ -194,12 +186,9 @@ std::string Channel::getPassword(int clientFd)
 	return (_password);
 }
 
-bool Channel::changePassword(int clientFd, const std::string &newPassword)
+void	Channel::changePassword(const std::string &newPassword)
 {
-	if (!isOperator(clientFd))
-		return (false);
 	_password = newPassword;
-	return (true);
 }
 
 std::string Channel::getName(void)
@@ -220,30 +209,17 @@ bool Channel::changeTopic(int clientFd, const std::string &newTopic)
 	return (true);
 }
 
-bool Channel::setTopicRestriction(int clientFd, bool isRestricted)
+void	Channel::setTopicRestriction(bool activate)
 {
-	if (!isOperator(clientFd))
-		return (false);
-	_isTopicRestricted = isRestricted;
-	return (true);
+	_isTopicRestricted = activate;
 }
 
-int Channel::setUserLimit(int clientFd, std::size_t newUserLimit)
+void	Channel::setUserLimit(bool activate, size_t newLimit)
 {
-	if (!isOperator(clientFd))
-		return (1);
-	if (newUserLimit < 2)
-		return (2);
-	_userLimit = newUserLimit;
-	return (0);
-}
-
-bool Channel::removeUserLimit(int clientFd)
-{
-	if (!isOperator(clientFd))
-		return (false);
-	_userLimit = (size_t)-1;
-	return (true);
+	if (activate)
+		_userLimit = newLimit;
+	else
+		_userLimit = (size_t)-1;
 }
 
 bool Channel::changeName(int clientFd, const std::string &newName)

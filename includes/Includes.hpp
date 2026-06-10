@@ -13,6 +13,8 @@
 #ifndef INCLUDES_HPP
 # define INCLUDES_HPP
 
+# define MAX_TOPIC_LEN 307
+
 # include <iostream>
 # include <string>
 # include <sys/socket.h>
