@@ -6,7 +6,7 @@
 /*   By: humontas@student.42.fr <humontas>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/10 11:24:13 by humontas@st       #+#    #+#             */
-/*   Updated: 2026/06/10 11:42:27 by humontas@st      ###   ########.fr       */
+/*   Updated: 2026/06/11 16:59:52 by humontas@st      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,11 +61,14 @@ std::vector<std::string> Server::splitArgs(const std::string &args)
 //      broadcast
 // --------------------
 
-void Server::broadcast(Channel *channel, const std::string &message)
+void Server::broadcast(Channel *channel, const std::string &message, int excludeFd)
 {
 	const std::vector<int> &users = channel->getUsers();
 	for (size_t i = 0; i < users.size(); i++)
-		sendMessage(users[i], message);
+	{
+		if (users[i] != excludeFd)
+			sendMessage(users[i], message);
+	}
 }
 
 void Server::broadcastUserChannels(int clientFd, const std::string &message)

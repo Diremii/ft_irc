@@ -241,7 +241,7 @@ void	Server::privmsgCommand(int clientFd, const std::string &args)
 		Channel	*channel = getChannel(target);
 		if (!channel)
 			return ;
-		broadcast(channel, IrcReply::privmsg(caller.getNickname(), caller.getUsername(), target, message));
+		broadcast(channel, IrcReply::privmsg(caller.getNickname(), caller.getUsername(), target, message), clientFd);
 	}
 	else
 	{

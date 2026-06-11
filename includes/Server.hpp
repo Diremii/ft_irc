@@ -59,7 +59,7 @@ class Server
 		User 								*getUserByNick(const std::string &nick);
 		void								tryRegister(int clientFd);
 		void								sendMessage(int clientFd, const std::string &message);
-		void								broadcast(Channel *channel, const std::string &message);
+		void								broadcast(Channel *channel, const std::string &message, int excludeFd = -1);
 		void								broadcastUserChannels(int clientFd, const std::string &message);
 		void								sendNamesList(int clientFd, Channel *channel);
 		Channel								*getChannel(const std::string &channelName);
