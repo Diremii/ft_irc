@@ -46,6 +46,10 @@ namespace IrcReply
     {
         return (":" + nick + "!" + user + "@localhost INVITE " + target + " " + channel + "\r\n");
     }
+    inline std::string privmsg(const std::string &nick, const std::string &user, const std::string &target, const std::string &message)
+    {
+        return (":" + nick + "!" + user + "@localhost PRIVMSG " + target + " :" + message + "\r\n");
+    }
 
     /* ERRORS */
     inline std::string topicTooLong(const std::string &nick, const std::string &channel)

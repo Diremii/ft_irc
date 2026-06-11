@@ -51,6 +51,7 @@ class Server
 		void    topicCommand(int clientFd, const std::string &args);
 		void    inviteCommand(int clientFd, const std::string &args);
 		void    modeCommand(int clientFd, const std::string &args);
+		void	privmsgCommand(int clientFd, const std::string &args);
 		
 		/* UTILS */
 		std::pair<std::string, std::string>	parseMessage(const std::string &message);

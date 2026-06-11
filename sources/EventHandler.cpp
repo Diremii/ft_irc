@@ -74,6 +74,8 @@ void	Server::handleCommand(int clientFd, const std::string &command, const std::
         topicCommand(clientFd, args);
     else if (command == "MODE")
         modeCommand(clientFd, args);
+	else if (command == "PRIVMSG")
+		privmsgCommand(clientFd, args);
     else
         return ;
     tryRegister(clientFd);
