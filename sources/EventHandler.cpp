@@ -28,6 +28,7 @@ void	Server::acceptClient()
 
 void	Server::removeClient(int clientFd)
 {
+	broadcastUserChannels(clientFd, IrcReply::quit(getUser(clientFd).getNickname(), getUser(clientFd).getUsername(), "Connection closed"));
 	close(clientFd);
 	for (size_t i = 0; i < _pollFds.size(); i++)
 	{
@@ -46,6 +47,9 @@ void	Server::removeClient(int clientFd)
 			break ;
 		}
 	}
+
+	for (size_t i = 0; i < _channels.size(); i++)
+    	_channels[i].removeUser(clientFd);
 }
 
 void	Server::handleCommand(int clientFd, const std::string &command, const std::string &args)

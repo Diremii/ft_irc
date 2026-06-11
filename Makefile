@@ -74,6 +74,8 @@ clean:
 	@echo "$(CYAN)   ╚════════════════════════════════╝$(RESET)"
 
 fclean: clean
+	@$(RM) -r $(OBJ_DIR)
+	@$(RM) $(NAME)
 	@$(RM) $(NAME)
 	@clear
 	@echo "\n$(CYAN)   ╔════════════════════════════════════════╗$(RESET)"
