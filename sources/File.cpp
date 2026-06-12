@@ -6,7 +6,7 @@
 /*   By: ttremel <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/05 15:33:17 by ttremel           #+#    #+#             */
-/*   Updated: 2026/06/12 17:00:40 by ttremel          ###   ########.fr       */
+/*   Updated: 2026/06/12 17:12:05 by ttremel          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,4 +71,5 @@ void	File::createNewFile(const std::string &folderPath)
 	if (!output.is_open())
 		throw (File::CantCreateFile());
 	output << this->_data;
+	output.close();
 }
