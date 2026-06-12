@@ -251,3 +251,60 @@ void	Server::privmsgCommand(int clientFd, const std::string &args)
 		sendMessage(targetUser->getFd(), IrcReply::privmsg(caller.getNickname(), caller.getUsername(), target, message));
 	}
 }
+
+void	Server::uploadCommand(int clientFd, const std::string &args)
+{
+	std::vector<std::string>	params = splitArgs(args);
+	std::string					target;
+	std::string					filePath;
+	std::string					message;
+	Channel						*channel;
+	User						&caller = getUser(clientFd);
+
+	if (params.size() < 2)
+		return (sendMessage(clientFd, IrcReply::notEnoughParams("UPLOAD")));
+	target = params[0];
+	filePath = params[1];
+	channel = getChannel(target);
+	if (!channel)
+		return ;
+	try 
+	{
+		channel->storeFile(File(filePath));
+		message = "upload a file: " + filePath.substr(filePath.find_last_of('/') + 1);
+		broadcast(channel, IrcReply::privmsg(caller.getNickname(), caller.getUsername(), target, message), clientFd);
+	}
+	catch (const std::exception &e)
+	{
+		message = "Failed to upload file cause: " + std::string(e.what());
+		sendMessage(clientFd, IrcReply::privmsg(caller.getNickname(), caller.getUsername(), target, message));
+	}
+}
+
+void	Server::downloadCommand(int clientFd, const std::string &args)
+{
+	std::vector<std::string>	params = splitArgs(args);
+	std::string					target;
+	std::string					fileName;
+	std::string					folderPath;
+	Channel						*channel;
+	User						&caller = getUser(clientFd);
+
+	if (params.size() < 3)
+		return (sendMessage(clientFd, IrcReply::notEnoughParams("DOWNLOAD")));
+	target = params[0];
+	fileName = params[1];
+	folderPath = params[2];
+	channel = getChannel(target);
+	if (!channel)
+		return ;
+	try
+	{
+		channel->getFile(fileName).createNewFile(folderPath);
+	}
+	catch (const std::exception &e)
+	{
+		sendMessage(clientFd, IrcReply::privmsg(caller.getNickname(), caller.getUsername(), target,
+			"Failed to download file cause: " + std::string(e.what())));
+	}
+}

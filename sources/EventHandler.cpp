@@ -76,6 +76,10 @@ void	Server::handleCommand(int clientFd, const std::string &command, const std::
         modeCommand(clientFd, args);
 	else if (command == "PRIVMSG")
 		privmsgCommand(clientFd, args);
+    else if (command == "UPLOAD")
+        uploadCommand(clientFd, args);
+    else if (command == "DOWNLOAD")
+        downloadCommand(clientFd, args);
     else
         return ;
     tryRegister(clientFd);
