@@ -6,7 +6,7 @@
 /*   By: humontas@student.42.fr <humontas>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/13 12:12:44 by humontas@st       #+#    #+#             */
-/*   Updated: 2026/06/13 14:47:59 by humontas@st      ###   ########.fr       */
+/*   Updated: 2026/06/14 01:02:23 by humontas@st      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,7 @@ class TicTacToe
         bool        checkWin(const std::string &symbol);
         bool        checkDraw();
         int         minimax(bool isBot);
+        int         getBestMove();
         std::string printBoard();
     
     public:
