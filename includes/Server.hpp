@@ -52,8 +52,7 @@ class Server
 		void    inviteCommand(int clientFd, const std::string &args);
 		void    modeCommand(int clientFd, const std::string &args);
 		void	privmsgCommand(int clientFd, const std::string &args);
-		void	uploadCommand(int clientFd, const std::string &args);
-		void	downloadCommand(int clientFd, const std::string &args);
+		void	dccSendCommand(int clientFd, const std::string &args);
 		
 		/* UTILS */
 		std::pair<std::string, std::string>	parseMessage(const std::string &message);

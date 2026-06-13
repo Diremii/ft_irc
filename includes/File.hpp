@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   File.hpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: humontas@student.42.fr <humontas>          +#+  +:+       +#+        */
+/*   By: ttremel <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/05 15:09:42 by ttremel           #+#    #+#             */
-/*   Updated: 2026/06/08 14:51:28 by humontas@st      ###   ########.fr       */
+/*   Updated: 2026/06/13 15:33:23 by ttremel          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,10 +20,10 @@ class File
 	private:
 		std::string	_data;
 		std::string	_fileName;
+		bool		_isEmpty;
 
-		File(void);
 	public:
-		File(const std::string &file_path);
+		File(void);
 		~File(void);
 		File(const File &other);
 
@@ -31,18 +31,9 @@ class File
 
 		std::string	getFileName(void);
 		std::string	getData(void);
-		void		createNewFile(const std::string &folderPath);
-
-		class	FileNotFound : public std::exception
-		{
-			public:
-				const char *what() const throw() { return ("File not found"); }
-		};
-		class	CantCreateFile : public std::exception
-		{
-			public:
-				const char *what() const throw() { return ("Can't create file"); }
-		};
+		bool		createNewFile(const std::string &folderPath);
+		bool		open(const std::string &filePath);
+		bool		isEmpty(void);
 };
 
 

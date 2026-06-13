@@ -6,7 +6,7 @@
 /*   By: ttremel <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/03 15:27:57 by ttremel           #+#    #+#             */
-/*   Updated: 2026/06/12 15:15:27 by ttremel          ###   ########.fr       */
+/*   Updated: 2026/06/13 15:33:32 by ttremel          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,15 +29,14 @@ class Channel
 		std::vector<int>		_inviteds;
 
 		std::stack<std::string>	_msgs;
-		std::vector<File>		_files;
 
 		std::size_t				_userLimit;
 		bool					_isInviteOnly;
 		bool					_isTopicRestricted;
 		int						_channelCreatorFd;
-
+		
 		Channel(void);
-
+		
 	public:
 		Channel(const std::string &name, User &channelCreator);
 		Channel(const Channel &other);
@@ -68,8 +67,6 @@ class Channel
 		void    setInviteOnly(bool activate);
 		void	setUserLimit(bool activate, size_t newLimit);
 		void	storeMessages(const std::string &msg);
-		File	&getFile(const std::string &fileName);
-		void	storeFile(const File &file);
 
 		bool	isInvited(int clientFd);
 		bool	isUserExist(int clientFd);

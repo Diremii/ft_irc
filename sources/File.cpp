@@ -6,17 +6,17 @@
 /*   By: ttremel <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/05 15:33:17 by ttremel           #+#    #+#             */
-/*   Updated: 2026/06/12 17:12:05 by ttremel          ###   ########.fr       */
+/*   Updated: 2026/06/13 15:45:47 by ttremel          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/Includes.hpp"
 #include "../includes/File.hpp"
 
-File::File(void) {}
+File::File(void) : _data(""), _fileName(""), _isEmpty(true) {}
 File::~File(void) {}
 
-File::File(const std::string &filePath)
+bool	File::open(const std::string &filePath)
 {
 	std::ifstream	input;
 	std::string		line;
@@ -24,13 +24,14 @@ File::File(const std::string &filePath)
 	
 	input.open(filePath.c_str(), std::ios::in);
 	if (!input.is_open())
-		throw (File::FileNotFound());
+		return (true);
 	this->_fileName = filePath;
 	if ((fileNamePos = filePath.find_last_of("/")) != std::string::npos)
 		this->_fileName = filePath.substr(fileNamePos + 1);
 	while (getline(input, line))
 		this->_data += line;
 	input.close();
+	return (false);
 }
 
 File::File(const File &other)
@@ -58,7 +59,12 @@ std::string	File::getFileName(void)
 	return (this->_fileName);
 }
 
-void	File::createNewFile(const std::string &folderPath)
+bool	File::isEmpty(void)
+{
+	return (_isEmpty);
+}
+
+bool	File::createNewFile(const std::string &folderPath)
 {
 	std::ofstream	output;
 	std::string		fullPath;
@@ -69,7 +75,8 @@ void	File::createNewFile(const std::string &folderPath)
 		fullPath = folderPath + '/' + this->_fileName;
 	output.open(fullPath.c_str(), std::ios::out | std::ios::trunc);
 	if (!output.is_open())
-		throw (File::CantCreateFile());
+		return (true);
 	output << this->_data;
 	output.close();
+	return (false);
 }
