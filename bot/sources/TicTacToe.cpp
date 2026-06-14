@@ -6,7 +6,7 @@
 /*   By: humontas@student.42.fr <humontas>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/13 12:26:46 by humontas@st       #+#    #+#             */
-/*   Updated: 2026/06/14 01:04:32 by humontas@st      ###   ########.fr       */
+/*   Updated: 2026/06/14 19:32:40 by humontas@st      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,17 +30,6 @@ void    TicTacToe::makeMove(int pos, const std::string &symbol)
     _board[pos] = symbol;
 }
 
-std::string    TicTacToe::printBoard()
-{
-    std::string result = "";
-                result += " " + _board[0] + " | " + _board[1] + " | " + _board[2] + "\n";
-                result += "---+---+---\n";
-                result += " " + _board[3] + " | " + _board[4] + " | " + _board[5] + "\n";
-                result += "---+---+---\n";
-                result += " " + _board[6] + " | " + _board[7] + " | " + _board[8] + "\n";
-    return (result);      
-}
-
 time_t  TicTacToe::getLastMoveTime()
 {
     return (_lastMoveTime);
@@ -56,12 +45,41 @@ bool    TicTacToe::isGameOver()
     return (_gameOver);
 }
 
+std::string TicTacToe::getPlayerSymbol()
+{
+    return (_playerSymbol);
+}
+
+std::string TicTacToe::getBotSymbol()
+{
+    return (_botSymbol);
+}
+
+std::string TicTacToe::getCurrentPlayer()
+{
+    return (_currentPlayer);
+}
+
+std::string TicTacToe::getBoard(int pos)
+{
+    return (_board[pos]);
+}
+
+int    TicTacToe::isValidMove(int pos)
+{
+    if (pos < 1 || pos > 9)
+        return (1);
+    if (_board[pos - 1] == "X" || _board[pos - 1] == "O")
+        return (2);
+    return (0);
+}
+
 TicTacToe::TicTacToe(const std::string &channel, const std::string &player) : 
     _gameChannel(channel),
     _currentPlayer(player),
-    _gameOver(false),
     _lastMoveTime(time(NULL)),
-    _gameEndTime(0)
+    _gameEndTime(0),
+    _gameOver(false)
 {
     initGame();
 }

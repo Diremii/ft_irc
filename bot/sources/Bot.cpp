@@ -6,7 +6,7 @@
 /*   By: humontas@student.42.fr <humontas>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/13 02:16:22 by humontas@st       #+#    #+#             */
-/*   Updated: 2026/06/13 13:50:37 by humontas@st      ###   ########.fr       */
+/*   Updated: 2026/06/14 19:36:20 by humontas@st      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ void    Bot::registerBot(const std::string &password)
         throw std::runtime_error("Failed to register bot");
 }
 
-void    Bot::handleCommand(const std::string &command, const std::string &args)
+void    Bot::handleCommand(const std::string &line, const std::string &command, const std::string &args)
 {
     if (command == "433")
     {
@@ -59,6 +59,8 @@ void    Bot::handleCommand(const std::string &command, const std::string &args)
         if (params.size() >= 2)
             sendMessage("JOIN " + params[1] + "\r\n");
     }
+    else if (command == "PRIVMSG")
+        handlePRIVMSG(getNickFromPrefix(line), args);
 }
 
 void    Bot::handleBot()
@@ -72,7 +74,7 @@ void    Bot::handleBot()
         std::pair<std::string, std::string> parsed = parseMessage(line);
         std::string command = parsed.first;
         std::string args = parsed.second;
-        handleCommand(command, args);
+        handleCommand(line, command, args);
         std::cout << "Command: " << command << " | Args: " << args << std::endl;
     }
 }
@@ -81,13 +83,13 @@ void    Bot::checkTimers()
 {
     std::map<std::string, TicTacToe*>::iterator it;
 
-    for (it = _games.begin(); it != _games.end(); it++)
+    for (it = _games.begin(); it != _games.end();)
     {
         if (time(NULL) - it->second->getLastMoveTime() > 60)
         {
             sendMessage("PRIVMSG " + it->first + " :Game over! You took too long to play.\r\n");
-            delete (it->second);
-            it = _games.erase(it);
+            delete it->second;
+            _games.erase(it++);
         }
         else
             it++;

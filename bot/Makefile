@@ -3,6 +3,9 @@ NAME=bot
 OBJ_DIR=./.obj
 MY_SOURCES= sources/main.cpp \
 			sources/Bot.cpp \
+			sources/TicTacToe.cpp \
+			sources/Minimax.cpp \
+			sources/Commands.cpp \
 
 MY_SOURCES+=utils/utils.cpp
 

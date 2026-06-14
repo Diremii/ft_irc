@@ -6,7 +6,7 @@
 /*   By: humontas@student.42.fr <humontas>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/13 11:10:17 by humontas@st       #+#    #+#             */
-/*   Updated: 2026/06/13 12:01:33 by humontas@st      ###   ########.fr       */
+/*   Updated: 2026/06/14 17:46:47 by humontas@st      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,4 +83,14 @@ std::string Bot::generateNick()
         nick+= "_";
 
     return (nick);
+}
+
+std::string Bot::getNickFromPrefix(const std::string &line)
+{
+    if (line.empty() || line[0] != ':')
+        return ("");
+    size_t  end = line.find('!');
+    if (end == std::string::npos)
+        return ("");
+    return (line.substr(1, end - 1));
 }

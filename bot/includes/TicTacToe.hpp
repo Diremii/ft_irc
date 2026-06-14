@@ -6,7 +6,7 @@
 /*   By: humontas@student.42.fr <humontas>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/13 12:12:44 by humontas@st       #+#    #+#             */
-/*   Updated: 2026/06/14 01:02:23 by humontas@st      ###   ########.fr       */
+/*   Updated: 2026/06/14 19:31:58 by humontas@st      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,20 +29,26 @@ class TicTacToe
         std::string _playerSymbol;
 
         void        initGame();
-        void        makeMove(int pos, const std::string &symbol);
-        bool        checkWin(const std::string &symbol);
-        bool        checkDraw();
         int         minimax(bool isBot);
-        int         getBestMove();
-        std::string printBoard();
-    
-    public:
+        
+        public:
         TicTacToe(const std::string &channel, const std::string &player);
         ~TicTacToe();
+        
+        int         getBestMove();
+        bool        checkWin(const std::string &symbol);
+        bool        checkDraw();
+        void        makeMove(int pos, const std::string &symbol);
 
-        time_t  getLastMoveTime();
-        time_t  getGameEndTime();
-        bool    isGameOver();
+        time_t      getLastMoveTime();
+        time_t      getGameEndTime();
+        std::string getCurrentPlayer();
+        std::string getPlayerSymbol();
+        std::string getBotSymbol();
+        std::string getBoard(int pos);
+
+        bool        isGameOver();
+        int        isValidMove(int pos);
 };
 
 #endif
