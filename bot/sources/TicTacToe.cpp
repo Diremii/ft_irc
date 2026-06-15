@@ -6,7 +6,7 @@
 /*   By: humontas@student.42.fr <humontas>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/13 12:26:46 by humontas@st       #+#    #+#             */
-/*   Updated: 2026/06/14 19:32:40 by humontas@st      ###   ########.fr       */
+/*   Updated: 2026/06/15 13:09:19 by humontas@st      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,11 +28,6 @@ void    TicTacToe::initGame()
 void    TicTacToe::makeMove(int pos, const std::string &symbol)
 {
     _board[pos] = symbol;
-}
-
-time_t  TicTacToe::getLastMoveTime()
-{
-    return (_lastMoveTime);
 }
 
 time_t  TicTacToe::getGameEndTime()
@@ -77,9 +72,9 @@ int    TicTacToe::isValidMove(int pos)
 TicTacToe::TicTacToe(const std::string &channel, const std::string &player) : 
     _gameChannel(channel),
     _currentPlayer(player),
-    _lastMoveTime(time(NULL)),
     _gameEndTime(0),
-    _gameOver(false)
+    _gameOver(false),
+    _lastMoveTime(time(NULL))
 {
     initGame();
 }

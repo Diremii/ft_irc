@@ -6,7 +6,7 @@
 /*   By: humontas@student.42.fr <humontas>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/14 01:04:14 by humontas@st       #+#    #+#             */
-/*   Updated: 2026/06/14 01:04:41 by humontas@st      ###   ########.fr       */
+/*   Updated: 2026/06/15 12:53:18 by humontas@st      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ int     TicTacToe::getBestMove()
         {
             std::string tmp = _board[i];
             _board[i] = _botSymbol;
-            int score = minimax(false);
+            int score = minimax(false, 0);
             _board[i] = tmp;
             if (score > bestScore)
             {
@@ -61,12 +61,12 @@ int     TicTacToe::getBestMove()
     return (bestMove);
 }
 
-int TicTacToe::minimax(bool isBot)
+int TicTacToe::minimax(bool isBot, int depth)
 {
     if (checkWin(_botSymbol))
-        return (1);
+        return (10 - depth);
     if (checkWin(_playerSymbol))
-        return (-1);
+        return (depth - 10);
     if (checkDraw())
         return (0);
     
@@ -77,7 +77,7 @@ int TicTacToe::minimax(bool isBot)
         {
             std::string tmp = _board[i];
             _board[i] = isBot ? _botSymbol : _playerSymbol;
-            int score = minimax(!isBot);
+            int score = minimax(!isBot, depth + 1);
             _board[i] = tmp;
             if (isBot)
                 best = std::max(best, score);

@@ -6,7 +6,7 @@
 /*   By: humontas@student.42.fr <humontas>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/13 02:16:22 by humontas@st       #+#    #+#             */
-/*   Updated: 2026/06/14 19:36:20 by humontas@st      ###   ########.fr       */
+/*   Updated: 2026/06/15 13:03:55 by humontas@st      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,7 +85,7 @@ void    Bot::checkTimers()
 
     for (it = _games.begin(); it != _games.end();)
     {
-        if (time(NULL) - it->second->getLastMoveTime() > 60)
+        if (time(NULL) - it->second->_lastMoveTime > 60)
         {
             sendMessage("PRIVMSG " + it->first + " :Game over! You took too long to play.\r\n");
             delete it->second;
