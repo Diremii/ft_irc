@@ -252,6 +252,10 @@ void	Server::privmsgCommand(int clientFd, const std::string &args)
 	}
 }
 
+/*
+	manual dcc send to trigger hexchat or send what port used
+	on nc client.
+*/
 void	Server::dccSend(int clientFd, const std::string &args)
 {
 	std::vector<std::string> params = splitArgs(args);
@@ -281,8 +285,8 @@ void	Server::dccSend(int clientFd, const std::string &args)
 		return ;
 	clientAddrLen = sizeof(clientAddr);
 	getsockname(clientFd, (struct sockaddr *)&clientAddr, &clientAddrLen);
-	clientIp = ntohl(clientAddr.sin_addr.s_addr);
-	oss << clientIp;
+	clientIp = ntohl(clientAddr.sin_addr.s_addr); // convert ip to 32 bit int
+	oss << clientIp; // convert int to string
 	trigger = "\x01";
 	message = trigger + "DCC SEND " + fileName + " " + oss.str() + " " + port + " " + fileSize + trigger;
 	sendMessage(targetUser->getFd(), IrcReply::privmsg(caller.getNickname(), caller.getUsername(), target, message));
