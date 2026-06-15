@@ -29,6 +29,9 @@
 # include <stack>
 # include <fstream>
 # include <csignal>
+# include <map>
+# include <netdb.h>
+# include <sstream>
 
 extern int	g_sig;
 

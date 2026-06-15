@@ -6,8 +6,7 @@ MY_SOURCES= sources/main.cpp \
 			sources/User.cpp \
 			sources/Commands.cpp \
 			sources/EventHandler.cpp \
-			sources/Channel.cpp \
-			sources/File.cpp
+			sources/Channel.cpp
 
 MY_SOURCES+=utils/Utils.cpp \
 			utils/CommandUtils.cpp 

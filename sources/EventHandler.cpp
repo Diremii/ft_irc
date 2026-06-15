@@ -76,8 +76,8 @@ void	Server::handleCommand(int clientFd, const std::string &command, const std::
         modeCommand(clientFd, args);
 	else if (command == "PRIVMSG")
 		privmsgCommand(clientFd, args);
-    else if (command == "DCCSEND")
-        dccSendCommand(clientFd, args);
+	else if (command == "DCC")
+		dccSend(clientFd, args);
     else
         return ;
     tryRegister(clientFd);
@@ -115,12 +115,15 @@ void Server::handleClient(int clientFd)
 	}
 }
 
+
+
 void	Server::handleEvents()
 {
 	for (size_t i = 0; i < _pollFds.size(); ++i)
 	{
 		if (_pollFds[i].revents & POLLIN)
 		{
+			
 			if (_pollFds[i].fd == _serverSocket)
 				acceptClient();
 			else

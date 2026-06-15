@@ -252,21 +252,38 @@ void	Server::privmsgCommand(int clientFd, const std::string &args)
 	}
 }
 
-void	Server::dccSendCommand(int clientFd, const std::string &args)
+void	Server::dccSend(int clientFd, const std::string &args)
 {
-	std::vector<std::string>	params = splitArgs(args);
-	std::string					target;
-	std::string					filePath;
-	std::string					message;
-	User						*targetUser;
-	User						&caller = getUser(clientFd);
+	std::vector<std::string> params = splitArgs(args);
+	struct sockaddr_in		clientAddr;
+	std::ostringstream		oss;
+	std::string				target;
+	std::string				port;
+	std::string				fileName;
+	std::string				fileSize;
+	std::string				message;
+	std::string				trigger;
+	socklen_t				clientAddrLen;
+	uint32_t				clientIp;
+	User					&caller = getUser(clientFd);
+	User					*targetUser;
 
-	if (params.size() < 2)
-		return (sendMessage(clientFd, IrcReply::notEnoughParams("UPLOAD")));
-	target = params[0];
-	filePath = params[1];
+	if (params.size() < 5)
+		return (sendMessage(clientFd, IrcReply::notEnoughParams("DCC SEND")));
+	if (params[0] != "SEND")
+		return ;
+	target = params[1];
+	fileName = params[2];
+	port = params[3];
+	fileSize = params[4];
 	targetUser = getUserByNick(target);
 	if (!targetUser)
 		return ;
+	clientAddrLen = sizeof(clientAddr);
+	getsockname(clientFd, (struct sockaddr *)&clientAddr, &clientAddrLen);
+	clientIp = ntohl(clientAddr.sin_addr.s_addr);
+	oss << clientIp;
+	trigger = "\x01";
+	message = trigger + "DCC SEND " + fileName + " " + oss.str() + " " + port + " " + fileSize + trigger;
 	sendMessage(targetUser->getFd(), IrcReply::privmsg(caller.getNickname(), caller.getUsername(), target, message));
 }
