@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/Server.hpp"
+#include "Server.hpp"
 
 void    Server::createSocket()
 {
@@ -59,6 +59,16 @@ void    Server::run()
             throw std::runtime_error("Poll error");
         handleEvents();
     }
+}
+
+User    *Server::getUserByFd(int clientFd)
+{
+    for (size_t i = 0; i < _users.size(); i++)
+    {
+        if (_users[i].getFd() == clientFd)
+            return (&_users[i]);
+    }
+    return (NULL);
 }
 
 Server::Server(int port, std::string password) :

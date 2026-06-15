@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ttremel <marvin@42.fr>                     +#+  +:+       +#+        */
+/*   By: humontas <humontas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/03 15:34:40 by ttremel           #+#    #+#             */
-/*   Updated: 2026/06/12 15:15:22 by ttremel          ###   ########.fr       */
+/*   Updated: 2026/06/15 14:43:52 by humontas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/Channel.hpp"
+#include "Channel.hpp"
 
 Channel::Channel(void) {}
 

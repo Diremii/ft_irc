@@ -108,7 +108,7 @@ void	Server::kickCommand(int clientFd, const std::string &args)
 	if (params.size() < 2)
 		return (sendMessage(clientFd, IrcReply::notEnoughParams("KICK")));
 
-	User 		&caller = getUser(clientFd);
+	User		&caller = getUser(clientFd);
 	std::string targetNick = params[1];
 	std::string reason = params.size() > 2 ? params[2] : "Kicked";
 
@@ -151,7 +151,7 @@ void	Server::topicCommand(int clientFd, const std::string &args)
 	if (params.size() < 1)
 		return (sendMessage(clientFd, IrcReply::notEnoughParams("TOPIC")));
 
-	User 		&caller = getUser(clientFd);
+	User		&caller = getUser(clientFd);
 	std::string channelName = params[0];
 
 	Channel *channel = getChannel(channelName);
@@ -178,7 +178,7 @@ void	Server::modeCommand(int clientFd, const std::string &args)
 
 	std::string flag = params[1];
 	if (flag.size() < 2)
-    	return (sendMessage(clientFd, IrcReply::notEnoughParams("MODE")));
+		return (sendMessage(clientFd, IrcReply::notEnoughParams("MODE")));
 
 	std::string optionalParam = params.size() > 2 ? params[2] : "";
 

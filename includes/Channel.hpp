@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ttremel <marvin@42.fr>                     +#+  +:+       +#+        */
+/*   By: humontas <humontas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/03 15:27:57 by ttremel           #+#    #+#             */
-/*   Updated: 2026/06/12 15:15:27 by ttremel          ###   ########.fr       */
+/*   Updated: 2026/06/15 14:51:08 by humontas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,7 @@ class Channel
 		bool	removeUserLimit(int clientFd);
 		void	setOperator(int targetFd, bool activate);
 		void	setTopicRestriction(bool activate);
-		void    setInviteOnly(bool activate);
+		void	setInviteOnly(bool activate);
 		void	setUserLimit(bool activate, size_t newLimit);
 		void	storeMessages(const std::string &msg);
 		File	&getFile(const std::string &fileName);
@@ -74,7 +74,6 @@ class Channel
 		bool	isInvited(int clientFd);
 		bool	isUserExist(int clientFd);
 		bool	isOperator(int clientFd);
-
 };
 
 #endif

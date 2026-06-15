@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/Server.hpp"
+#include "Server.hpp"
 
 void	Server::acceptClient()
 {
@@ -49,77 +49,80 @@ void	Server::removeClient(int clientFd)
 	}
 
 	for (size_t i = 0; i < _channels.size(); i++)
-    	_channels[i].removeUser(clientFd);
+		_channels[i].removeUser(clientFd);
 }
 
 void	Server::handleCommand(int clientFd, const std::string &command, const std::string &args)
 {
-    if (command == "PASS")
-        passCommand(clientFd, args);
-    else if (command == "NICK")
-        nickCommand(clientFd, args);
-    else if (command == "USER")
-        userCommand(clientFd, args);
-    else if (command == "QUIT")
-        return quitCommand(clientFd, args);
-    else if (!getUser(clientFd).getRegistered())
-        return sendMessage(clientFd, IrcReply::notRegistered());
-    else if (command == "JOIN")
-        joinChannel(clientFd, args);
-    else if (command == "KICK")
-        kickCommand(clientFd, args);
-    else if (command == "INVITE")
-        inviteCommand(clientFd, args);
-    else if (command == "TOPIC")
-        topicCommand(clientFd, args);
-    else if (command == "MODE")
-        modeCommand(clientFd, args);
+	if (command == "PASS")
+		passCommand(clientFd, args);
+	else if (command == "NICK")
+		nickCommand(clientFd, args);
+	else if (command == "USER")
+		userCommand(clientFd, args);
+	else if (command == "QUIT")
+		return quitCommand(clientFd, args);
+	else if (!getUser(clientFd).getRegistered())
+		return sendMessage(clientFd, IrcReply::notRegistered());
+	else if (command == "JOIN")
+		joinChannel(clientFd, args);
+	else if (command == "KICK")
+		kickCommand(clientFd, args);
+	else if (command == "INVITE")
+		inviteCommand(clientFd, args);
+	else if (command == "TOPIC")
+		topicCommand(clientFd, args);
+	else if (command == "MODE")
+		modeCommand(clientFd, args);
 	else if (command == "PRIVMSG")
 		privmsgCommand(clientFd, args);
-    else if (command == "UPLOAD")
-        uploadCommand(clientFd, args);
-    else if (command == "DOWNLOAD")
-        downloadCommand(clientFd, args);
-    else
-        return ;
-    tryRegister(clientFd);
+	else if (command == "UPLOAD")
+		uploadCommand(clientFd, args);
+	else if (command == "DOWNLOAD")
+		downloadCommand(clientFd, args);
+	else
+		return ;
+	tryRegister(clientFd);
 }
 
 void Server::handleClient(int clientFd)
 {
-    char buffer[1024];
-    int bytes = recv(clientFd, buffer, sizeof(buffer), 0);
-    if (bytes <= 0)
-    {
-        removeClient(clientFd);
-        return ;
-    }
-    User &user = getUser(clientFd);
-    user.setBuffer(user.getBuffer() + std::string(buffer, bytes));
-    
-	size_t pos;
+	char buffer[1024];
+	int bytes = recv(clientFd, buffer, sizeof(buffer), 0);
+	if (bytes <= 0)
+	{
+		removeClient(clientFd);
+		return ;
+	}
+  
+	getUser(clientFd).setBuffer(getUser(clientFd).getBuffer() + std::string(buffer, bytes));
+	
 	while (true)
 	{
-	    size_t delimLen = 2;
-	    pos = user.getBuffer().find("\r\n");
-	    if (pos == std::string::npos)
-	    {
-	        pos = user.getBuffer().find("\n");
-	        delimLen = 1;
-	    }
-	    if (pos == std::string::npos)
-	        break ;
+		std::string buf = getUser(clientFd).getBuffer();
+		size_t delimLen = 2;
+		size_t pos = buf.find("\r\n");
+		if (pos == std::string::npos)
+		{
+			pos = buf.find("\n");
+			delimLen = 1;
+		}
+		if (pos == std::string::npos)
+			break ;
 	
-	    std::string line = user.getBuffer().substr(0, pos);
-	    user.setBuffer(user.getBuffer().substr(pos + delimLen));
-	    std::pair<std::string, std::string> parsed = parseMessage(line);
-	    handleCommand(clientFd, parsed.first, parsed.second);
+		std::string line = buf.substr(0, pos);
+		getUser(clientFd).setBuffer(buf.substr(pos + delimLen));
+		std::pair<std::string, std::string> parsed = parseMessage(line);
+		handleCommand(clientFd, parsed.first, parsed.second);
+
+		if (!getUserByFd(clientFd))
+			return ;
 	}
 }
 
 void	Server::handleEvents()
 {
-	for (size_t i = 0; i < _pollFds.size(); ++i)
+	for (size_t i = _pollFds.size(); i-- > 0;)
 	{
 		if (_pollFds[i].revents & POLLIN)
 		{

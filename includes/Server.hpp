@@ -69,6 +69,7 @@ class Server
 		std::vector<std::string>			splitArgs(const std::string &args);
 		int									isValidName(const std::string &name, size_t maxLen, const std::string &forbidden);
 
+		User	*getUserByFd(int clientFd);
 
 	public:
 		Server(int port, std::string password);

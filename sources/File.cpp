@@ -3,15 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   File.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ttremel <marvin@42.fr>                     +#+  +:+       +#+        */
+/*   By: humontas <humontas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/05 15:33:17 by ttremel           #+#    #+#             */
-/*   Updated: 2026/06/12 17:12:05 by ttremel          ###   ########.fr       */
+/*   Updated: 2026/06/15 14:44:05 by humontas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/Includes.hpp"
-#include "../includes/File.hpp"
+#include "Includes.hpp"
+#include "File.hpp"
 
 File::File(void) {}
 File::~File(void) {}

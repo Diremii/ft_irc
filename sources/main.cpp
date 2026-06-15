@@ -10,8 +10,8 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/Includes.hpp"
-#include "../includes/Server.hpp"
+#include "Includes.hpp"
+#include "Server.hpp"
 
 int	g_sig = 0;
 
