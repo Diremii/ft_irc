@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: humontas <humontas@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ttremel <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/03 15:27:57 by ttremel           #+#    #+#             */
-/*   Updated: 2026/06/15 14:51:08 by humontas         ###   ########.fr       */
+/*   Updated: 2026/06/15 21:50:46 by ttremel          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,6 @@
 # define CHANNEL_HPP
 
 # include "Includes.hpp"
-# include "File.hpp"
 # include "User.hpp"
 
 class Channel
@@ -29,15 +28,14 @@ class Channel
 		std::vector<int>		_inviteds;
 
 		std::stack<std::string>	_msgs;
-		std::vector<File>		_files;
 
 		std::size_t				_userLimit;
 		bool					_isInviteOnly;
 		bool					_isTopicRestricted;
 		int						_channelCreatorFd;
-
+		
 		Channel(void);
-
+		
 	public:
 		Channel(const std::string &name, User &channelCreator);
 		Channel(const Channel &other);
@@ -68,8 +66,6 @@ class Channel
 		void	setInviteOnly(bool activate);
 		void	setUserLimit(bool activate, size_t newLimit);
 		void	storeMessages(const std::string &msg);
-		File	&getFile(const std::string &fileName);
-		void	storeFile(const File &file);
 
 		bool	isInvited(int clientFd);
 		bool	isUserExist(int clientFd);

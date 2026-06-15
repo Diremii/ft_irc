@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: humontas <humontas@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ttremel <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/03 15:34:40 by ttremel           #+#    #+#             */
-/*   Updated: 2026/06/15 14:43:52 by humontas         ###   ########.fr       */
+/*   Updated: 2026/06/15 21:51:28 by ttremel          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,6 @@ Channel &Channel::operator=(const Channel &other)
 		this->_users = other._users;
 		this->_inviteds = other._inviteds;
 		this->_msgs = other._msgs;
-		this->_files = other._files;
 		this->_userLimit = other._userLimit;
 		this->_isInviteOnly = other._isInviteOnly;
 		this->_isTopicRestricted = other._isTopicRestricted;
@@ -60,21 +59,6 @@ std::stack<std::string> Channel::getMessages(void)
 const std::vector<int> &Channel::getUsers(void) const
 {
     return _users;
-}
-
-void	Channel::storeFile(const File &file)
-{
-	_files.push_back(file);
-}
-
-File	&Channel::getFile(const std::string &fileName)
-{
-	for (size_t	i = 0; i < _files.size(); i++)
-	{
-		if (_files[i].getFileName() == fileName)
-			return (_files[i]);
-	}
-	throw (File::FileNotFound());
 }
 
 // --------------------

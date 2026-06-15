@@ -21,12 +21,12 @@
 class Server
 {
 	private:
-		int							_serverSocket;
-		int							_serverPort;
-		std::string					_serverPassword;
-		std::vector<struct pollfd>	_pollFds;
-		std::vector<User>			_users;
-		std::vector<Channel>		_channels;
+		int								_serverSocket;
+		int								_serverPort;
+		std::string						_serverPassword;
+		std::vector<struct pollfd>		_pollFds;
+		std::vector<User>				_users;
+		std::vector<Channel>			_channels;
 
 		/* SERVER */
 		void	createSocket();
@@ -52,8 +52,7 @@ class Server
 		void    inviteCommand(int clientFd, const std::string &args);
 		void    modeCommand(int clientFd, const std::string &args);
 		void	privmsgCommand(int clientFd, const std::string &args);
-		void	uploadCommand(int clientFd, const std::string &args);
-		void	downloadCommand(int clientFd, const std::string &args);
+		void	dccSend(int clientFd, const std::string &args);
 		
 		/* UTILS */
 		std::pair<std::string, std::string>	parseMessage(const std::string &message);

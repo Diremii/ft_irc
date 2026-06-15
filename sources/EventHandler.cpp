@@ -76,13 +76,11 @@ void	Server::handleCommand(int clientFd, const std::string &command, const std::
 		modeCommand(clientFd, args);
 	else if (command == "PRIVMSG")
 		privmsgCommand(clientFd, args);
-	else if (command == "UPLOAD")
-		uploadCommand(clientFd, args);
-	else if (command == "DOWNLOAD")
-		downloadCommand(clientFd, args);
-	else
-		return ;
-	tryRegister(clientFd);
+	else if (command == "DCC")
+		dccSend(clientFd, args);
+    else
+        return ;
+    tryRegister(clientFd);
 }
 
 void Server::handleClient(int clientFd)
@@ -120,12 +118,15 @@ void Server::handleClient(int clientFd)
 	}
 }
 
+
+
 void	Server::handleEvents()
 {
 	for (size_t i = _pollFds.size(); i-- > 0;)
 	{
 		if (_pollFds[i].revents & POLLIN)
 		{
+			
 			if (_pollFds[i].fd == _serverSocket)
 				acceptClient();
 			else

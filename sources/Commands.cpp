@@ -252,59 +252,42 @@ void	Server::privmsgCommand(int clientFd, const std::string &args)
 	}
 }
 
-void	Server::uploadCommand(int clientFd, const std::string &args)
+/*
+	manual dcc send to trigger hexchat or send what port used
+	on nc client.
+*/
+void	Server::dccSend(int clientFd, const std::string &args)
 {
-	std::vector<std::string>	params = splitArgs(args);
-	std::string					target;
-	std::string					filePath;
-	std::string					message;
-	Channel						*channel;
-	User						&caller = getUser(clientFd);
+	std::vector<std::string> params = splitArgs(args);
+	struct sockaddr_in		clientAddr;
+	std::ostringstream		oss;
+	std::string				target;
+	std::string				port;
+	std::string				fileName;
+	std::string				fileSize;
+	std::string				message;
+	std::string				trigger;
+	socklen_t				clientAddrLen;
+	uint32_t				clientIp;
+	User					&caller = getUser(clientFd);
+	User					*targetUser;
 
-	if (params.size() < 2)
-		return (sendMessage(clientFd, IrcReply::notEnoughParams("UPLOAD")));
-	target = params[0];
-	filePath = params[1];
-	channel = getChannel(target);
-	if (!channel)
+	if (params.size() < 5)
+		return (sendMessage(clientFd, IrcReply::notEnoughParams("DCC SEND")));
+	if (params[0] != "SEND")
 		return ;
-	try 
-	{
-		channel->storeFile(File(filePath));
-		message = "upload a file: " + filePath.substr(filePath.find_last_of('/') + 1);
-		broadcast(channel, IrcReply::privmsg(caller.getNickname(), caller.getUsername(), target, message), clientFd);
-	}
-	catch (const std::exception &e)
-	{
-		message = "Failed to upload file cause: " + std::string(e.what());
-		sendMessage(clientFd, IrcReply::privmsg(caller.getNickname(), caller.getUsername(), target, message));
-	}
-}
-
-void	Server::downloadCommand(int clientFd, const std::string &args)
-{
-	std::vector<std::string>	params = splitArgs(args);
-	std::string					target;
-	std::string					fileName;
-	std::string					folderPath;
-	Channel						*channel;
-	User						&caller = getUser(clientFd);
-
-	if (params.size() < 3)
-		return (sendMessage(clientFd, IrcReply::notEnoughParams("DOWNLOAD")));
-	target = params[0];
-	fileName = params[1];
-	folderPath = params[2];
-	channel = getChannel(target);
-	if (!channel)
+	target = params[1];
+	fileName = params[2];
+	port = params[3];
+	fileSize = params[4];
+	targetUser = getUserByNick(target);
+	if (!targetUser)
 		return ;
-	try
-	{
-		channel->getFile(fileName).createNewFile(folderPath);
-	}
-	catch (const std::exception &e)
-	{
-		sendMessage(clientFd, IrcReply::privmsg(caller.getNickname(), caller.getUsername(), target,
-			"Failed to download file cause: " + std::string(e.what())));
-	}
+	clientAddrLen = sizeof(clientAddr);
+	getsockname(clientFd, (struct sockaddr *)&clientAddr, &clientAddrLen);
+	clientIp = ntohl(clientAddr.sin_addr.s_addr); // convert ip to 32 bit int
+	oss << clientIp; // convert int to string
+	trigger = "\x01";
+	message = trigger + "DCC SEND " + fileName + " " + oss.str() + " " + port + " " + fileSize + trigger;
+	sendMessage(targetUser->getFd(), IrcReply::privmsg(caller.getNickname(), caller.getUsername(), target, message));
 }
