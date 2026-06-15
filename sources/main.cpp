@@ -20,25 +20,25 @@ void	signalHandlers(int sig)
 	g_sig = sig;
 }
 
-int main(int argc, char **argv)
+int	main(int argc, char **argv)
 {
-    if (argc != 3)
-    {
-        std::cerr << "Usage: " << argv[0] << " <port> <password>" << std::endl;
-        return (1);
-    }
-    try
-    {
-        Server server(atoi(argv[1]), argv[2]);
+	if (argc != 3)
+	{
+		std::cerr << "Usage: " << argv[0] << " <port> <password>" << std::endl;
+		return (1);
+	}
+	try
+	{
+		Server server(atoi(argv[1]), argv[2]);
 		std::signal(SIGQUIT, signalHandlers);
 		std::signal(SIGINT, signalHandlers);
-        std::cout << "Server started on port " << argv[1] << std::endl;
-        server.run();
-    }
-    catch (const std::exception &e)
-    {
-        std::cerr << "Error: " << e.what() << std::endl;
-        return (1);
-    }
-    return (0);
+		std::cout << "Server started on port " << argv[1] << std::endl;
+		server.run();
+	}
+	catch (const std::exception &e)
+	{
+		std::cerr << "Error: " << e.what() << std::endl;
+		return (1);
+	}
+	return (0);
 }

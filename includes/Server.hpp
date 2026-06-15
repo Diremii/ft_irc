@@ -46,11 +46,11 @@ class Server
 		void	nickCommand(int clientFd, const std::string &nickName);
 		void	userCommand(int clientFd, const std::string &userName);
 		void	quitCommand(int clientFd, const std::string &message);
-		void	joinChannel(int clientFd, const std::string &channelName);
+		void	joinChannel(int clientFd, const std::string &args);
 		void	kickCommand(int clientFd, const std::string &args);
-		void    topicCommand(int clientFd, const std::string &args);
-		void    inviteCommand(int clientFd, const std::string &args);
-		void    modeCommand(int clientFd, const std::string &args);
+		void	topicCommand(int clientFd, const std::string &args);
+		void	inviteCommand(int clientFd, const std::string &args);
+		void	modeCommand(int clientFd, const std::string &args);
 		void	privmsgCommand(int clientFd, const std::string &args);
 		void	dccSend(int clientFd, const std::string &args);
 		

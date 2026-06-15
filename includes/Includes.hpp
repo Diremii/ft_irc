@@ -14,6 +14,8 @@
 # define INCLUDES_HPP
 
 # define MAX_TOPIC_LEN 307
+# define MAX_NICK_LEN 63
+# define MAX_USER_LEN 10
 
 # include <iostream>
 # include <string>

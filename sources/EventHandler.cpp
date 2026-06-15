@@ -83,18 +83,18 @@ void	Server::handleCommand(int clientFd, const std::string &command, const std::
     tryRegister(clientFd);
 }
 
-void Server::handleClient(int clientFd)
+void	Server::handleClient(int clientFd)
 {
-	char buffer[1024];
+	char	buffer[1024];
 	int bytes = recv(clientFd, buffer, sizeof(buffer), 0);
 	if (bytes <= 0)
 	{
 		removeClient(clientFd);
 		return ;
 	}
-  
+
 	getUser(clientFd).setBuffer(getUser(clientFd).getBuffer() + std::string(buffer, bytes));
-	
+
 	while (true)
 	{
 		std::string buf = getUser(clientFd).getBuffer();
@@ -117,8 +117,6 @@ void Server::handleClient(int clientFd)
 			return ;
 	}
 }
-
-
 
 void	Server::handleEvents()
 {

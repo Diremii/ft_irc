@@ -76,13 +76,13 @@ namespace IrcReply
 	{
 		return (":server 461 * " + cmd + " :Not enough parameters\r\n");
 	}
-	inline std::string alreadyRegistered()
-	{
-		return (":server 462 * :You may not reregister\r\n");
-	}
 	inline std::string badUser(const std::string &user)
 	{
 		return (":server 461 * " + user + " :Erroneous username\r\n");
+	}
+	inline std::string alreadyRegistered()
+	{
+		return (":server 462 * :You may not reregister\r\n");
 	}
 	inline std::string notAuthenticated()
 	{
@@ -95,6 +95,10 @@ namespace IrcReply
 	inline std::string inviteOnlyChannel(const std::string &nick, const std::string &channel)
 	{
 		return (":server 473 " + nick + " " + channel + " :Cannot join channel (+i)\r\n");
+	}
+	inline std::string badChannelKey(const std::string &nick, const std::string &channel)
+	{
+	return (":server 475 " + nick + " " + channel + " :Cannot join channel (+k)\r\n");
 	}
 	inline std::string badChannelMask(const std::string &nick, const std::string &channel)
 	{

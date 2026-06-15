@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ttremel <marvin@42.fr>                     +#+  +:+       +#+        */
+/*   By: humontas@student.42.fr <humontas>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/03 15:27:57 by ttremel           #+#    #+#             */
-/*   Updated: 2026/06/15 21:50:46 by ttremel          ###   ########.fr       */
+/*   Updated: 2026/06/15 22:39:10 by humontas@st      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ class Channel
 		std::string				viewTopic(void);
 
 		/* CORE */
-		int		addUser(int clientFd);
+		int		addUser(int clientFd, const std::string &password);
 		void	kickClient(int targetFd);
 		void	inviteClient(int targetFd);
 		void	removeUser(int clientFd);

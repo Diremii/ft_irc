@@ -12,73 +12,80 @@
 
 #include "Server.hpp"
 
-void    Server::createSocket()
+void	Server::createSocket()
 {
-    _serverSocket = socket(AF_INET, SOCK_STREAM, 0);
-    if (_serverSocket == -1)
-        throw std::runtime_error("Failed to create socket");
+	_serverSocket = socket(AF_INET, SOCK_STREAM, 0);
+	if (_serverSocket == -1)
+		throw std::runtime_error("Failed to create socket");
+
+	int opt = 1;
+	if (setsockopt(_serverSocket, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) == -1)
+	{
+		close(_serverSocket);
+		throw std::runtime_error("setsockopt SO_REUSEADDR failed");
+	}
 }
 
-void    Server::bindSocket()
+void	Server::bindSocket()
 {
-    struct sockaddr_in addr;
-    addr.sin_family = AF_INET;
-    addr.sin_port = htons(_serverPort);
-    addr.sin_addr.s_addr = INADDR_ANY;
+	struct sockaddr_in addr;
+	addr.sin_family = AF_INET;
+	addr.sin_port = htons(_serverPort);
+	addr.sin_addr.s_addr = INADDR_ANY;
 
-    if (bind(_serverSocket, (struct sockaddr *)&addr, sizeof(addr)) == -1)
-    {
-        close(_serverSocket);
-        throw std::runtime_error("Failed to bind socket");
-    }
+	if (bind(_serverSocket, (struct sockaddr *)&addr, sizeof(addr)) == -1)
+	{
+		close(_serverSocket);
+		throw std::runtime_error("Failed to bind socket");
+	}
 }
 
-void    Server::listenSocket()
+void	Server::listenSocket()
 {
-    if (listen(_serverSocket, 10) == -1)
-        throw std::runtime_error("Failed to listen on socket");
+	if (listen(_serverSocket, 10) == -1)
+		throw std::runtime_error("Failed to listen on socket");
 }
 
-void    Server::initPollFds()
+void	Server::initPollFds()
 {
-    struct pollfd serverPollFd;
-    serverPollFd.fd = _serverSocket;
-    serverPollFd.events = POLLIN;
-    serverPollFd.revents = 0;
-    _pollFds.push_back(serverPollFd);
+	struct pollfd serverPollFd;
+	serverPollFd.fd = _serverSocket;
+	serverPollFd.events = POLLIN;
+	serverPollFd.revents = 0;
+	_pollFds.push_back(serverPollFd);
 }
 
-void    Server::run()
+void	Server::run()
 {
-    while (true)
-    {
-        int activity = poll(_pollFds.data(), _pollFds.size(), -1);
+	while (true)
+	{
+		int activity = poll(_pollFds.data(), _pollFds.size(), -1);
 		if (g_sig == SIGINT || g_sig == SIGQUIT)
 			return ;
-        if (activity == -1)
-            throw std::runtime_error("Poll error");
-        handleEvents();
-    }
+		if (activity == -1)
+			throw std::runtime_error("Poll error");
+		handleEvents();
+	}
 }
 
-User    *Server::getUserByFd(int clientFd)
+User	*Server::getUserByFd(int clientFd)
 {
-    for (size_t i = 0; i < _users.size(); i++)
-    {
-        if (_users[i].getFd() == clientFd)
-            return (&_users[i]);
-    }
-    return (NULL);
+	for (size_t i = 0; i < _users.size(); i++)
+	{
+		if (_users[i].getFd() == clientFd)
+			return (&_users[i]);
+	}
+	return (NULL);
 }
 
 Server::Server(int port, std::string password) :
-    _serverPort(port),
-    _serverPassword(password)
+	_serverPort(port),
+	_serverPassword(password)
 {
-    createSocket();
-    bindSocket();
-    listenSocket();
-    initPollFds();
+	createSocket();
+	bindSocket();
+	listenSocket();
+	initPollFds();
 }
 
 Server::~Server()

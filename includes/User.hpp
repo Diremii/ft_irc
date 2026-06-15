@@ -17,18 +17,18 @@
 
 class User
 {
-    private:
-        int			_userFd;
-        std::string	_nickName;
-        std::string	_userName;
-        std::string	_hostName;
-        bool		_authenticated;
+	private:
+		int			_userFd;
+		std::string	_nickName;
+		std::string	_userName;
+		std::string	_hostName;
+		bool		_authenticated;
 		bool		_registered;
 		std::string	_buffer;
 
 		User(void);
 
-    public:
+	public:
 		User(int socketFd);
 		~User();
 		User(const User &other);
@@ -42,8 +42,7 @@ class User
 		bool		getAuthenticated(void) const;
 		bool		getRegistered(void) const;
 		std::string	getBuffer(void) const;
-		
-		void	setFd(int userFd);
+
 		void	setNickname(const std::string &nickName);
 		void	setUsername(const std::string &userName);
 		void	setHostname(const std::string &hostName);

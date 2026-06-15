@@ -24,12 +24,12 @@ std::pair<std::string, std::string>	Server::parseMessage(const std::string &mess
 
 void Server::tryRegister(int clientFd)
 {
-    User &user = getUser(clientFd);
-    if (!user.getRegistered() && user.getAuthenticated() && !user.getNickname().empty() && !user.getUsername().empty())
-    {
-        user.setRegistered(true);
-        sendMessage(clientFd, ":server 001 " + user.getNickname() + " :Welcome to the Internet Relay Network " + user.getNickname() + "!" + user.getUsername() + "@localhost\r\n");
-    }
+	User &user = getUser(clientFd);
+	if (!user.getRegistered() && user.getAuthenticated() && !user.getNickname().empty() && !user.getUsername().empty())
+	{
+		user.setRegistered(true);
+		sendMessage(clientFd, ":server 001 " + user.getNickname() + " :Welcome to the Internet Relay Network " + user.getNickname() + "!" + user.getUsername() + "@localhost\r\n");
+	}
 }
 
 User	&Server::getUser(int clientFd)

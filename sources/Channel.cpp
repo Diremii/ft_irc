@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ttremel <marvin@42.fr>                     +#+  +:+       +#+        */
+/*   By: humontas@student.42.fr <humontas>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/03 15:34:40 by ttremel           #+#    #+#             */
-/*   Updated: 2026/06/15 21:51:28 by ttremel          ###   ########.fr       */
+/*   Updated: 2026/06/15 23:09:09 by humontas@st      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ Channel::Channel(const Channel &other)
 	*this = other;
 }
 
-Channel &Channel::operator=(const Channel &other)
+Channel	&Channel::operator=(const Channel &other)
 {
 	if (this != &other)
 	{
@@ -48,17 +48,17 @@ Channel &Channel::operator=(const Channel &other)
 		this->_isTopicRestricted = other._isTopicRestricted;
 		this->_channelCreatorFd = other._channelCreatorFd;
 	}
-	return *this;
+	return (*this);
 }
 
-std::stack<std::string> Channel::getMessages(void)
+std::stack<std::string>	Channel::getMessages(void)
 {
-	return _msgs;
+	return (_msgs);
 }
 
-const std::vector<int> &Channel::getUsers(void) const
+const std::vector<int>	&Channel::getUsers(void) const
 {
-    return _users;
+	return (_users);
 }
 
 // --------------------
@@ -75,34 +75,34 @@ bool	Channel::isInvited(int clientFd)
 	return (false);
 }
 
-bool Channel::isUserExist(int clientFd)
+bool	Channel::isUserExist(int clientFd)
 {
 	for (size_t i = 0; i < _users.size(); i++)
 	{
 		if (_users[i] == clientFd)
-			return true;
+			return (true);
 	}
-	return false;
+	return (false);
 }
 
-bool Channel::isOperator(int clientFd)
+bool	Channel::isOperator(int clientFd)
 {
 	for (size_t i = 0; i < _operators.size(); i++)
 	{
 		if (_operators[i] == clientFd)
-			return true;
+			return (true);
 	}
-	return false;
+	return (false);
 }
 
-void Channel::removeUser(int clientFd)
+void	Channel::removeUser(int clientFd)
 {
 	for (size_t i = 0; i < _users.size(); i++)
 	{
 		if (_users[i] == clientFd)
 		{
 			_users.erase(_users.begin() + i);
-			return;
+			return ;
 		}
 	}
 }
@@ -111,12 +111,14 @@ void Channel::removeUser(int clientFd)
 // users
 // --------------------
 
-int	Channel::addUser(int clientFd)
+int	Channel::addUser(int clientFd, const std::string &password)
 {
 	if (_isInviteOnly && !isInvited(clientFd))
 		return (1);
 	if (_users.size() >= _userLimit)
 		return (2);
+	if (!_password.empty() && _password != password)
+		return (3);
 	if (!isUserExist(clientFd))
 		_users.push_back(clientFd);
 	return (0);
@@ -124,13 +126,13 @@ int	Channel::addUser(int clientFd)
 
 void	Channel::inviteClient(int targetFd)
 {
-    if (_isInviteOnly && !isInvited(targetFd))
-        _inviteds.push_back(targetFd);
+	if (_isInviteOnly && !isInvited(targetFd))
+		_inviteds.push_back(targetFd);
 }
 
 void	Channel::kickClient(int targetFd)
 {
-    removeUser(targetFd);
+	removeUser(targetFd);
 }
 
 // --------------------
@@ -163,7 +165,7 @@ void	Channel::setInviteOnly(bool activate)
 // settings
 // --------------------
 
-std::string Channel::getPassword(int clientFd)
+std::string	Channel::getPassword(int clientFd)
 {
 	if (!isOperator(clientFd))
 		return ("");
@@ -175,17 +177,17 @@ void	Channel::changePassword(const std::string &newPassword)
 	_password = newPassword;
 }
 
-std::string Channel::getName(void)
+std::string	Channel::getName(void)
 {
-	return _name;
+	return (_name);
 }
 
-std::string Channel::viewTopic(void)
+std::string	Channel::viewTopic(void)
 {
-	return _topic;
+	return (_topic);
 }
 
-bool Channel::changeTopic(int clientFd, const std::string &newTopic)
+bool	Channel::changeTopic(int clientFd, const std::string &newTopic)
 {
 	if (_isTopicRestricted && !isOperator(clientFd))
 		return (false);
@@ -214,7 +216,7 @@ bool Channel::changeName(int clientFd, const std::string &newName)
 	return (true);
 }
 
-void Channel::storeMessages(const std::string &msg)
+void	Channel::storeMessages(const std::string &msg)
 {
 	_msgs.push(msg);
 }

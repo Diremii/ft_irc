@@ -26,7 +26,7 @@ void	Server::passCommand(int clientFd, const std::string &password)
 
 void	Server::nickCommand(int clientFd, const std::string &nickName)
 {
-	switch (isValidName(nickName, 63, " ,*?!@"))
+	switch (isValidName(nickName, MAX_NICK_LEN, " ,*?!@"))
 	{
 		case 1:
 			return (sendMessage(clientFd, IrcReply::noNick()));
@@ -51,7 +51,7 @@ void	Server::userCommand(int clientFd, const std::string &userName)
 	if (caller.getRegistered())
 		return (sendMessage(clientFd, IrcReply::alreadyRegistered()));
 
-	switch (isValidName(username, 10, " @\r\n"))
+	switch (isValidName(username, MAX_USER_LEN, " @\r\n"))
 	{
 		case 1:
 			return (sendMessage(clientFd, IrcReply::notEnoughParams("USER")));
@@ -62,8 +62,12 @@ void	Server::userCommand(int clientFd, const std::string &userName)
 	caller.setUsername(username);
 }
 
-void	Server::joinChannel(int clientFd, const std::string &channelName)
+void	Server::joinChannel(int clientFd, const std::string &args)
 {
+	std::vector<std::string> params = splitArgs(args);
+
+	std::string channelName = params[0];
+	std::string password = (params.size() > 1) ? params[1] : "";
 	User	&caller = getUser(clientFd);
 
 	if (channelName.empty() || channelName[0] != '#')
@@ -77,12 +81,14 @@ void	Server::joinChannel(int clientFd, const std::string &channelName)
 	}
 	else
 	{
-		switch (channel->addUser(clientFd))
+		switch (channel->addUser(clientFd, password))
 		{
 			case 1:
 				return (sendMessage(clientFd, IrcReply::inviteOnlyChannel(caller.getNickname(), channelName)));
 			case 2:
 				return (sendMessage(clientFd, IrcReply::channelIsFull(caller.getNickname(), channelName)));
+			case 3:
+				return (sendMessage(clientFd, IrcReply::badChannelKey(caller.getNickname(), channelName)));
 		}
 	}
 
@@ -258,19 +264,19 @@ void	Server::privmsgCommand(int clientFd, const std::string &args)
 */
 void	Server::dccSend(int clientFd, const std::string &args)
 {
-	std::vector<std::string> params = splitArgs(args);
-	struct sockaddr_in		clientAddr;
-	std::ostringstream		oss;
-	std::string				target;
-	std::string				port;
-	std::string				fileName;
-	std::string				fileSize;
-	std::string				message;
-	std::string				trigger;
-	socklen_t				clientAddrLen;
-	uint32_t				clientIp;
-	User					&caller = getUser(clientFd);
-	User					*targetUser;
+	std::vector<std::string>	params = splitArgs(args);
+	struct sockaddr_in			clientAddr;
+	std::ostringstream			oss;
+	std::string					target;
+	std::string					port;
+	std::string					fileName;
+	std::string					fileSize;
+	std::string					message;
+	std::string					trigger;
+	socklen_t					clientAddrLen;
+	uint32_t					clientIp;
+	User						&caller = getUser(clientFd);
+	User						*targetUser;
 
 	if (params.size() < 5)
 		return (sendMessage(clientFd, IrcReply::notEnoughParams("DCC SEND")));

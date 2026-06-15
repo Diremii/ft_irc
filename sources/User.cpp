@@ -85,11 +85,6 @@ std::string	User::getBuffer(void) const
 /*          SETTER          */
 // -------------------------//
 
-void	User::setFd(int userFd)
-{
-	this->_userFd = userFd;
-}
-
 void	User::setNickname(const std::string &nickname)
 {
 	this->_nickName = nickname;
