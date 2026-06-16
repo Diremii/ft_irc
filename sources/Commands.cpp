@@ -102,9 +102,9 @@ void	Server::joinChannel(int clientFd, const std::string &args)
 
 void	Server::quitCommand(int clientFd, const std::string &reason)
 {
-	User	&caller = getUser(clientFd);
-
-	broadcastUserChannels(clientFd, IrcReply::quit(caller.getNickname(), caller.getUsername(), reason.empty() ? "Client Quit" : reason));
+	User &caller = getUser(clientFd);
+	std::string msg = reason.empty() ? "Client Quit" : reason;
+	broadcastUserChannels(clientFd, IrcReply::quit(caller.getNickname(), caller.getUsername(), msg));
 	removeClient(clientFd);
 }
 
