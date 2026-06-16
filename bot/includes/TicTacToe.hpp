@@ -6,7 +6,7 @@
 /*   By: humontas@student.42.fr <humontas>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/13 12:12:44 by humontas@st       #+#    #+#             */
-/*   Updated: 2026/06/15 13:19:23 by humontas@st      ###   ########.fr       */
+/*   Updated: 2026/06/16 01:48:14 by humontas@st      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,12 +36,12 @@ class TicTacToe
 		~TicTacToe();
 
 		/* GETTERS */
-		time_t		getGameEndTime();
-		std::string	getCurrentPlayer();
-		std::string	getPlayerSymbol();
-		std::string	getBotSymbol();
-		std::string	getBoard(int pos);
-		bool		isGameOver();
+		time_t			getGameEndTime() const;
+		std::string		getCurrentPlayer() const;
+		std::string		getPlayerSymbol() const;
+		std::string		getBotSymbol() const;
+		std::string		getBoard(int pos) const;
+		bool			isGameOver() const;
 
 		/* CORE */
 		int		getBestMove();

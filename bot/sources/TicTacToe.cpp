@@ -5,78 +5,95 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: humontas@student.42.fr <humontas>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/06/13 12:26:46 by humontas@st       #+#    #+#             */
-/*   Updated: 2026/06/15 13:09:19 by humontas@st      ###   ########.fr       */
+/*   Created: 2026/06/16 01:48:22 by humontas@st       #+#    #+#             */
+/*   Updated: 2026/06/16 01:48:23 by humontas@st      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "TicTacToe.hpp"
 
-void    TicTacToe::initGame()
-{
-    for (int i = 0; i < 9; i++)
-    {
-        std::stringstream    ss;
-        ss << (i + 1);
-        _board[i] = ss.str();
-    }
-    srand(time(NULL));
-    _botSymbol = (rand() % 2 == 0) ? "X" : "O";
-    _playerSymbol = (_botSymbol == "X") ? "O" : "X";
-}
+// --------------------
+//     constructors
+// --------------------
 
-void    TicTacToe::makeMove(int pos, const std::string &symbol)
+TicTacToe::TicTacToe(const std::string &channel, const std::string &player)
+	: _gameChannel(channel),
+	  _currentPlayer(player),
+	  _gameEndTime(0),
+	  _gameOver(false),
+	  _lastMoveTime(time(NULL))
 {
-    _board[pos] = symbol;
-}
-
-time_t  TicTacToe::getGameEndTime()
-{
-    return (_gameEndTime);
-}
-
-bool    TicTacToe::isGameOver()
-{
-    return (_gameOver);
-}
-
-std::string TicTacToe::getPlayerSymbol()
-{
-    return (_playerSymbol);
-}
-
-std::string TicTacToe::getBotSymbol()
-{
-    return (_botSymbol);
-}
-
-std::string TicTacToe::getCurrentPlayer()
-{
-    return (_currentPlayer);
-}
-
-std::string TicTacToe::getBoard(int pos)
-{
-    return (_board[pos]);
-}
-
-int    TicTacToe::isValidMove(int pos)
-{
-    if (pos < 1 || pos > 9)
-        return (1);
-    if (_board[pos - 1] == "X" || _board[pos - 1] == "O")
-        return (2);
-    return (0);
-}
-
-TicTacToe::TicTacToe(const std::string &channel, const std::string &player) : 
-    _gameChannel(channel),
-    _currentPlayer(player),
-    _gameEndTime(0),
-    _gameOver(false),
-    _lastMoveTime(time(NULL))
-{
-    initGame();
+	initGame();
 }
 
 TicTacToe::~TicTacToe() {}
+
+// --------------------
+//     initialization
+// --------------------
+
+void TicTacToe::initGame()
+{
+	for (int i = 0; i < 9; i++)
+	{
+		std::stringstream ss;
+		ss << (i + 1);
+		_board[i] = ss.str();
+	}
+
+	srand(time(NULL));
+	_botSymbol = (rand() % 2 == 0) ? "X" : "O";
+	_playerSymbol = (_botSymbol == "X") ? "O" : "X";
+}
+
+// --------------------
+//        core
+// --------------------
+
+void TicTacToe::makeMove(int pos, const std::string &symbol)
+{
+	_board[pos] = symbol;
+}
+
+int TicTacToe::isValidMove(int pos)
+{
+	if (pos < 1 || pos > 9)
+		return (1);
+	if (_board[pos - 1] == "X" || _board[pos - 1] == "O")
+		return (2);
+	return (0);
+}
+
+// --------------------
+//       getters
+// --------------------
+
+time_t TicTacToe::getGameEndTime() const
+{
+	return (_gameEndTime);
+}
+
+bool TicTacToe::isGameOver() const
+{
+	return (_gameOver);
+}
+
+std::string TicTacToe::getPlayerSymbol() const
+{
+	return (_playerSymbol);
+}
+
+std::string TicTacToe::getBotSymbol() const
+{
+	return (_botSymbol);
+}
+
+std::string TicTacToe::getCurrentPlayer() const
+{
+	return (_currentPlayer);
+}
+
+std::string TicTacToe::getBoard(int pos) const
+{
+	return (_board[pos]);
+}

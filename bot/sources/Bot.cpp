@@ -3,14 +3,36 @@
 /*                                                        :::      ::::::::   */
 /*   Bot.cpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: humontas <humontas@student.42.fr>          +#+  +:+       +#+        */
+/*   By: humontas@student.42.fr <humontas>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/06/13 02:16:22 by humontas@st       #+#    #+#             */
-/*   Updated: 2026/06/15 15:47:13 by humontas         ###   ########.fr       */
+/*   Created: 2026/06/16 01:52:00 by humontas@st       #+#    #+#             */
+/*   Updated: 2026/06/16 01:53:05 by humontas@st      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Bot.hpp"
+
+// --------------------
+//     constructors
+// --------------------
+
+Bot::Bot(const std::string &hostname, int port, const std::string &password)
+	: _nickName("ShallowRed"),
+	  _userName("ShallowRed")
+{
+	createSocket();
+	connectToServer(hostname, port);
+	registerBot(password);
+}
+
+Bot::~Bot()
+{
+	close(_userFd);
+}
+
+// --------------------
+//        setup
+// --------------------
 
 void	Bot::createSocket()
 {
@@ -21,12 +43,13 @@ void	Bot::createSocket()
 
 void	Bot::connectToServer(const std::string &hostname, int port)
 {
-	struct hostent  *host = gethostbyname(hostname.c_str());
+	struct hostent *host = gethostbyname(hostname.c_str());
 	if (!host)
 		throw std::runtime_error("Failed to resolve hostname");
-	
+
 	struct sockaddr_in addr;
 	memset(&addr, 0, sizeof(addr));
+
 	addr.sin_family = AF_INET;
 	addr.sin_port = htons(port);
 	memcpy(&addr.sin_addr, host->h_addr, host->h_length);
@@ -35,14 +58,23 @@ void	Bot::connectToServer(const std::string &hostname, int port)
 		throw std::runtime_error("Failed to connect to server");
 }
 
+// --------------------
+//     registration
+// --------------------
+
 void	Bot::registerBot(const std::string &password)
 {
 	std::string out = "PASS " + password + "\r\n";
-				out+= "NICK " + _nickName + "\r\n";
-				out+= "USER " + _userName + " 0 * :" + _userName + "\r\n";
+	out += "NICK " + _nickName + "\r\n";
+	out += "USER " + _userName + " 0 * :" + _userName + "\r\n";
+
 	if (send(_userFd, out.c_str(), out.length(), 0) == -1)
 		throw std::runtime_error("Failed to register bot");
 }
+
+// --------------------
+//     IRC handlers
+// --------------------
 
 void	Bot::handleCommand(const std::string &line, const std::string &command, const std::string &args)
 {
@@ -52,7 +84,9 @@ void	Bot::handleCommand(const std::string &line, const std::string &command, con
 		sendMessage("NICK " + _nickName + "\r\n");
 	}
 	else if (command == "001")
+	{
 		sendMessage("JOIN #general\r\n");
+	}
 	else if (command == "INVITE")
 	{
 		std::vector<std::string> params = splitArgs(args);
@@ -60,24 +94,40 @@ void	Bot::handleCommand(const std::string &line, const std::string &command, con
 			sendMessage("JOIN " + params[1] + "\r\n");
 	}
 	else if (command == "PRIVMSG")
+	{
 		handlePRIVMSG(getNickFromPrefix(line), args);
+	}
 }
+
+// --------------------
+//     message loop
+// --------------------
 
 void	Bot::handleBot()
 {
 	size_t pos = _buffer.find("\r\n");
+
 	while (pos != std::string::npos)
 	{
 		std::string line = _buffer.substr(0, pos);
 		_buffer = _buffer.substr(pos + 2);
+
 		pos = _buffer.find("\r\n");
+
 		std::pair<std::string, std::string> parsed = parseMessage(line);
 		std::string command = parsed.first;
 		std::string args = parsed.second;
+
 		handleCommand(line, command, args);
-		std::cout << "Command: " << command << " | Args: " << args << std::endl;
+
+		std::cout << "Command: " << command
+				  << " | Args: " << args << std::endl;
 	}
 }
+
+// --------------------
+//     game timers
+// --------------------
 
 void	Bot::checkTimers()
 {
@@ -87,7 +137,9 @@ void	Bot::checkTimers()
 	{
 		if (time(NULL) - it->second->_lastMoveTime > 60)
 		{
-			sendMessage("PRIVMSG " + it->first + " :Game over! You took too long to play.\r\n");
+			sendMessage("PRIVMSG " + it->first +
+						" :Game over! You took too long to play.\r\n");
+
 			delete it->second;
 			_games.erase(it++);
 		}
@@ -96,40 +148,36 @@ void	Bot::checkTimers()
 	}
 }
 
+// --------------------
+//       main loop
+// --------------------
+
 void	Bot::run()
 {
 	struct pollfd pfd;
 	pfd.fd = _userFd;
 	pfd.events = POLLIN;
-	
+
 	char buffer[1024];
+
 	while (true)
 	{
 		pfd.revents = 0;
+
 		int activity = poll(&pfd, 1, 1000);
-		if (activity > 0 && pfd.revents & POLLIN)
+
+		if (activity > 0 && (pfd.revents & POLLIN))
 		{
 			memset(buffer, 0, sizeof(buffer));
+
 			int bytes = recv(_userFd, buffer, sizeof(buffer), 0);
 			if (bytes <= 0)
 				break;
+
 			_buffer += std::string(buffer, bytes);
 			handleBot();
 		}
+
 		checkTimers();
 	}
-}
-
-Bot::Bot(const std::string &hostname, int port, const std::string &password) : 
-	_nickName("ShallowRed"), 
-	_userName("ShallowRed")
-{
-	createSocket();
-	connectToServer(hostname, port);
-	registerBot(password);
-}
-
-Bot::~Bot()
-{
-	close(_userFd);
 }

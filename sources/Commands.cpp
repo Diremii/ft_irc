@@ -258,42 +258,28 @@ void	Server::privmsgCommand(int clientFd, const std::string &args)
 	}
 }
 
-/*
-	manual dcc send to trigger hexchat or send what port used
-	on nc client.
-*/
-void	Server::dccSend(int clientFd, const std::string &args)
+void Server::dccSend(int clientFd, const std::string &args)
 {
-	std::vector<std::string>	params = splitArgs(args);
-	struct sockaddr_in			clientAddr;
-	std::ostringstream			oss;
-	std::string					target;
-	std::string					port;
-	std::string					fileName;
-	std::string					fileSize;
-	std::string					message;
-	std::string					trigger;
-	socklen_t					clientAddrLen;
-	uint32_t					clientIp;
-	User						&caller = getUser(clientFd);
-	User						*targetUser;
-
-	if (params.size() < 5)
+	std::vector<std::string> params = splitArgs(args);
+	if (params.size() < 5 || params[0] != "SEND")
 		return (sendMessage(clientFd, IrcReply::notEnoughParams("DCC SEND")));
-	if (params[0] != "SEND")
-		return ;
-	target = params[1];
-	fileName = params[2];
-	port = params[3];
-	fileSize = params[4];
-	targetUser = getUserByNick(target);
+
+	User &caller = getUser(clientFd);
+	std::string	target = params[1];
+	std::string	fileName = params[2];
+	std::string	port = params[3];
+	std::string	fileSize = params[4];
+
+	User *targetUser = getUserByNick(target);
 	if (!targetUser)
 		return ;
-	clientAddrLen = sizeof(clientAddr);
+
+	struct sockaddr_in clientAddr;
+	socklen_t clientAddrLen = sizeof(clientAddr);
 	getsockname(clientFd, (struct sockaddr *)&clientAddr, &clientAddrLen);
-	clientIp = ntohl(clientAddr.sin_addr.s_addr); // convert ip to 32 bit int
-	oss << clientIp; // convert int to string
-	trigger = "\x01";
-	message = trigger + "DCC SEND " + fileName + " " + oss.str() + " " + port + " " + fileSize + trigger;
-	sendMessage(targetUser->getFd(), IrcReply::privmsg(caller.getNickname(), caller.getUsername(), target, message));
+
+	std::ostringstream oss;
+	oss << ntohl(clientAddr.sin_addr.s_addr);
+
+	sendMessage(targetUser->getFd(), IrcReply::dccSend(caller.getNickname(), caller.getUsername(), target, fileName, oss.str(), port, fileSize));
 }

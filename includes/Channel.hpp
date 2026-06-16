@@ -6,7 +6,7 @@
 /*   By: humontas@student.42.fr <humontas>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/03 15:27:57 by ttremel           #+#    #+#             */
-/*   Updated: 2026/06/15 22:39:10 by humontas@st      ###   ########.fr       */
+/*   Updated: 2026/06/16 01:11:08 by humontas@st      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,12 +27,9 @@ class Channel
 		std::vector<int>		_users;
 		std::vector<int>		_inviteds;
 
-		std::stack<std::string>	_msgs;
-
 		std::size_t				_userLimit;
 		bool					_isInviteOnly;
 		bool					_isTopicRestricted;
-		int						_channelCreatorFd;
 		
 		Channel(void);
 		
@@ -44,9 +41,7 @@ class Channel
 		Channel &operator=(const Channel &other);
 
 		/* GETTERS */
-		std::stack<std::string>	getMessages(void);
 		const std::vector<int>	&getUsers(void) const;
-		std::string				getPassword(int clientFd);
 		std::string				getName(void);
 		std::string				viewTopic(void);
 
@@ -59,14 +54,10 @@ class Channel
 		/* CHANNEL SETTINGS */
 		bool	changeTopic(int clientFd, const std::string &newTopic);
 		void	changePassword(const std::string &newPassword);
-		bool	changeName(int clientFd, const std::string &newName);
-		bool	removeUserLimit(int clientFd);
 		void	setOperator(int targetFd, bool activate);
 		void	setTopicRestriction(bool activate);
 		void	setInviteOnly(bool activate);
 		void	setUserLimit(bool activate, size_t newLimit);
-		void	storeMessages(const std::string &msg);
-
 		bool	isInvited(int clientFd);
 		bool	isUserExist(int clientFd);
 		bool	isOperator(int clientFd);

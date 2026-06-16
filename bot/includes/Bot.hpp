@@ -6,7 +6,7 @@
 /*   By: humontas@student.42.fr <humontas>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/13 01:53:59 by humontas@st       #+#    #+#             */
-/*   Updated: 2026/06/15 13:20:41 by humontas@st      ###   ########.fr       */
+/*   Updated: 2026/06/16 02:04:38 by humontas@st      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,7 @@ class Bot
 		void	handleMove(const std::string &nick, const std::string &channel, const std::string &arg);
 		void	endGame(const std::string &channel, const std::string &message);
 		void	sendBoard(const std::string &channel, TicTacToe *game);
+		bool    applyMove(const std::string &channel, int position, const std::string &symbol, const std::string &display, const std::string &winMsg);
 
 		/* UTILS */
 		std::pair<std::string, std::string>	parseMessage(const std::string &message);

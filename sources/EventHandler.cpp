@@ -12,7 +12,7 @@
 
 #include "Server.hpp"
 
-void	Server::acceptClient()
+void Server::acceptClient()
 {
 	int clientSocket = accept(_serverSocket, NULL, NULL);
 	if (clientSocket == -1)
@@ -22,14 +22,16 @@ void	Server::acceptClient()
 	clientPollFd.fd = clientSocket;
 	clientPollFd.events = POLLIN;
 	clientPollFd.revents = 0;
+
 	_pollFds.push_back(clientPollFd);
 	_users.push_back(User(clientSocket));
 }
 
-void	Server::removeClient(int clientFd)
+void Server::removeClient(int clientFd)
 {
 	broadcastUserChannels(clientFd, IrcReply::quit(getUser(clientFd).getNickname(), getUser(clientFd).getUsername(), "Connection closed"));
 	close(clientFd);
+
 	for (size_t i = 0; i < _pollFds.size(); i++)
 	{
 		if (_pollFds[i].fd == clientFd)
@@ -52,7 +54,7 @@ void	Server::removeClient(int clientFd)
 		_channels[i].removeUser(clientFd);
 }
 
-void	Server::handleCommand(int clientFd, const std::string &command, const std::string &args)
+void Server::handleCommand(int clientFd, const std::string &command, const std::string &args)
 {
 	if (command == "PASS")
 		passCommand(clientFd, args);
@@ -62,8 +64,10 @@ void	Server::handleCommand(int clientFd, const std::string &command, const std::
 		userCommand(clientFd, args);
 	else if (command == "QUIT")
 		return quitCommand(clientFd, args);
+
 	else if (!getUser(clientFd).getRegistered())
 		return sendMessage(clientFd, IrcReply::notRegistered());
+
 	else if (command == "JOIN")
 		joinChannel(clientFd, args);
 	else if (command == "KICK")
@@ -78,15 +82,17 @@ void	Server::handleCommand(int clientFd, const std::string &command, const std::
 		privmsgCommand(clientFd, args);
 	else if (command == "DCC")
 		dccSend(clientFd, args);
-    else
-        return ;
-    tryRegister(clientFd);
+	else
+		return ;
+
+	tryRegister(clientFd);
 }
 
-void	Server::handleClient(int clientFd)
+void Server::handleClient(int clientFd)
 {
 	char	buffer[1024];
-	int bytes = recv(clientFd, buffer, sizeof(buffer), 0);
+	int		bytes = recv(clientFd, buffer, sizeof(buffer), 0);
+
 	if (bytes <= 0)
 	{
 		removeClient(clientFd);
@@ -97,9 +103,10 @@ void	Server::handleClient(int clientFd)
 
 	while (true)
 	{
-		std::string buf = getUser(clientFd).getBuffer();
-		size_t delimLen = 2;
-		size_t pos = buf.find("\r\n");
+		std::string	buf = getUser(clientFd).getBuffer();
+		size_t		delimLen = 2;
+		size_t		pos = buf.find("\r\n");
+
 		if (pos == std::string::npos)
 		{
 			pos = buf.find("\n");
@@ -107,9 +114,10 @@ void	Server::handleClient(int clientFd)
 		}
 		if (pos == std::string::npos)
 			break ;
-	
+
 		std::string line = buf.substr(0, pos);
 		getUser(clientFd).setBuffer(buf.substr(pos + delimLen));
+
 		std::pair<std::string, std::string> parsed = parseMessage(line);
 		handleCommand(clientFd, parsed.first, parsed.second);
 
@@ -118,13 +126,12 @@ void	Server::handleClient(int clientFd)
 	}
 }
 
-void	Server::handleEvents()
+void Server::handleEvents()
 {
 	for (size_t i = _pollFds.size(); i-- > 0;)
 	{
 		if (_pollFds[i].revents & POLLIN)
 		{
-			
 			if (_pollFds[i].fd == _serverSocket)
 				acceptClient();
 			else

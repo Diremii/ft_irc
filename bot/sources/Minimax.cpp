@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   Minimax.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: humontas <humontas@student.42.fr>          +#+  +:+       +#+        */
+/*   By: humontas@student.42.fr <humontas>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/14 01:04:14 by humontas@st       #+#    #+#             */
-/*   Updated: 2026/06/15 15:22:39 by humontas         ###   ########.fr       */
+/*   Updated: 2026/06/16 01:49:12 by humontas@st      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "TicTacToe.hpp"
 
-bool    TicTacToe::checkWin(const std::string &symbol)
+bool	TicTacToe::checkWin(const std::string &symbol)
 {
 	int wins[8][3] = {
 		{0,1,2}, {3,4,5}, {6,7,8},
@@ -27,7 +27,7 @@ bool    TicTacToe::checkWin(const std::string &symbol)
 	return (false);
 }
 
-bool    TicTacToe::checkDraw()
+bool	TicTacToe::checkDraw()
 {
 	int filled = 0;
 
@@ -39,7 +39,7 @@ bool    TicTacToe::checkDraw()
 	return (filled == 9);
 }
 
-int     TicTacToe::getBestMove()
+int	TicTacToe::getBestMove()
 {
 	int bestScore = -1000;
 	int bestMove = -1;

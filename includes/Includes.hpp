@@ -24,15 +24,10 @@
 # include <arpa/inet.h>
 # include <poll.h>
 # include <unistd.h>
-# include <fcntl.h>
 # include <vector>
 # include <cstdlib>
 # include <stdexcept>
-# include <stack>
-# include <fstream>
 # include <csignal>
-# include <map>
-# include <netdb.h>
 # include <sstream>
 
 extern int	g_sig;

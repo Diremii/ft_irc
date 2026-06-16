@@ -21,35 +21,30 @@ class User
 		int			_userFd;
 		std::string	_nickName;
 		std::string	_userName;
-		std::string	_hostName;
+		std::string	_buffer;
 		bool		_authenticated;
 		bool		_registered;
-		std::string	_buffer;
-
-		User(void);
 
 	public:
 		User(int socketFd);
-		~User();
 		User(const User &other);
+		~User();
+		User &operator=(const User &other);
 
-		User	&operator=(const User &other);
-
+		/* GETTERS */
 		int			getFd(void) const;
 		std::string	getNickname(void) const;
 		std::string	getUsername(void) const;
-		std::string	getHostname(void) const;
+		std::string	getBuffer(void) const;
 		bool		getAuthenticated(void) const;
 		bool		getRegistered(void) const;
-		std::string	getBuffer(void) const;
 
+		/* SETTERS */
 		void	setNickname(const std::string &nickName);
 		void	setUsername(const std::string &userName);
-		void	setHostname(const std::string &hostName);
 		void	setAuthenticated(bool auth);
 		void	setRegistered(bool reg);
 		void	setBuffer(const std::string &buffer);
-		
 };
 
 #endif

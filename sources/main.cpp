@@ -15,7 +15,7 @@
 
 int	g_sig = 0;
 
-void	signalHandlers(int sig)
+void	signalHandler(int sig)
 {
 	g_sig = sig;
 }
@@ -30,8 +30,8 @@ int	main(int argc, char **argv)
 	try
 	{
 		Server server(atoi(argv[1]), argv[2]);
-		std::signal(SIGQUIT, signalHandlers);
-		std::signal(SIGINT, signalHandlers);
+		std::signal(SIGQUIT, signalHandler);
+		std::signal(SIGINT, signalHandler);
 		std::cout << "Server started on port " << argv[1] << std::endl;
 		server.run();
 	}
