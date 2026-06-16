@@ -29,6 +29,7 @@
 # include <stdexcept>
 # include <csignal>
 # include <sstream>
+# include <cstring>
 
 extern int	g_sig;
 

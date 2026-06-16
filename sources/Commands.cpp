@@ -65,10 +65,14 @@ void	Server::userCommand(int clientFd, const std::string &userName)
 void	Server::joinChannel(int clientFd, const std::string &args)
 {
 	std::vector<std::string>	params = splitArgs(args);
+	if (params.size() < 1)
+		return (sendMessage(clientFd, IrcReply::notEnoughParams("TOPIC")));
 
 	User		&caller = getUser(clientFd);
 	std::string	channelName = params[0];
 	std::string	password = (params.size() > 1) ? params[1] : "";
+	if (params.size() < 1)
+		return (sendMessage(clientFd, IrcReply::notEnoughParams("TOPIC")));
 
 	if (channelName.empty() || channelName[0] != '#')
 		return (sendMessage(clientFd, IrcReply::badChannelMask(caller.getNickname(), channelName)));

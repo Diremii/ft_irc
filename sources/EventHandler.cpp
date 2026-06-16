@@ -56,35 +56,40 @@ void	Server::removeClient(int clientFd)
 
 void	Server::handleCommand(int clientFd, const std::string &command, const std::string &args)
 {
-	if (command == "PASS")
-		passCommand(clientFd, args);
-	else if (command == "NICK")
-		nickCommand(clientFd, args);
-	else if (command == "USER")
-		userCommand(clientFd, args);
-	else if (command == "QUIT")
-		return quitCommand(clientFd, args);
+	typedef void (Server::*CommandHandler)(int, const std::string&);
+	struct  s_cmd
+	{
+		const char      *str;
+		CommandHandler  cmd;
+		bool            auth;
+	};
+	static s_cmd cmd[11] = {
+		{"PASS", &Server::passCommand, false},
+		{"NICK", &Server::nickCommand, false},
+		{"USER", &Server::userCommand, false},
+		{"QUIT", &Server::quitCommand, false},
+		{"JOIN", &Server::joinChannel, true},
+		{"KICK", &Server::kickCommand, true},
+		{"INVITE", &Server::inviteCommand, true},
+		{"TOPIC", &Server::topicCommand, true},
+		{"MODE", &Server::modeCommand, true},
+		{"PRIVMSG", &Server::privmsgCommand, true},
+		{"DCC", &Server::dccSend, true}
+	};
+	bool    is_registered = getUser(clientFd).getRegistered();
 
-	else if (!getUser(clientFd).getRegistered())
-		return sendMessage(clientFd, IrcReply::notRegistered());
-
-	else if (command == "JOIN")
-		joinChannel(clientFd, args);
-	else if (command == "KICK")
-		kickCommand(clientFd, args);
-	else if (command == "INVITE")
-		inviteCommand(clientFd, args);
-	else if (command == "TOPIC")
-		topicCommand(clientFd, args);
-	else if (command == "MODE")
-		modeCommand(clientFd, args);
-	else if (command == "PRIVMSG")
-		privmsgCommand(clientFd, args);
-	else if (command == "DCC")
-		dccSend(clientFd, args);
-	else
-		return ;
-
+	for (size_t i = 0; i < 11; i++)
+	{
+		if (std::strcmp(cmd[i].str, command.c_str()) == 0)
+		{
+			if (cmd[i].auth && !is_registered)
+				return sendMessage(clientFd, IrcReply::notRegistered());
+			(this->*cmd[i].cmd)(clientFd, args);
+			if (i == 3) // QUIT index
+				return ;
+			break ;
+		}
+	}
 	tryRegister(clientFd);
 	log(clientFd, command, args);
 }

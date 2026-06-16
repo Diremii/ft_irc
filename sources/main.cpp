@@ -32,6 +32,7 @@ int	main(int argc, char **argv)
 		Server server(atoi(argv[1]), argv[2]);
 		std::signal(SIGQUIT, signalHandler);
 		std::signal(SIGINT, signalHandler);
+		std::signal(SIGPIPE, signalHandler);
 		std::cout << "Server started on port " << argv[1] << std::endl;
 		server.run();
 	}

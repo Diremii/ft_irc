@@ -1,0 +1,63 @@
+This project has been created as part of the 42 curriculum by humontas, ttremel
+
+**Description**
+This is a custom IRC server for 42 school, featuring a bot and DCC file transfer support.
+An IRC server relays messages between clients. This implementation is compatible with HexChat and nc.
+
+**Instructions**
+### how to build server:
+`make`
+
+### How to run the server:
+`./ircserv <port> <password>`
+
+### How to build bot:
+`make` (in bot folder)
+
+### How to run the bot:
+`./bot <hostname> <port> <password>`
+
+### How to connect to server with nc:
+`nc -C <server_ip> <port>`
+`USER <your_name>`
+`NICK <your_pseudo>`
+`PASS <server_password>`
+
+### How to connect with Hexchat:
+Launch HexChat and open the Network List.
+Click Add and name your network.
+Select it and click Edit.
+Under the Servers tab, click the default entry and replace it with <server_ip>/<port>, then press Enter.
+Click Connect.
+
+Prefix all IRC commands with '/' in HexChat (e.g., /JOIN #channel).
+
+### List command
+`PASS <password>` Authenticate with the server password.
+`NICKNICK <nickname>` Set or change your nickname.
+`USER <username>` Set your username (required for registration).
+`QUIT` Disconnect from the server.
+`JOIN <#channel>` Join a channel.
+`KICK <#channel> <nick> [:<reason>]` Remove a user from a channel (operator only).
+`INVITE <nick> <#channel>` Invite a user to a channel (operator only).
+`TOPIC <#channel> [:<new topic>]` View or change a channel's topic.
+`MODE <+/-flags> [args]` Set channel or user modes.
+	Flag mode:
+	- o Set operator.
+	- i Set channel invite only.
+	- t Set channel topic restriction.
+	- k Change channnel password.
+	- l Set channel user limit.
+`PRIVMSG <target> <message>/:<...> <...>` Send a message to a user or channel.
+`DCC SEND <nick> <file> <port> <file_size>` Initiate a direct file transfer.
+
+Commands before PASS, NICK, and USER are complete require registration. Unregistered clients can only use PASS, NICK, USER, and QUIT.
+
+### List bot command
+`!help` Display available bot commands.
+`!play` Start a game of Tic Tac Toe.
+`!move <arg>` Make a move in the current game.
+
+**Resources**
+- IRC Protocol (RFC 1459)
+- HexChat
