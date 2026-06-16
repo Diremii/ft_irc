@@ -40,12 +40,12 @@ Channel *Server::getChannel(const std::string &channelName)
 //       utils
 // --------------------
 
-void Server::sendMessage(int clientFd, const std::string &message)
+void	Server::sendMessage(int clientFd, const std::string &message)
 {
 	send(clientFd, message.c_str(), message.size(), 0);
 }
 
-std::pair<std::string, std::string> Server::parseMessage(const std::string &message)
+std::pair<std::string, std::string>	Server::parseMessage(const std::string &message)
 {
 	size_t space = message.find(' ');
 	if (space == std::string::npos)
@@ -56,7 +56,7 @@ std::pair<std::string, std::string> Server::parseMessage(const std::string &mess
 	return (std::make_pair(command, args));
 }
 
-void Server::tryRegister(int clientFd)
+void	Server::tryRegister(int clientFd)
 {
 	User &user = getUser(clientFd);
 	if (!user.getRegistered() && user.getAuthenticated() && !user.getNickname().empty() && !user.getUsername().empty())
@@ -76,7 +76,7 @@ std::string	Server::getTimestamp()
 
 void	Server::log(int clientFd, const std::string &command, const std::string &args)
 {
-	User *user = getUserByFd(clientFd);
-	std::string nick = (user && !user->getNickname().empty()) ? user->getNickname() : "unknown";
+	User		*user = getUserByFd(clientFd);
+	std::string	nick = (user && !user->getNickname().empty()) ? user->getNickname() : "unknown";
 	std::cout << "[" << getTimestamp() << "] [" << nick << "] " << command << " " << args << std::endl;
 }
