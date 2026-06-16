@@ -80,3 +80,15 @@ void	Server::log(int clientFd, const std::string &command, const std::string &ar
 	std::string	nick = (user && !user->getNickname().empty()) ? user->getNickname() : "unknown";
 	std::cout << "[" << getTimestamp() << "] [" << nick << "] " << command << " " << args << std::endl;
 }
+
+void	Server::removeChannel(const std::string &channelName)
+{
+	for (size_t i = 0; i < _channels.size(); i++)
+	{
+		if (_channels[i].getName() == channelName)
+		{
+			_channels.erase(_channels.begin() + i);
+			return ;
+		}
+	}
+}

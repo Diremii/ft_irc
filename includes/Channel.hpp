@@ -6,7 +6,7 @@
 /*   By: humontas@student.42.fr <humontas>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/03 15:27:57 by ttremel           #+#    #+#             */
-/*   Updated: 2026/06/16 01:11:08 by humontas@st      ###   ########.fr       */
+/*   Updated: 2026/06/16 23:06:37 by humontas@st      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,7 @@ class Channel
 		void	kickClient(int targetFd);
 		void	inviteClient(int targetFd);
 		void	removeUser(int clientFd);
+		void	removeOperator(int clientFd);
 
 		/* CHANNEL SETTINGS */
 		bool	changeTopic(int clientFd, const std::string &newTopic);

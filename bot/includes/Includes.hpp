@@ -6,7 +6,7 @@
 /*   By: humontas@student.42.fr <humontas>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/13 12:16:04 by humontas@st       #+#    #+#             */
-/*   Updated: 2026/06/16 02:23:53 by humontas@st      ###   ########.fr       */
+/*   Updated: 2026/06/16 22:02:23 by humontas@st      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,5 +26,8 @@
 # include <cstdlib>
 # include <map>
 # include <poll.h>
+# include <csignal>
+
+extern int	g_sig;
 
 #endif

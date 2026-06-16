@@ -6,7 +6,7 @@
 /*   By: humontas@student.42.fr <humontas>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 01:52:00 by humontas@st       #+#    #+#             */
-/*   Updated: 2026/06/16 11:08:52 by humontas@st      ###   ########.fr       */
+/*   Updated: 2026/06/16 22:04:23 by humontas@st      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -164,19 +164,17 @@ void	Bot::run()
 		pfd.revents = 0;
 
 		int activity = poll(&pfd, 1, 1000);
-
+		if (g_sig == SIGINT || g_sig == SIGQUIT)
+			return ;
 		if (activity > 0 && (pfd.revents & POLLIN))
 		{
 			memset(buffer, 0, sizeof(buffer));
-
 			int	bytes = recv(_userFd, buffer, sizeof(buffer), 0);
 			if (bytes <= 0)
 				break;
-
 			_buffer += std::string(buffer, bytes);
 			handleBot();
 		}
-
 		checkTimers();
 	}
 }

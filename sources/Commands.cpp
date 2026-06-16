@@ -40,7 +40,13 @@ void	Server::nickCommand(int clientFd, const std::string &nickName)
 			return (sendMessage(clientFd, IrcReply::nickInUse(nickName)));
 	}
 
+	std::string oldNick = getUser(clientFd).getNickname();
 	getUser(clientFd).setNickname(nickName);
+	if (getUser(clientFd).getRegistered())
+	{
+		sendMessage(clientFd, IrcReply::nick(oldNick, getUser(clientFd).getUsername(), nickName));
+		broadcastUserChannels(clientFd, IrcReply::nick(oldNick, getUser(clientFd).getUsername(), nickName), clientFd);
+	}
 }
 
 void	Server::userCommand(int clientFd, const std::string &userName)
@@ -65,14 +71,12 @@ void	Server::userCommand(int clientFd, const std::string &userName)
 void	Server::joinChannel(int clientFd, const std::string &args)
 {
 	std::vector<std::string>	params = splitArgs(args);
-	if (params.size() < 1)
-		return (sendMessage(clientFd, IrcReply::notEnoughParams("TOPIC")));
+	if (params.empty())
+		return (sendMessage(clientFd, IrcReply::notEnoughParams("JOIN")));
 
 	User		&caller = getUser(clientFd);
 	std::string	channelName = params[0];
 	std::string	password = (params.size() > 1) ? params[1] : "";
-	if (params.size() < 1)
-		return (sendMessage(clientFd, IrcReply::notEnoughParams("TOPIC")));
 
 	if (channelName.empty() || channelName[0] != '#')
 		return (sendMessage(clientFd, IrcReply::badChannelMask(caller.getNickname(), channelName)));
@@ -104,14 +108,13 @@ void	Server::joinChannel(int clientFd, const std::string &args)
 	sendNamesList(clientFd, channel);
 }
 
-void	Server::quitCommand(int clientFd, const std::string &reason)
+void Server::quitCommand(int clientFd, const std::string &reason)
 {
 	User		&caller = getUser(clientFd);
 	std::string	msg = reason.empty() ? "Client Quit" : reason;
 	std::string	nick = caller.getNickname().empty() ? "unknown" : caller.getNickname();
 	std::cout << "[" << getTimestamp() << "] [" << nick << "] QUIT :" << msg << std::endl;
-	broadcastUserChannels(clientFd, IrcReply::quit(caller.getNickname(), caller.getUsername(), msg));
-	removeClient(clientFd);
+	removeClient(clientFd, msg);
 }
 
 void	Server::kickCommand(int clientFd, const std::string &args)
@@ -264,7 +267,29 @@ void	Server::privmsgCommand(int clientFd, const std::string &args)
 	}
 }
 
-void Server::dccSend(int clientFd, const std::string &args)
+void	Server::partCommand(int clientFd, const std::string &args)
+{
+	std::vector<std::string>	params = splitArgs(args);
+	if (params.empty())
+		return (sendMessage(clientFd, IrcReply::notEnoughParams("PART")));
+
+	User		&caller = getUser(clientFd);
+	std::string	reason = (params.size() > 1) ? params[1] : "";
+
+	Channel	*channel = getChannel(params[0]);
+	if (!channel)
+		return ;
+
+	if (!channel->isUserExist(clientFd))
+		return ;
+
+	broadcast(channel, IrcReply::part(caller.getNickname(), caller.getUsername(), channel->getName(), reason));
+	channel->removeUser(clientFd);
+	if (channel->getUsers().empty())
+		removeChannel(channel->getName());
+}
+
+void	Server::dccSend(int clientFd, const std::string &args)
 {
 	std::vector<std::string>	params = splitArgs(args);
 	if (params.size() < 5 || params[0] != "SEND")

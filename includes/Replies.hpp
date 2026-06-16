@@ -55,6 +55,14 @@ namespace IrcReply
 		std::string ctrl(1, '\x01');
 		return (":" + nick + "!" + user + "@localhost PRIVMSG " + target + " :" + ctrl + "DCC SEND " + fileName + " " + ip + " " + port + " " + fileSize + ctrl + "\r\n");
 	}
+	inline std::string part(const std::string &nick, const std::string &user, const std::string &channel, const std::string &reason)
+	{
+		return (":" + nick + "!" + user + "@localhost PART " + channel + " :" + reason + "\r\n");
+	}
+	inline std::string nick(const std::string &oldNick, const std::string &user, const std::string &newNick)
+	{	
+		return (":" + oldNick + "!" + user + "@localhost NICK " + newNick + "\r\n");
+	}
 
 	/* ERRORS */
 	inline std::string topicTooLong(const std::string &nick, const std::string &channel)

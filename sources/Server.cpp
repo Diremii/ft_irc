@@ -88,7 +88,7 @@ void	Server::run()
 {
 	while (true)
 	{
-		int activity = poll(_pollFds.data(), _pollFds.size(), -1);
+		int	activity = poll(_pollFds.data(), _pollFds.size(), -1);
 		if (g_sig == SIGINT || g_sig == SIGQUIT)
 			return ;
 		if (activity == -1)

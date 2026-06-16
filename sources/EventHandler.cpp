@@ -27,9 +27,9 @@ void	Server::acceptClient()
 	_users.push_back(User(clientSocket));
 }
 
-void	Server::removeClient(int clientFd)
+void	Server::removeClient(int clientFd, const std::string &reason)
 {
-	broadcastUserChannels(clientFd, IrcReply::quit(getUser(clientFd).getNickname(), getUser(clientFd).getUsername(), "Connection closed"));
+	broadcastUserChannels(clientFd, IrcReply::quit(getUser(clientFd).getNickname(), getUser(clientFd).getUsername(), reason));
 	close(clientFd);
 
 	for (size_t i = 0; i < _pollFds.size(); i++)
@@ -50,46 +50,56 @@ void	Server::removeClient(int clientFd)
 		}
 	}
 
-	for (size_t i = 0; i < _channels.size(); i++)
+	for (size_t i = _channels.size(); i-- > 0;)
+	{
 		_channels[i].removeUser(clientFd);
+		_channels[i].removeOperator(clientFd);
+		if (_channels[i].getUsers().empty())
+			_channels.erase(_channels.begin() + i);
+	}
 }
 
 void	Server::handleCommand(int clientFd, const std::string &command, const std::string &args)
 {
-	typedef void (Server::*CommandHandler)(int, const std::string&);
-	struct  s_cmd
+	typedef void	(Server::*CommandHandler)(int, const std::string&);
+	struct			s_cmd
 	{
-		const char      *str;
-		CommandHandler  cmd;
-		bool            auth;
+		const char		*str;
+		CommandHandler	cmd;
+		bool			auth;
+		bool			early_return;
 	};
-	static s_cmd cmd[11] = {
-		{"PASS", &Server::passCommand, false},
-		{"NICK", &Server::nickCommand, false},
-		{"USER", &Server::userCommand, false},
-		{"QUIT", &Server::quitCommand, false},
-		{"JOIN", &Server::joinChannel, true},
-		{"KICK", &Server::kickCommand, true},
-		{"INVITE", &Server::inviteCommand, true},
-		{"TOPIC", &Server::topicCommand, true},
-		{"MODE", &Server::modeCommand, true},
-		{"PRIVMSG", &Server::privmsgCommand, true},
-		{"DCC", &Server::dccSend, true}
-	};
-	bool    is_registered = getUser(clientFd).getRegistered();
 
-	for (size_t i = 0; i < 11; i++)
+	static s_cmd	cmd[12] = {
+		{"PASS", &Server::passCommand, false, false},
+		{"NICK", &Server::nickCommand, false, false},
+		{"USER", &Server::userCommand, false, false},
+		{"QUIT", &Server::quitCommand, false, true},
+		{"JOIN", &Server::joinChannel, true, false},
+		{"KICK", &Server::kickCommand, true, false},
+		{"INVITE", &Server::inviteCommand, true, false},
+		{"TOPIC", &Server::topicCommand, true, false},
+		{"MODE", &Server::modeCommand, true, false},
+		{"PRIVMSG", &Server::privmsgCommand, true, false},
+		{"PART", &Server::partCommand, true, false},
+		{"DCC", &Server::dccSend, true, false}
+	};
+	bool	is_registered = getUser(clientFd).getRegistered();
+
+	for (size_t i = 0; i < 12; i++)
 	{
 		if (std::strcmp(cmd[i].str, command.c_str()) == 0)
 		{
 			if (cmd[i].auth && !is_registered)
 				return sendMessage(clientFd, IrcReply::notRegistered());
+
 			(this->*cmd[i].cmd)(clientFd, args);
-			if (i == 3) // QUIT index
+			if (cmd[i].early_return)
 				return ;
-			break ;
+			break;
 		}
 	}
+
 	tryRegister(clientFd);
 	log(clientFd, command, args);
 }

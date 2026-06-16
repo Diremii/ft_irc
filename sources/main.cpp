@@ -29,7 +29,7 @@ int	main(int argc, char **argv)
 	}
 	try
 	{
-		Server server(atoi(argv[1]), argv[2]);
+		Server	server(atoi(argv[1]), argv[2]);
 		std::signal(SIGQUIT, signalHandler);
 		std::signal(SIGINT, signalHandler);
 		std::signal(SIGPIPE, signalHandler);

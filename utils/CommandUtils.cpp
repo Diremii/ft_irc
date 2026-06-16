@@ -6,7 +6,7 @@
 /*   By: humontas@student.42.fr <humontas>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/10 11:24:13 by humontas@st       #+#    #+#             */
-/*   Updated: 2026/06/16 11:05:49 by humontas@st      ###   ########.fr       */
+/*   Updated: 2026/06/16 23:32:24 by humontas@st      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,7 @@ void	Server::broadcast(Channel *channel, const std::string &message, int exclude
 	}
 }
 
-void	Server::broadcastUserChannels(int clientFd, const std::string &message)
+void	Server::broadcastUserChannels(int clientFd, const std::string &message, int excludeFd)
 {
 	for (size_t i = 0; i < _channels.size(); i++)
 	{
@@ -79,7 +79,10 @@ void	Server::broadcastUserChannels(int clientFd, const std::string &message)
 		{
 			const std::vector<int>	&users = _channels[i].getUsers();
 			for (size_t j = 0; j < users.size(); j++)
-				sendMessage(users[j], message);
+			{
+				if (users[j] != excludeFd)
+					sendMessage(users[j], message);
+			}
 		}
 	}
 }

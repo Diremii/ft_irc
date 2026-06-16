@@ -6,7 +6,7 @@
 /*   By: humontas@student.42.fr <humontas>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/03 15:34:40 by ttremel           #+#    #+#             */
-/*   Updated: 2026/06/16 11:01:46 by humontas@st      ###   ########.fr       */
+/*   Updated: 2026/06/16 23:06:10 by humontas@st      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,6 +98,18 @@ void	Channel::removeUser(int clientFd)
 		if (_users[i] == clientFd)
 		{
 			_users.erase(_users.begin() + i);
+			return ;
+		}
+	}
+}
+
+void	Channel::removeOperator(int clientFd)
+{
+	for (size_t i = 0; i < _operators.size(); i++)
+	{
+		if (_operators[i] == clientFd)
+		{
+			_operators.erase(_operators.begin() + i);
 			return ;
 		}
 	}

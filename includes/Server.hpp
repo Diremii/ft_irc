@@ -37,7 +37,7 @@ class Server
 		/* EVENTHANDLER */
 		void	acceptClient();
 		void	handleEvents();
-		void	removeClient(int clientFd);
+		void	removeClient(int clientFd, const std::string &reason = "Connection closed");
 		void	handleClient(int clientFd);
 		void	handleCommand(int clientFd, const std::string &command, const std::string &args);
 		
@@ -52,6 +52,7 @@ class Server
 		void	inviteCommand(int clientFd, const std::string &args);
 		void	modeCommand(int clientFd, const std::string &args);
 		void	privmsgCommand(int clientFd, const std::string &args);
+		void	partCommand(int clientFd, const std::string &args);
 		void	dccSend(int clientFd, const std::string &args);
 		
 		/* UTILS */
@@ -60,9 +61,10 @@ class Server
 		User								*getUserByNick(const std::string &nick);
 		Channel								*getChannel(const std::string &channelName);
 		Channel								*getOperatorChannel(int clientFd, const std::string &channelName);
+		void								removeChannel(const std::string &channelName);
 		void								sendMessage(int clientFd, const std::string &message);
 		void								broadcast(Channel *channel, const std::string &message, int excludeFd = -1);
-		void								broadcastUserChannels(int clientFd, const std::string &message);
+		void								broadcastUserChannels(int clientFd, const std::string &message, int excludeFd = -1);
 		void								sendNamesList(int clientFd, Channel *channel);
 		std::pair<std::string, std::string>	parseMessage(const std::string &message);
 		std::vector<std::string>			splitArgs(const std::string &args);
