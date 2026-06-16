@@ -6,13 +6,21 @@
 /*   By: humontas@student.42.fr <humontas>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/14 01:06:27 by humontas@st       #+#    #+#             */
-/*   Updated: 2026/06/16 02:05:07 by humontas@st      ###   ########.fr       */
+/*   Updated: 2026/06/16 10:24:41 by humontas@st      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Bot.hpp"
 
-void	Bot::handlePlay(const std::string &nick, const std::string &channel)
+void	Bot::helpCommand(const std::string &channel)
+{
+	sendMessage("PRIVMSG " + channel + " :Available commands:\r\n");
+	sendMessage("PRIVMSG " + channel + " :!play - Start a new TicTacToe game\r\n");
+	sendMessage("PRIVMSG " + channel + " :!move <1-9> - Play a move\r\n");
+	sendMessage("PRIVMSG " + channel + " :!help - Show this help\r\n");
+}
+
+void	Bot::playCommand(const std::string &nick, const std::string &channel)
 {
 	if (_games.find(channel) != _games.end())
 		return (sendMessage("PRIVMSG " + channel + " :A game is already in progress!\r\n"));
@@ -29,7 +37,7 @@ void	Bot::handlePlay(const std::string &nick, const std::string &channel)
 	sendMessage("PRIVMSG " + channel + " :You are " + _games[channel]->getPlayerSymbol() + " - use !move <1-9>\r\n");
 }
 
-void	Bot::handleMove(const std::string &nick, const std::string &channel, const std::string &arg)
+void	Bot::moveCommand(const std::string &nick, const std::string &channel, const std::string &arg)
 {
 	if (_games.find(channel) == _games.end())
 		return (sendMessage("PRIVMSG " + channel + BotReply::noGame()));
@@ -62,7 +70,8 @@ void	Bot::handlePRIVMSG(const std::string &nick, const std::string &args)
 	std::string arg = message.find(' ') != std::string::npos ? message.substr(message.find(' ') + 1) : "";
 
 	if (command == "!play")
-		handlePlay(nick, channel);
+		playCommand(nick, channel);
 	else if (command == "!move")
-		handleMove(nick, channel, arg);
+		moveCommand(nick, channel, arg);
 }
+

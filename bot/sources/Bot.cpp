@@ -6,7 +6,7 @@
 /*   By: humontas@student.42.fr <humontas>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 01:52:00 by humontas@st       #+#    #+#             */
-/*   Updated: 2026/06/16 01:53:05 by humontas@st      ###   ########.fr       */
+/*   Updated: 2026/06/16 11:08:52 by humontas@st      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,7 @@ void	Bot::connectToServer(const std::string &hostname, int port)
 
 void	Bot::registerBot(const std::string &password)
 {
-	std::string out = "PASS " + password + "\r\n";
+	std::string	out = "PASS " + password + "\r\n";
 	out += "NICK " + _nickName + "\r\n";
 	out += "USER " + _userName + " 0 * :" + _userName + "\r\n";
 
@@ -89,7 +89,7 @@ void	Bot::handleCommand(const std::string &line, const std::string &command, con
 	}
 	else if (command == "INVITE")
 	{
-		std::vector<std::string> params = splitArgs(args);
+		std::vector<std::string>	params = splitArgs(args);
 		if (params.size() >= 2)
 			sendMessage("JOIN " + params[1] + "\r\n");
 	}
@@ -105,18 +105,18 @@ void	Bot::handleCommand(const std::string &line, const std::string &command, con
 
 void	Bot::handleBot()
 {
-	size_t pos = _buffer.find("\r\n");
+	size_t	pos = _buffer.find("\r\n");
 
 	while (pos != std::string::npos)
 	{
-		std::string line = _buffer.substr(0, pos);
+		std::string	line = _buffer.substr(0, pos);
 		_buffer = _buffer.substr(pos + 2);
 
 		pos = _buffer.find("\r\n");
 
-		std::pair<std::string, std::string> parsed = parseMessage(line);
-		std::string command = parsed.first;
-		std::string args = parsed.second;
+		std::pair<std::string, std::string>	parsed = parseMessage(line);
+		std::string							command = parsed.first;
+		std::string							args = parsed.second;
 
 		handleCommand(line, command, args);
 
@@ -131,14 +131,13 @@ void	Bot::handleBot()
 
 void	Bot::checkTimers()
 {
-	std::map<std::string, TicTacToe*>::iterator it;
+	std::map<std::string, TicTacToe*>::iterator	it;
 
 	for (it = _games.begin(); it != _games.end();)
 	{
 		if (time(NULL) - it->second->_lastMoveTime > 60)
 		{
-			sendMessage("PRIVMSG " + it->first +
-						" :Game over! You took too long to play.\r\n");
+			sendMessage("PRIVMSG " + it->first + " :Game over! You took too long to play.\r\n");
 
 			delete it->second;
 			_games.erase(it++);
@@ -158,7 +157,7 @@ void	Bot::run()
 	pfd.fd = _userFd;
 	pfd.events = POLLIN;
 
-	char buffer[1024];
+	char	buffer[1024];
 
 	while (true)
 	{
@@ -170,7 +169,7 @@ void	Bot::run()
 		{
 			memset(buffer, 0, sizeof(buffer));
 
-			int bytes = recv(_userFd, buffer, sizeof(buffer), 0);
+			int	bytes = recv(_userFd, buffer, sizeof(buffer), 0);
 			if (bytes <= 0)
 				break;
 

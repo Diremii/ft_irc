@@ -6,7 +6,7 @@
 /*   By: humontas@student.42.fr <humontas>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/10 11:24:13 by humontas@st       #+#    #+#             */
-/*   Updated: 2026/06/11 16:59:52 by humontas@st      ###   ########.fr       */
+/*   Updated: 2026/06/16 11:05:49 by humontas@st      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 //       helpers
 // --------------------
 
-int Server::isValidName(const std::string &name, size_t maxLen, const std::string &forbidden)
+int	Server::isValidName(const std::string &name, size_t maxLen, const std::string &forbidden)
 {
 	if (name.empty())
 		return (1);
@@ -30,10 +30,10 @@ int Server::isValidName(const std::string &name, size_t maxLen, const std::strin
 	return (0);
 }
 
-std::vector<std::string> Server::splitArgs(const std::string &args)
+std::vector<std::string>	Server::splitArgs(const std::string &args)
 {
-	std::vector<std::string> result;
-	std::string word;
+	std::vector<std::string>	result;
+	std::string					word;
 	for (size_t i = 0; i < args.size(); i++)
 	{
 		if (args[i] == ':')
@@ -61,9 +61,9 @@ std::vector<std::string> Server::splitArgs(const std::string &args)
 //      broadcast
 // --------------------
 
-void Server::broadcast(Channel *channel, const std::string &message, int excludeFd)
+void	Server::broadcast(Channel *channel, const std::string &message, int excludeFd)
 {
-	const std::vector<int> &users = channel->getUsers();
+	const std::vector<int>	&users = channel->getUsers();
 	for (size_t i = 0; i < users.size(); i++)
 	{
 		if (users[i] != excludeFd)
@@ -71,13 +71,13 @@ void Server::broadcast(Channel *channel, const std::string &message, int exclude
 	}
 }
 
-void Server::broadcastUserChannels(int clientFd, const std::string &message)
+void	Server::broadcastUserChannels(int clientFd, const std::string &message)
 {
 	for (size_t i = 0; i < _channels.size(); i++)
 	{
 		if (_channels[i].isUserExist(clientFd))
 		{
-			const std::vector<int> &users = _channels[i].getUsers();
+			const std::vector<int>	&users = _channels[i].getUsers();
 			for (size_t j = 0; j < users.size(); j++)
 				sendMessage(users[j], message);
 		}
@@ -88,7 +88,7 @@ void Server::broadcastUserChannels(int clientFd, const std::string &message)
 //       getters
 // --------------------
 
-User *Server::getUserByNick(const std::string &nick)
+User	*Server::getUserByNick(const std::string &nick)
 {
 	for (size_t i = 0; i < _users.size(); i++)
 	{
@@ -98,9 +98,9 @@ User *Server::getUserByNick(const std::string &nick)
 	return (NULL);
 }
 
-Channel *Server::getOperatorChannel(int clientFd, const std::string &channelName)
+Channel	*Server::getOperatorChannel(int clientFd, const std::string &channelName)
 {
-	Channel *channel = getChannel(channelName);
+	Channel	*channel = getChannel(channelName);
 	if (!channel)
 		return (NULL);
 	if (!channel->isOperator(clientFd))
@@ -115,11 +115,11 @@ Channel *Server::getOperatorChannel(int clientFd, const std::string &channelName
 //     names list
 // --------------------
 
-void Server::sendNamesList(int clientFd, Channel *channel)
+void	Server::sendNamesList(int clientFd, Channel *channel)
 {
-	std::string nick = getUser(clientFd).getNickname();
-	std::string usersList;
-	const std::vector<int> &users = channel->getUsers();
+	std::string	nick = getUser(clientFd).getNickname();
+	std::string	usersList;
+	const std::vector<int>	&users = channel->getUsers();
 	for (size_t i = 0; i < users.size(); i++)
 	{
 		if (i > 0)

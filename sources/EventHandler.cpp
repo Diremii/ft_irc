@@ -12,9 +12,9 @@
 
 #include "Server.hpp"
 
-void Server::acceptClient()
+void	Server::acceptClient()
 {
-	int clientSocket = accept(_serverSocket, NULL, NULL);
+	int	clientSocket = accept(_serverSocket, NULL, NULL);
 	if (clientSocket == -1)
 		throw std::runtime_error("accept() failed");
 
@@ -27,7 +27,7 @@ void Server::acceptClient()
 	_users.push_back(User(clientSocket));
 }
 
-void Server::removeClient(int clientFd)
+void	Server::removeClient(int clientFd)
 {
 	broadcastUserChannels(clientFd, IrcReply::quit(getUser(clientFd).getNickname(), getUser(clientFd).getUsername(), "Connection closed"));
 	close(clientFd);
@@ -54,7 +54,7 @@ void Server::removeClient(int clientFd)
 		_channels[i].removeUser(clientFd);
 }
 
-void Server::handleCommand(int clientFd, const std::string &command, const std::string &args)
+void	Server::handleCommand(int clientFd, const std::string &command, const std::string &args)
 {
 	if (command == "PASS")
 		passCommand(clientFd, args);
@@ -86,9 +86,10 @@ void Server::handleCommand(int clientFd, const std::string &command, const std::
 		return ;
 
 	tryRegister(clientFd);
+	log(clientFd, command, args);
 }
 
-void Server::handleClient(int clientFd)
+void	Server::handleClient(int clientFd)
 {
 	char	buffer[1024];
 	int		bytes = recv(clientFd, buffer, sizeof(buffer), 0);
@@ -115,10 +116,10 @@ void Server::handleClient(int clientFd)
 		if (pos == std::string::npos)
 			break ;
 
-		std::string line = buf.substr(0, pos);
+		std::string	line = buf.substr(0, pos);
 		getUser(clientFd).setBuffer(buf.substr(pos + delimLen));
 
-		std::pair<std::string, std::string> parsed = parseMessage(line);
+		std::pair<std::string, std::string>	parsed = parseMessage(line);
 		handleCommand(clientFd, parsed.first, parsed.second);
 
 		if (!getUserByFd(clientFd))
@@ -126,7 +127,7 @@ void Server::handleClient(int clientFd)
 	}
 }
 
-void Server::handleEvents()
+void	Server::handleEvents()
 {
 	for (size_t i = _pollFds.size(); i-- > 0;)
 	{

@@ -6,7 +6,7 @@
 /*   By: humontas@student.42.fr <humontas>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 01:48:22 by humontas@st       #+#    #+#             */
-/*   Updated: 2026/06/16 01:48:23 by humontas@st      ###   ########.fr       */
+/*   Updated: 2026/06/16 11:06:28 by humontas@st      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,11 +32,11 @@ TicTacToe::~TicTacToe() {}
 //     initialization
 // --------------------
 
-void TicTacToe::initGame()
+void	TicTacToe::initGame()
 {
 	for (int i = 0; i < 9; i++)
 	{
-		std::stringstream ss;
+		std::stringstream	ss;
 		ss << (i + 1);
 		_board[i] = ss.str();
 	}
@@ -68,32 +68,32 @@ int TicTacToe::isValidMove(int pos)
 //       getters
 // --------------------
 
-time_t TicTacToe::getGameEndTime() const
+time_t	TicTacToe::getGameEndTime() const
 {
 	return (_gameEndTime);
 }
 
-bool TicTacToe::isGameOver() const
+bool	TicTacToe::isGameOver() const
 {
 	return (_gameOver);
 }
 
-std::string TicTacToe::getPlayerSymbol() const
+std::string	TicTacToe::getPlayerSymbol() const
 {
 	return (_playerSymbol);
 }
 
-std::string TicTacToe::getBotSymbol() const
+std::string	TicTacToe::getBotSymbol() const
 {
 	return (_botSymbol);
 }
 
-std::string TicTacToe::getCurrentPlayer() const
+std::string	TicTacToe::getCurrentPlayer() const
 {
 	return (_currentPlayer);
 }
 
-std::string TicTacToe::getBoard(int pos) const
+std::string	TicTacToe::getBoard(int pos) const
 {
 	return (_board[pos]);
 }

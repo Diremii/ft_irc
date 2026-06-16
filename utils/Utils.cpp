@@ -67,3 +67,18 @@ void Server::tryRegister(int clientFd)
 		sendMessage(clientFd, IrcReply::welcome(user.getNickname(), user.getUsername()));
 	}
 }
+
+std::string	Server::getTimestamp()
+{
+	time_t now = time(NULL);
+	char buf[20];
+	strftime(buf, sizeof(buf), "%H:%M:%S", localtime(&now));
+	return (std::string(buf));
+}
+
+void	Server::log(int clientFd, const std::string &command, const std::string &args)
+{
+	User *user = getUserByFd(clientFd);
+	std::string nick = (user && !user->getNickname().empty()) ? user->getNickname() : "unknown";
+	std::cout << "[" << getTimestamp() << "] [" << nick << "] " << command << " " << args << std::endl;
+}

@@ -36,21 +36,21 @@ Server::~Server()
 //      setup
 // --------------------
 
-void Server::createSocket()
+void	Server::createSocket()
 {
 	_serverSocket = socket(AF_INET, SOCK_STREAM, 0);
 	if (_serverSocket == -1)
 		throw std::runtime_error("Failed to create socket");
 
-	int opt = 1;
-	if (setsockopt(_serverSocket, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) == -1)
+	int	yes = 1;
+	if (setsockopt(_serverSocket, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(yes)) == -1)
 	{
 		close(_serverSocket);
 		throw std::runtime_error("setsockopt SO_REUSEADDR failed");
 	}
 }
 
-void Server::bindSocket()
+void	Server::bindSocket()
 {
 	struct sockaddr_in addr;
 	addr.sin_family = AF_INET;
@@ -64,13 +64,13 @@ void Server::bindSocket()
 	}
 }
 
-void Server::listenSocket()
+void	Server::listenSocket()
 {
 	if (listen(_serverSocket, 10) == -1)
 		throw std::runtime_error("Failed to listen on socket");
 }
 
-void Server::initPollFds()
+void	Server::initPollFds()
 {
 	struct pollfd serverPollFd;
 	serverPollFd.fd = _serverSocket;
@@ -84,7 +84,7 @@ void Server::initPollFds()
 //       core
 // --------------------
 
-void Server::run()
+void	Server::run()
 {
 	while (true)
 	{
@@ -101,7 +101,7 @@ void Server::run()
 //      getters
 // --------------------
 
-User *Server::getUserByFd(int clientFd)
+User	*Server::getUserByFd(int clientFd)
 {
 	for (size_t i = 0; i < _users.size(); i++)
 	{

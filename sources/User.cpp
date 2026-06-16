@@ -29,7 +29,7 @@ User::User(const User &other)
 	*this = other;
 }
 
-User &User::operator=(const User &other)
+User	&User::operator=(const User &other)
 {
 	if (this != &other)
 	{
@@ -47,32 +47,32 @@ User &User::operator=(const User &other)
 //       getters
 // --------------------
 
-int User::getFd(void) const
+int	User::getFd(void) const
 {
 	return (this->_userFd);
 }
 
-std::string User::getNickname(void) const
+std::string	User::getNickname(void) const
 {
 	return (this->_nickName);
 }
 
-std::string User::getUsername(void) const
+std::string	User::getUsername(void) const
 {
 	return (this->_userName);
 }
 
-bool User::getAuthenticated(void) const
+bool	User::getAuthenticated(void) const
 {
 	return (this->_authenticated);
 }
 
-bool User::getRegistered(void) const
+bool	User::getRegistered(void) const
 {
 	return (this->_registered);
 }
 
-std::string User::getBuffer(void) const
+std::string	User::getBuffer(void) const
 {
 	return (this->_buffer);
 }
@@ -81,27 +81,27 @@ std::string User::getBuffer(void) const
 //       setters
 // --------------------
 
-void User::setNickname(const std::string &nickname)
+void	User::setNickname(const std::string &nickname)
 {
 	this->_nickName = nickname;
 }
 
-void User::setUsername(const std::string &username)
+void	User::setUsername(const std::string &username)
 {
 	this->_userName = username;
 }
 
-void User::setAuthenticated(bool auth)
+void	User::setAuthenticated(bool auth)
 {
 	this->_authenticated = auth;
 }
 
-void User::setRegistered(bool reg)
+void	User::setRegistered(bool reg)
 {
 	this->_registered = reg;
 }
 
-void User::setBuffer(const std::string &buffer)
+void	User::setBuffer(const std::string &buffer)
 {
 	this->_buffer = buffer;
 }

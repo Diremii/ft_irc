@@ -6,7 +6,7 @@
 /*   By: humontas@student.42.fr <humontas>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/03 15:34:40 by ttremel           #+#    #+#             */
-/*   Updated: 2026/06/16 01:19:53 by humontas@st      ###   ########.fr       */
+/*   Updated: 2026/06/16 11:01:46 by humontas@st      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ Channel::Channel(const Channel &other)
 	*this = other;
 }
 
-Channel &Channel::operator=(const Channel &other)
+Channel	&Channel::operator=(const Channel &other)
 {
 	if (this != &other)
 	{
@@ -52,7 +52,7 @@ Channel &Channel::operator=(const Channel &other)
 	return (*this);
 }
 
-const std::vector<int> &Channel::getUsers(void) const
+const std::vector<int>	&Channel::getUsers(void) const
 {
 	return (_users);
 }
@@ -61,7 +61,7 @@ const std::vector<int> &Channel::getUsers(void) const
 //        utils
 // --------------------
 
-bool Channel::isInvited(int clientFd)
+bool	Channel::isInvited(int clientFd)
 {
 	for (size_t i = 0; i < _inviteds.size(); i++)
 	{
@@ -71,7 +71,7 @@ bool Channel::isInvited(int clientFd)
 	return (false);
 }
 
-bool Channel::isUserExist(int clientFd)
+bool	Channel::isUserExist(int clientFd)
 {
 	for (size_t i = 0; i < _users.size(); i++)
 	{
@@ -81,7 +81,7 @@ bool Channel::isUserExist(int clientFd)
 	return (false);
 }
 
-bool Channel::isOperator(int clientFd)
+bool	Channel::isOperator(int clientFd)
 {
 	for (size_t i = 0; i < _operators.size(); i++)
 	{
@@ -91,7 +91,7 @@ bool Channel::isOperator(int clientFd)
 	return (false);
 }
 
-void Channel::removeUser(int clientFd)
+void	Channel::removeUser(int clientFd)
 {
 	for (size_t i = 0; i < _users.size(); i++)
 	{
@@ -107,7 +107,7 @@ void Channel::removeUser(int clientFd)
 //        users
 // --------------------
 
-int Channel::addUser(int clientFd, const std::string &password)
+int	Channel::addUser(int clientFd, const std::string &password)
 {
 	if (_isInviteOnly && !isInvited(clientFd))
 		return (1);
@@ -120,13 +120,13 @@ int Channel::addUser(int clientFd, const std::string &password)
 	return (0);
 }
 
-void Channel::inviteClient(int targetFd)
+void	Channel::inviteClient(int targetFd)
 {
 	if (_isInviteOnly && !isInvited(targetFd))
 		_inviteds.push_back(targetFd);
 }
 
-void Channel::kickClient(int targetFd)
+void	Channel::kickClient(int targetFd)
 {
 	removeUser(targetFd);
 }
@@ -135,7 +135,7 @@ void Channel::kickClient(int targetFd)
 //      operators
 // --------------------
 
-void Channel::setOperator(int targetFd, bool activate)
+void	Channel::setOperator(int targetFd, bool activate)
 {
 	if (activate)
 		_operators.push_back(targetFd);
@@ -156,17 +156,17 @@ void Channel::setOperator(int targetFd, bool activate)
 //      settings
 // --------------------
 
-std::string Channel::getName(void)
+std::string	Channel::getName(void)
 {
 	return (_name);
 }
 
-std::string Channel::viewTopic(void)
+std::string	Channel::viewTopic(void)
 {
 	return (_topic);
 }
 
-bool Channel::changeTopic(int clientFd, const std::string &newTopic)
+bool	Channel::changeTopic(int clientFd, const std::string &newTopic)
 {
 	if (_isTopicRestricted && !isOperator(clientFd))
 		return (false);
@@ -174,22 +174,22 @@ bool Channel::changeTopic(int clientFd, const std::string &newTopic)
 	return (true);
 }
 
-void Channel::changePassword(const std::string &newPassword)
+void	Channel::changePassword(const std::string &newPassword)
 {
 	_password = newPassword;
 }
 
-void Channel::setInviteOnly(bool activate)
+void	Channel::setInviteOnly(bool activate)
 {
 	_isInviteOnly = activate;
 }
 
-void Channel::setTopicRestriction(bool activate)
+void	Channel::setTopicRestriction(bool activate)
 {
 	_isTopicRestricted = activate;
 }
 
-void Channel::setUserLimit(bool activate, size_t newLimit)
+void	Channel::setUserLimit(bool activate, size_t newLimit)
 {
 	if (activate)
 		_userLimit = newLimit;

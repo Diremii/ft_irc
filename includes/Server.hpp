@@ -55,20 +55,22 @@ class Server
 		void	dccSend(int clientFd, const std::string &args);
 		
 		/* UTILS */
-		std::pair<std::string, std::string>	parseMessage(const std::string &message);
-		User								&getUser(int clientFd);  
-		User 								*getUserByNick(const std::string &nick);
-		void								tryRegister(int clientFd);
+		User								&getUser(int clientFd);
+		User								*getUserByFd(int clientFd);
+		User								*getUserByNick(const std::string &nick);
+		Channel								*getChannel(const std::string &channelName);
+		Channel								*getOperatorChannel(int clientFd, const std::string &channelName);
 		void								sendMessage(int clientFd, const std::string &message);
 		void								broadcast(Channel *channel, const std::string &message, int excludeFd = -1);
 		void								broadcastUserChannels(int clientFd, const std::string &message);
 		void								sendNamesList(int clientFd, Channel *channel);
-		Channel								*getChannel(const std::string &channelName);
-		Channel								*getOperatorChannel(int clientFd, const std::string &channelName);
+		std::pair<std::string, std::string>	parseMessage(const std::string &message);
 		std::vector<std::string>			splitArgs(const std::string &args);
 		int									isValidName(const std::string &name, size_t maxLen, const std::string &forbidden);
+		void								tryRegister(int clientFd);
+		void								log(int clientFd, const std::string &command, const std::string &args);
+		std::string							getTimestamp();
 
-		User	*getUserByFd(int clientFd);
 
 	public:
 		Server(int port, std::string password);

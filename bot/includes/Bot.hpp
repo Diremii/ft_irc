@@ -6,7 +6,7 @@
 /*   By: humontas@student.42.fr <humontas>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/13 01:53:59 by humontas@st       #+#    #+#             */
-/*   Updated: 2026/06/16 02:04:38 by humontas@st      ###   ########.fr       */
+/*   Updated: 2026/06/16 11:09:12 by humontas@st      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,11 +39,14 @@ class Bot
 		void	handlePRIVMSG(const std::string &nick, const std::string &args);
 
 		/* COMMANDS */
-		void	handlePlay(const std::string &nick, const std::string &channel);
-		void	handleMove(const std::string &nick, const std::string &channel, const std::string &arg);
+		void	helpCommand(const std::string &channel);
+		void	playCommand(const std::string &nick, const std::string &channel);
+		void	moveCommand(const std::string &nick, const std::string &channel, const std::string &arg);
+
+		/*GAME UTILS*/
 		void	endGame(const std::string &channel, const std::string &message);
 		void	sendBoard(const std::string &channel, TicTacToe *game);
-		bool    applyMove(const std::string &channel, int position, const std::string &symbol, const std::string &display, const std::string &winMsg);
+		bool	applyMove(const std::string &channel, int position, const std::string &symbol, const std::string &display, const std::string &winMsg);
 
 		/* UTILS */
 		std::pair<std::string, std::string>	parseMessage(const std::string &message);
