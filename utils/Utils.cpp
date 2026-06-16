@@ -16,7 +16,7 @@
 //       getters
 // --------------------
 
-User &Server::getUser(int clientFd)
+User	&Server::getUser(int clientFd)
 {
 	for (size_t i = 0; i < _users.size(); i++)
 	{
@@ -26,7 +26,7 @@ User &Server::getUser(int clientFd)
 	throw std::runtime_error("User not found");
 }
 
-Channel *Server::getChannel(const std::string &channelName)
+Channel	*Server::getChannel(const std::string &channelName)
 {
 	for (size_t i = 0; i < _channels.size(); i++)
 	{
