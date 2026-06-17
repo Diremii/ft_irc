@@ -84,21 +84,24 @@ void	Server::handleCommand(int clientFd, const std::string &command, const std::
 		{"PART", &Server::partCommand, true, false},
 		{"DCC", &Server::dccSend, true, false}
 	};
-	bool	is_registered = getUser(clientFd).getRegistered();
 
+	bool	isRegistered = getUser(clientFd).getRegistered();
+	bool	found = false;
 	for (size_t i = 0; i < 12; i++)
 	{
 		if (std::strcmp(cmd[i].str, command.c_str()) == 0)
 		{
-			if (cmd[i].auth && !is_registered)
+			found = true;
+			if (cmd[i].auth && !isRegistered)
 				return sendMessage(clientFd, IrcReply::notRegistered());
-
 			(this->*cmd[i].cmd)(clientFd, args);
 			if (cmd[i].early_return)
 				return ;
 			break;
 		}
 	}
+	if (!found)
+		return (sendMessage(clientFd, IrcReply::unknownCommand(getUser(clientFd).getNickname(), command)));
 
 	tryRegister(clientFd);
 	log(clientFd, command, args);

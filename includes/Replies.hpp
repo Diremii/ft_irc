@@ -6,37 +6,17 @@
 namespace IrcReply
 {
 	/* SUCCESS */
-	inline std::string welcome(const std::string &nick, const std::string &user)
-	{
-		return (":server 001 " + nick + " :Welcome to the Internet Relay Network " + nick + "!" + user + "@localhost\r\n");
-	}
-	inline std::string quit(const std::string &nick, const std::string &user, const std::string &reason)
-	{
-		return (":" + nick + "!" + user + "@localhost QUIT :" + reason + "\r\n");
-	}
-	inline std::string noTopic(const std::string &nick, const std::string &channel)
-	{
-		return (":server 331 " + nick + " " + channel + " :No topic is set\r\n");
-	}
-	inline std::string topic(const std::string &nick, const std::string &channel, const std::string &topic)
-	{
-		return (":server 332 " + nick + " " + channel + " :" + topic + "\r\n");
-	}
-	inline std::string topicChanged(const std::string &nick, const std::string &user, const std::string &channel, const std::string &topic)
-	{
-		return (":" + nick + "!" + user + "@localhost TOPIC " + channel + " :" + topic + "\r\n");
-	}
-	inline std::string namesList(const std::string &nick, const std::string &channel, const std::string &users)
-	{
-		return (":server 353 " + nick + " = " + channel + " :" + users + "\r\n");
-	}
-	inline std::string endOfNames(const std::string &nick, const std::string &channel)
-	{
-		return (":server 366 " + nick + " " + channel + " :End of /NAMES list\r\n");
+	inline std::string nick(const std::string &oldNick, const std::string &user, const std::string &newNick)
+	{	
+		return (":" + oldNick + "!" + user + "@localhost NICK " + newNick + "\r\n");
 	}
 	inline std::string join(const std::string &nick, const std::string &user, const std::string &channel)
 	{
 		return (":" + nick + "!" + user + "@localhost JOIN " + channel + "\r\n");
+	}
+	inline std::string quit(const std::string &nick, const std::string &user, const std::string &reason)
+	{
+		return (":" + nick + "!" + user + "@localhost QUIT :" + reason + "\r\n");
 	}
 	inline std::string kick(const std::string &nick, const std::string &user, const std::string &channel, const std::string &target, const std::string &reason)
 	{
@@ -46,28 +26,52 @@ namespace IrcReply
 	{
 		return (":" + nick + "!" + user + "@localhost INVITE " + target + " " + channel + "\r\n");
 	}
+	inline std::string topicChanged(const std::string &nick, const std::string &user, const std::string &channel, const std::string &topic)
+	{
+		return (":" + nick + "!" + user + "@localhost TOPIC " + channel + " :" + topic + "\r\n");
+	}
 	inline std::string privmsg(const std::string &nick, const std::string &user, const std::string &target, const std::string &message)
 	{
 		return (":" + nick + "!" + user + "@localhost PRIVMSG " + target + " :" + message + "\r\n");
+	}
+	inline std::string part(const std::string &nick, const std::string &user, const std::string &channel, const std::string &reason)
+	{
+		return (":" + nick + "!" + user + "@localhost PART " + channel + " :" + reason + "\r\n");
 	}
 	inline std::string dccSend(const std::string &nick, const std::string &user, const std::string &target, const std::string &fileName, const std::string &ip, const std::string &port, const std::string &fileSize)
 	{
 		std::string ctrl(1, '\x01');
 		return (":" + nick + "!" + user + "@localhost PRIVMSG " + target + " :" + ctrl + "DCC SEND " + fileName + " " + ip + " " + port + " " + fileSize + ctrl + "\r\n");
 	}
-	inline std::string part(const std::string &nick, const std::string &user, const std::string &channel, const std::string &reason)
+	inline std::string welcome(const std::string &nick, const std::string &user)
 	{
-		return (":" + nick + "!" + user + "@localhost PART " + channel + " :" + reason + "\r\n");
+		return (":server 001 " + nick + " :Welcome to the Internet Relay Network " + nick + "!" + user + "@localhost\r\n");
 	}
-	inline std::string nick(const std::string &oldNick, const std::string &user, const std::string &newNick)
-	{	
-		return (":" + oldNick + "!" + user + "@localhost NICK " + newNick + "\r\n");
+	inline std::string noTopic(const std::string &nick, const std::string &channel)
+	{
+		return (":server 331 " + nick + " " + channel + " :No topic is set\r\n");
+	}
+	inline std::string topic(const std::string &nick, const std::string &channel, const std::string &topic)
+	{
+		return (":server 332 " + nick + " " + channel + " :" + topic + "\r\n");
+	}
+	inline std::string namesList(const std::string &nick, const std::string &channel, const std::string &users)
+	{
+		return (":server 353 " + nick + " = " + channel + " :" + users + "\r\n");
+	}
+	inline std::string endOfNames(const std::string &nick, const std::string &channel)
+	{
+		return (":server 366 " + nick + " " + channel + " :End of /NAMES list\r\n");
 	}
 
 	/* ERRORS */
 	inline std::string topicTooLong(const std::string &nick, const std::string &channel)
 	{
 		return (":server 416 " + nick + " " + channel + " :Topic too long\r\n");
+	}
+	inline std::string unknownCommand(const std::string &nick, const std::string &command)
+	{
+		return (":server 421 " + nick + " " + command + " :Unknown command\r\n");
 	}
 	inline std::string noNick()
 	{
