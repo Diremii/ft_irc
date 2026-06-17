@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Bot.cpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ttremel <marvin@42.fr>                     +#+  +:+       +#+        */
+/*   By: humontas@student.42.fr <humontas>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 01:52:00 by humontas@st       #+#    #+#             */
-/*   Updated: 2026/06/17 15:03:55 by ttremel          ###   ########.fr       */
+/*   Updated: 2026/06/17 20:07:01 by humontas@st      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,10 @@ void	Bot::connectToServer(const std::string &hostname, int port)
 {
 	struct hostent *host = gethostbyname(hostname.c_str());
 	if (!host)
+	{
+		close(_userFd);
 		throw std::runtime_error("Failed to resolve hostname");
+	}
 
 	struct sockaddr_in addr;
 	memset(&addr, 0, sizeof(addr));
@@ -55,7 +58,10 @@ void	Bot::connectToServer(const std::string &hostname, int port)
 	memcpy(&addr.sin_addr, host->h_addr, host->h_length);
 
 	if (connect(_userFd, (struct sockaddr *)&addr, sizeof(addr)) == -1)
+	{
+		close(_userFd);
 		throw std::runtime_error("Failed to connect to server");
+	}
 }
 
 // --------------------
@@ -69,7 +75,10 @@ void	Bot::registerBot(const std::string &password)
 	out += "USER " + _userName + " 0 * :" + _userName + "\r\n";
 
 	if (send(_userFd, out.c_str(), out.length(), 0) == -1)
+	{
+		close(_userFd);
 		throw std::runtime_error("Failed to register bot");
+	}
 }
 
 // --------------------
@@ -166,7 +175,7 @@ void	Bot::run()
 		if (activity > 0 && (pfd.revents & POLLIN))
 		{
 			memset(buffer, 0, sizeof(buffer));
-			int	bytes = recv(_userFd, buffer, sizeof(buffer), 0);
+			ssize_t	bytes = recv(_userFd, buffer, sizeof(buffer), 0);
 			if (bytes <= 0)
 				break;
 			_buffer += std::string(buffer, bytes);

@@ -42,8 +42,8 @@ void	Server::createSocket()
 	if (_serverSocket == -1)
 		throw std::runtime_error("Failed to create socket");
 
-	int	yes = 1;
-	if (setsockopt(_serverSocket, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(yes)) == -1)
+	int	reuseAddr = 1;
+	if (setsockopt(_serverSocket, SOL_SOCKET, SO_REUSEADDR, &reuseAddr, sizeof(reuseAddr)) == -1)
 	{
 		close(_serverSocket);
 		throw std::runtime_error("setsockopt SO_REUSEADDR failed");
@@ -67,7 +67,10 @@ void	Server::bindSocket()
 void	Server::listenSocket()
 {
 	if (listen(_serverSocket, 10) == -1)
+	{
+		close(_serverSocket);
 		throw std::runtime_error("Failed to listen on socket");
+	}
 }
 
 void	Server::initPollFds()
@@ -92,7 +95,11 @@ void	Server::run()
 		if (g_sig == SIGINT || g_sig == SIGQUIT)
 			return ;
 		if (activity == -1)
+		{
+			if (errno == EINTR)
+				continue ;
 			throw std::runtime_error("Poll error");
+		}
 		handleEvents();
 	}
 }

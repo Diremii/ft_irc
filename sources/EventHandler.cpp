@@ -16,8 +16,10 @@ void	Server::acceptClient()
 {
 	int	clientSocket = accept(_serverSocket, NULL, NULL);
 	if (clientSocket == -1)
-		throw std::runtime_error("accept() failed");
-
+	{
+		std::cerr << "accept() failed" << std::endl;
+		return ;
+	}
 	struct pollfd clientPollFd;
 	clientPollFd.fd = clientSocket;
 	clientPollFd.events = POLLIN;
@@ -69,7 +71,7 @@ void	Server::handleCommand(int clientFd, const std::string &command, const std::
 		bool			authentification;
 	};
 
-	const s_cmd	commandArray[] = {
+	static const s_cmd	commandArray[] = {
 		{"PASS", &Server::passCommand, false},
 		{"NICK", &Server::nickCommand, false},
 		{"USER", &Server::userCommand, false},
@@ -112,18 +114,18 @@ void	Server::handleClient(int clientFd)
 {
 	char	buffer[1024];
 	int		bytes = recv(clientFd, buffer, sizeof(buffer), 0);
-
 	if (bytes <= 0)
 	{
 		removeClient(clientFd);
 		return ;
 	}
 
-	getUser(clientFd).setBuffer(getUser(clientFd).getBuffer() + std::string(buffer, bytes));
-
+	User	&caller = getUser(clientFd);
+	caller.setBuffer(caller.getBuffer() + std::string(buffer, bytes));
+c
 	while (true)
 	{
-		std::string	buf = getUser(clientFd).getBuffer();
+		std::string	buf = caller.getBuffer();
 		size_t		delimLen = 2;
 		size_t		pos = buf.find("\r\n");
 
@@ -136,9 +138,9 @@ void	Server::handleClient(int clientFd)
 			break ;
 
 		std::string	line = buf.substr(0, pos);
-		getUser(clientFd).setBuffer(buf.substr(pos + delimLen));
+		caller.setBuffer(buf.substr(pos + delimLen));
 
-		std::pair<std::string, std::string>	parsed = parseMessage(line);
+		std::pair<std::string, std::string> parsed = parseMessage(line);
 		handleCommand(clientFd, parsed.first, parsed.second);
 
 		if (!getUserByFd(clientFd))

@@ -30,6 +30,7 @@
 # include <csignal>
 # include <sstream>
 # include <cstring>
+# include <cerrno>
 
 extern int	g_sig;
 
