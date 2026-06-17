@@ -60,7 +60,7 @@ class Server
 		User								*getUserByFd(int clientFd);
 		User								*getUserByNick(const std::string &nick);
 		Channel								*getChannel(const std::string &channelName);
-		Channel								*getOperatorChannel(int clientFd, const std::string &channelName);
+		Channel								*checkChannelRequirements(int clientFd, const std::string &channelName, bool checkOperator);
 		void								removeChannel(const std::string &channelName);
 		void								sendMessage(int clientFd, const std::string &message);
 		void								broadcast(Channel *channel, const std::string &message, int excludeFd = -1);

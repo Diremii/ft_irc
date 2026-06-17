@@ -65,6 +65,14 @@ namespace IrcReply
 	}
 
 	/* ERRORS */
+	inline std::string noSuchNick(const std::string &nick, const std::string &target)
+	{
+		return (":server 401 " + nick + " " + target + " :No such nick/channel\r\n");
+	}
+	inline std::string noSuchChannel(const std::string &nick, const std::string &channel)
+	{
+		return (":server 403 " + nick + " " + channel + " :No such channel\r\n");
+	}
 	inline std::string topicTooLong(const std::string &nick, const std::string &channel)
 	{
 		return (":server 416 " + nick + " " + channel + " :Topic too long\r\n");
@@ -84,6 +92,10 @@ namespace IrcReply
 	inline std::string nickInUse(const std::string &nick)
 	{
 		return (":server 433 * " + nick + " :Nickname is already in use\r\n");
+	}
+	inline std::string notOnChannel(const std::string &nick, const std::string &channel)
+	{
+		return (":server 442 " + nick + " " + channel + " :You're not on that channel\r\n");
 	}
 	inline std::string notRegistered()
 	{
@@ -108,6 +120,10 @@ namespace IrcReply
 	inline std::string channelIsFull(const std::string &nick, const std::string &channel)
 	{
 		return (":server 471 " + nick + " " + channel + " :Cannot join channel (+l)\r\n");
+	}
+	inline std::string unknownMode(const std::string &nick, const std::string &mode)
+	{
+		return (":server 472 " + nick + " " + mode + " :is unknown mode char to me\r\n");
 	}
 	inline std::string inviteOnlyChannel(const std::string &nick, const std::string &channel)
 	{

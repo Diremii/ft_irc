@@ -127,7 +127,7 @@ void	Server::kickCommand(int clientFd, const std::string &args)
 	std::string	targetNick = params[1];
 	std::string	reason = params.size() > 2 ? params[2] : "Kicked";
 
-	Channel *channel = getOperatorChannel(clientFd, params[0]);
+	Channel *channel = checkChannelRequirements(clientFd, params[0], true);
 	if (!channel)
 		return ;
 
@@ -148,7 +148,7 @@ void	Server::inviteCommand(int clientFd, const std::string &args)
 	User		&caller = getUser(clientFd);
 	std::string	targetNick = params[0];
 
-	Channel	*channel = getOperatorChannel(clientFd, params[1]);
+	Channel	*channel = checkChannelRequirements(clientFd, params[1], true);
 	if (!channel)
 		return ;
 
@@ -169,7 +169,7 @@ void	Server::topicCommand(int clientFd, const std::string &args)
 	User		&caller = getUser(clientFd);
 	std::string	channelName = params[0];
 
-	Channel	*channel = getChannel(channelName);
+	Channel *channel = checkChannelRequirements(clientFd, channelName, false);
 	if (!channel)
 		return ;
 
@@ -197,13 +197,16 @@ void	Server::modeCommand(int clientFd, const std::string &args)
 
 	std::string	optionalParam = params.size() > 2 ? params[2] : "";
 
-	Channel	*channel = getOperatorChannel(clientFd, params[0]);
+	Channel	*channel = checkChannelRequirements(clientFd, params[0], true);
 	if (!channel)
 		return ;
 
+	User &caller = getUser(clientFd);
 	bool	activate = flag[0] == '+';
 	switch (flag[1])
 	{
+		default:
+			return (sendMessage(clientFd, IrcReply::unknownMode(caller.getNickname(), std::string(1, flag[1]))));
 		case 'i':
 		{
 			channel->setInviteOnly(activate);
@@ -243,26 +246,26 @@ void	Server::modeCommand(int clientFd, const std::string &args)
 
 void	Server::privmsgCommand(int clientFd, const std::string &args)
 {
-	std::vector<std::string>	params = splitArgs(args);
+	std::vector<std::string> params = splitArgs(args);
 	if (params.size() < 2)
 		return (sendMessage(clientFd, IrcReply::notEnoughParams("PRIVMSG")));
-	
-	User		&caller = getUser(clientFd);
-	std::string	target = params[0];
-	std::string	message = params[1];
+
+	User		&caller  = getUser(clientFd);
+	std::string	target   = params[0];
+	std::string	message  = params[1];
 
 	if (target[0] == '#')
 	{
-		Channel	*channel = getChannel(target);
+		Channel *channel = getChannel(target);
 		if (!channel)
-			return ;
+			return (sendMessage(clientFd, IrcReply::noSuchNick(caller.getNickname(), target)));
 		broadcast(channel, IrcReply::privmsg(caller.getNickname(), caller.getUsername(), target, message), clientFd);
 	}
 	else
 	{
-		User	*targetUser = getUserByNick(target);
+		User *targetUser = getUserByNick(target);
 		if (!targetUser)
-			return ;
+			return (sendMessage(clientFd, IrcReply::noSuchNick(caller.getNickname(), target)));
 		sendMessage(targetUser->getFd(), IrcReply::privmsg(caller.getNickname(), caller.getUsername(), target, message));
 	}
 }
@@ -276,11 +279,8 @@ void	Server::partCommand(int clientFd, const std::string &args)
 	User		&caller = getUser(clientFd);
 	std::string	reason = (params.size() > 1) ? params[1] : "";
 
-	Channel	*channel = getChannel(params[0]);
+	Channel	*channel = checkChannelRequirements(clientFd, params[0], false);
 	if (!channel)
-		return ;
-
-	if (!channel->isUserExist(clientFd))
 		return ;
 
 	broadcast(channel, IrcReply::part(caller.getNickname(), caller.getUsername(), channel->getName(), reason));

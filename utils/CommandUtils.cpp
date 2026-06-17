@@ -6,7 +6,7 @@
 /*   By: humontas@student.42.fr <humontas>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/10 11:24:13 by humontas@st       #+#    #+#             */
-/*   Updated: 2026/06/16 23:32:24 by humontas@st      ###   ########.fr       */
+/*   Updated: 2026/06/17 12:06:04 by humontas@st      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,12 +101,20 @@ User	*Server::getUserByNick(const std::string &nick)
 	return (NULL);
 }
 
-Channel	*Server::getOperatorChannel(int clientFd, const std::string &channelName)
+Channel	*Server::checkChannelRequirements(int clientFd, const std::string &channelName, bool checkOperator)
 {
-	Channel	*channel = getChannel(channelName);
+	Channel *channel = getChannel(channelName);
 	if (!channel)
+	{
+		sendMessage(clientFd, IrcReply::noSuchChannel(getUser(clientFd).getNickname(), channelName));
 		return (NULL);
-	if (!channel->isOperator(clientFd))
+	}
+	if (!channel->isUserExist(clientFd))
+	{
+		sendMessage(clientFd, IrcReply::notOnChannel(getUser(clientFd).getNickname(), channelName));
+		return (NULL);
+	}
+	if (checkOperator && !channel->isOperator(clientFd))
 	{
 		sendMessage(clientFd, IrcReply::chanOpPrivsNeeded(getUser(clientFd).getNickname(), channelName));
 		return (NULL);
