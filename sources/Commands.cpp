@@ -163,7 +163,7 @@ void	Server::inviteCommand(int clientFd, const std::string &args)
 void	Server::topicCommand(int clientFd, const std::string &args)
 {
 	std::vector<std::string>	params = splitArgs(args);
-	if (params.size() < 1)
+	if (params.empty())
 		return (sendMessage(clientFd, IrcReply::notEnoughParams("TOPIC")));
 
 	User		&caller = getUser(clientFd);

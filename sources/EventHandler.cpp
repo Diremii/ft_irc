@@ -67,7 +67,7 @@ void	Server::handleCommand(int clientFd, const std::string &command, const std::
 		const char		*str;
 		CommandHandler	cmd;
 		bool			auth;
-		bool			early_return;
+		bool			earlyReturn;
 	};
 
 	static s_cmd	cmd[12] = {
@@ -95,7 +95,7 @@ void	Server::handleCommand(int clientFd, const std::string &command, const std::
 			if (cmd[i].auth && !isRegistered)
 				return sendMessage(clientFd, IrcReply::notRegistered());
 			(this->*cmd[i].cmd)(clientFd, args);
-			if (cmd[i].early_return)
+			if (cmd[i].earlyReturn)
 				return ;
 			break;
 		}
