@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Bot.cpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: humontas@student.42.fr <humontas>          +#+  +:+       +#+        */
+/*   By: ttremel <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 01:52:00 by humontas@st       #+#    #+#             */
-/*   Updated: 2026/06/16 22:04:23 by humontas@st      ###   ########.fr       */
+/*   Updated: 2026/06/17 15:03:55 by ttremel          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -119,9 +119,6 @@ void	Bot::handleBot()
 		std::string							args = parsed.second;
 
 		handleCommand(line, command, args);
-
-		std::cout << "Command: " << command
-				  << " | Args: " << args << std::endl;
 	}
 }
 
