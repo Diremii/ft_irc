@@ -122,7 +122,7 @@ void	Server::handleClient(int clientFd)
 
 	User	&caller = getUser(clientFd);
 	caller.setBuffer(caller.getBuffer() + std::string(buffer, bytes));
-c
+
 	while (true)
 	{
 		std::string	buf = caller.getBuffer();
