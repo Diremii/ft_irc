@@ -18,15 +18,27 @@
 # include "Channel.hpp"
 # include "Replies.hpp"
 
+
+
 class Server
 {
+	
 	private:
+		typedef void	(Server::*CommandHandler)(int, const std::string&);
+		struct	s_cmd
+		{
+			const char		*commandName;
+			CommandHandler	command;
+			bool			authentification;
+		};
+
 		int								_serverSocket;
 		int								_serverPort;
 		std::string						_serverPassword;
 		std::vector<struct pollfd>		_pollFds;
 		std::vector<User>				_users;
 		std::vector<Channel>			_channels;
+		static const s_cmd				_commandArray[];
 
 		/* SERVER */
 		void	createSocket();
@@ -72,7 +84,7 @@ class Server
 		void								tryRegister(int clientFd);
 		void								log(int clientFd, const std::string &command, const std::string &args);
 		std::string							getTimestamp();
-
+		
 
 	public:
 		Server(int port, std::string password);
