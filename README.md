@@ -12,7 +12,7 @@ Clients can connect and, once authenticated, chat in public channels or
 via private messages. Users have access to channel modes, allowing them 
 to configure their channels as needed. This project also includes a bot 
 named 'ShallowRed' — a reference to Deep Blue — featuring a Tic Tac Toe 
-game, as well as DCC file transfer support.
+game powered by the Minimax algorithm, as well as DCC file transfer support.
 
 ## Instructions
 
