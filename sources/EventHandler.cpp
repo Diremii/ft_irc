@@ -75,7 +75,7 @@ void	Server::handleCommand(int clientFd, const std::string &command, const std::
 			(this->*commandArray[i].command)(clientFd, args);
 			if (std::strcmp(commandArray[i].commandName, "QUIT") == 0)
 				return ;
-			break;
+			break ;
 		}
 	}
 	if (!found)
