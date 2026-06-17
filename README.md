@@ -63,8 +63,8 @@ USER <username>
 | `JOIN <#channel> [password]` | Join a channel |
 | `PART <#channel> [:<reason>]` | Leave a channel |
  
-> Commands requiring registration: `PASS`, `NICK`, and `USER` must be completed before using any other command.
-> **Note:** Everything after `:` is treated as a single trailing parameter and may contain spaces.
+> Commands requiring registration: `PASS`, `NICK`, and `USER` must be completed before using any other command.  
+> **Note:** Everything after `:` is treated as a single trailing parameter and may contain spaces.  
 > Example: `PRIVMSG #general :hello world`
 
 ### MODE Flags
