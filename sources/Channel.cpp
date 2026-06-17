@@ -149,7 +149,7 @@ void	Channel::kickClient(int targetFd)
 
 void	Channel::setOperator(int targetFd, bool activate)
 {
-	if (activate && !isOperator(targetFd)
+	if (activate && !isOperator(targetFd))
 		_operators.push_back(targetFd);
 	else
 	{
