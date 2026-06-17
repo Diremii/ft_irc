@@ -6,7 +6,7 @@
 /*   By: humontas@student.42.fr <humontas>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 01:52:00 by humontas@st       #+#    #+#             */
-/*   Updated: 2026/06/17 20:07:01 by humontas@st      ###   ########.fr       */
+/*   Updated: 2026/06/17 22:09:40 by humontas@st      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -174,7 +174,6 @@ void	Bot::run()
 			return ;
 		if (activity > 0 && (pfd.revents & POLLIN))
 		{
-			memset(buffer, 0, sizeof(buffer));
 			ssize_t	bytes = recv(_userFd, buffer, sizeof(buffer), 0);
 			if (bytes <= 0)
 				break;

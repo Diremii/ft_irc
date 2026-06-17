@@ -81,6 +81,41 @@ void	Server::log(int clientFd, const std::string &command, const std::string &ar
 	std::cout << "[" << getTimestamp() << "] [" << nick << "] " << command << " " << args << std::endl;
 }
 
+void	Server::removeClient(int clientFd, const std::string &reason)
+{
+	User	*user = getUserByFd(clientFd);
+	if (!user)
+		return ;
+	broadcastUserChannels(clientFd, IrcReply::quit(user->getNickname(), user->getUsername(), reason), clientFd);
+	close(clientFd);
+
+	for (size_t i = 0; i < _pollFds.size(); i++)
+	{
+		if (_pollFds[i].fd == clientFd)
+		{
+			_pollFds.erase(_pollFds.begin() + i);
+			break ;
+		}
+	}
+
+	for (size_t i = 0; i < _users.size(); i++)
+	{
+		if (_users[i].getFd() == clientFd)
+		{
+			_users.erase(_users.begin() + i);
+			break ;
+		}
+	}
+
+	for (size_t i = _channels.size(); i-- > 0;)
+	{
+		_channels[i].removeUser(clientFd);
+		_channels[i].removeOperator(clientFd);
+		if (_channels[i].getUsers().empty())
+			_channels.erase(_channels.begin() + i);
+	}
+}
+
 void	Server::removeChannel(const std::string &channelName)
 {
 	for (size_t i = 0; i < _channels.size(); i++)

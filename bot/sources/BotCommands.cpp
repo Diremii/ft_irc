@@ -6,7 +6,7 @@
 /*   By: humontas@student.42.fr <humontas>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/14 01:06:27 by humontas@st       #+#    #+#             */
-/*   Updated: 2026/06/16 22:01:10 by humontas@st      ###   ########.fr       */
+/*   Updated: 2026/06/17 22:51:26 by humontas@st      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,18 +60,21 @@ void	Bot::moveCommand(const std::string &nick, const std::string &channel, const
 
 void	Bot::handlePRIVMSG(const std::string &nick, const std::string &args)
 {
-	std::vector<std::string>	params = splitArgs(args);
+	std::vector<std::string> params = splitArgs(args);
 	if (params.size() < 2)
 		return ;
+	std::string target = params[0];
+	std::string message = args.substr(args.find(':') + 1);
+	std::string command = message.substr(0, message.find(' '));
+	std::string arg = message.find(' ') != std::string::npos ? message.substr(message.find(' ') + 1) : "";
 
-	std::string	channel = params[0];
-	std::string	message = args.substr(args.find(':') + 1);
-	std::string	command = message.substr(0, message.find(' '));
-	std::string	arg = message.find(' ') != std::string::npos ? message.substr(message.find(' ') + 1) : "";
+	std::string channel = (target == _nickName) ? nick : target;
 
 	if (command == "!play")
 		playCommand(nick, channel);
 	else if (command == "!move")
 		moveCommand(nick, channel, arg);
+	else if (command == "!help")
+		helpCommand(channel);
 }
 

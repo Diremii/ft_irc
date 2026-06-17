@@ -1,63 +1,100 @@
-This project has been created as part of the 42 curriculum by humontas, ttremel
+*This project has been created as part of the 42 curriculum by humontas, ttremel*
 
-**Description**
-This is a custom IRC server for 42 school, featuring a bot and DCC file transfer support.
-An IRC server relays messages between clients. This implementation is compatible with HexChat and nc.
+# ft_irc — Internet Relay Chat
 
-**Instructions**
-### how to build server:
-`make`
+A custom IRC server written in C++98, compatible with HexChat, 
+implementing the core operator commands of the IRC protocol (RFC 1459).
 
-### How to run the server:
-`./ircserv <port> <password>`
+## Description
 
-### How to build bot:
-`make` (in bot folder)
+ft_irc implements the core commands for a functional IRC server (RFC 1459). 
+Clients can connect and, once authenticated, chat in public channels or 
+via private messages. Users have access to channel modes, allowing them 
+to configure their channels as needed. This project also includes a bot 
+named 'ShallowRed' — a reference to Deep Blue — featuring a Tic Tac Toe 
+game, as well as DCC file transfer support.
 
-### How to run the bot:
-`./bot <hostname> <port> <password>`
+## Instructions
 
-### How to connect to server with nc:
-`nc -C <server_ip> <port>`
-`USER <your_name>`
-`NICK <your_pseudo>`
-`PASS <server_password>`
+### Server
+```Bash
+# Build
+make
 
-### How to connect with Hexchat:
-Launch HexChat and open the Network List.
-Click Add and name your network.
-Select it and click Edit.
-Under the Servers tab, click the default entry and replace it with <server_ip>/<port>, then press Enter.
-Click Connect.
+# Run
+./ircserv <port> <password>
+```
 
-Prefix all IRC commands with '/' in HexChat (e.g., /JOIN #channel).
+### Bot
+```Bash
+# Build
+cd bot && make
 
-### List command
-`PASS <password>` Authenticate with the server password.
-`NICKNICK <nickname>` Set or change your nickname.
-`USER <username>` Set your username (required for registration).
-`QUIT` Disconnect from the server.
-`JOIN <#channel>` Join a channel.
-`KICK <#channel> <nick> [:<reason>]` Remove a user from a channel (operator only).
-`INVITE <nick> <#channel>` Invite a user to a channel (operator only).
-`TOPIC <#channel> [:<new topic>]` View or change a channel's topic.
-`MODE <+/-flags> [args]` Set channel or user modes.
-	Flag mode:
-	- o Set operator.
-	- i Set channel invite only.
-	- t Set channel topic restriction.
-	- k Change channnel password.
-	- l Set channel user limit.
-`PRIVMSG <target> <message>/:<...> <...>` Send a message to a user or channel.
-`DCC SEND <nick> <file> <port> <file_size>` Initiate a direct file transfer.
+# Run
+./bot <hostname> <port> <password>
+```
 
-Commands before PASS, NICK, and USER are complete require registration. Unregistered clients can only use PASS, NICK, USER, and QUIT.
+### Connect with HexChat
+1. Open HexChat → Network List → Add
+2. Edit the network, set server to `<server_ip>/<port>`
+3. Enter the server password in the password field.
 
-### List bot command
-`!help` Display available bot commands.
-`!play` Start a game of Tic Tac Toe.
-`!move <arg>` Make a move in the current game.
+If your connection details are correct, HexChat will automatically handle the authentication commands.
 
-**Resources**
-- IRC Protocol (RFC 1459)
-- HexChat
+### Connect with netcat
+```bash
+nc -C <server_ip> <port>
+PASS <password>
+NICK <nickname>
+USER <username>
+```
+
+## Command Reference
+
+### General
+
+| Command | Description |
+|---|---|
+| `PASS <password>` | Authenticate with the server |
+| `NICK <nickname>` | Set or change your nickname |
+| `USER <username>` | Set your username (required for registration) |
+| `QUIT [:<reason>]` | Disconnect from the server |
+| `PRIVMSG <target> :<message>` | Send a message to a user or channel |
+| `JOIN <#channel> [password]` | Join a channel |
+| `PART <#channel> [:<reason>]` | Leave a channel |
+ 
+> Commands requiring registration: `PASS`, `NICK`, and `USER` must be completed before using any other command.
+
+### MODE Flags
+ 
+| Flag | Description |
+|---|---|
+| `+o / -o <nick>` | Grant or revoke operator status |
+| `+i / -i` | Toggle invite-only mode |
+| `+t / -t` | Restrict topic changes to operators |
+| `+k / -k <password>` | Set or remove channel password |
+| `+l / -l <limit>` | Set or remove user limit |
+ 
+### DCC File Transfer
+ 
+```
+DCC SEND <nick> <filename> <port> <filesize>
+```
+ 
+### Bot Commands
+ 
+| Command | Description |
+|---|---|
+| `!help` | Display available bot commands |
+| `!play` | Start a Tic Tac Toe game |
+| `!move <position>` | Make a move (1-9) |
+ 
+The bot (`ShallowRed`) auto-joins `#general` on startup and joins any channel it is invited to. Games time out after 60 seconds of inactivity.
+
+> `ShallowRed` can only play with one person per channel at a time, but you can also challenge him via private message.
+ 
+## Resources
+
+- [RFC 1459 — Internet Relay Chat Protocol](https://datatracker.ietf.org/doc/html/rfc1459)
+- [HexChat IRC Client](https://hexchat.github.io/)
+- AI was used as a learning aid for debugging, understanding edge cases in socket programming, and reviewing code for potential crashes. All code was written and understood by the authors.

@@ -33,7 +33,7 @@ Server::~Server()
 }
 
 // --------------------
-//      setup
+//        setup
 // --------------------
 
 void	Server::createSocket()
@@ -42,7 +42,13 @@ void	Server::createSocket()
 	if (_serverSocket == -1)
 		throw std::runtime_error("Failed to create socket");
 
-	int	reuseAddr = 1;
+	if (fcntl(_serverSocket, F_SETFL, O_NONBLOCK) == -1)
+	{
+		close(_serverSocket);
+		throw std::runtime_error("fcntl failed on server socket");
+	}
+
+	int reuseAddr = 1;
 	if (setsockopt(_serverSocket, SOL_SOCKET, SO_REUSEADDR, &reuseAddr, sizeof(reuseAddr)) == -1)
 	{
 		close(_serverSocket);

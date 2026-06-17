@@ -20,6 +20,13 @@ void	Server::acceptClient()
 		std::cerr << "accept() failed" << std::endl;
 		return ;
 	}
+
+	if (fcntl(clientSocket, F_SETFL, O_NONBLOCK) == -1)
+	{
+		close(clientSocket);
+		return ;
+	}
+	
 	struct pollfd clientPollFd;
 	clientPollFd.fd = clientSocket;
 	clientPollFd.events = POLLIN;
@@ -27,38 +34,6 @@ void	Server::acceptClient()
 
 	_pollFds.push_back(clientPollFd);
 	_users.push_back(User(clientSocket));
-}
-
-void	Server::removeClient(int clientFd, const std::string &reason)
-{
-	broadcastUserChannels(clientFd, IrcReply::quit(getUser(clientFd).getNickname(), getUser(clientFd).getUsername(), reason));
-	close(clientFd);
-
-	for (size_t i = 0; i < _pollFds.size(); i++)
-	{
-		if (_pollFds[i].fd == clientFd)
-		{
-			_pollFds.erase(_pollFds.begin() + i);
-			break ;
-		}
-	}
-
-	for (size_t i = 0; i < _users.size(); i++)
-	{
-		if (_users[i].getFd() == clientFd)
-		{
-			_users.erase(_users.begin() + i);
-			break ;
-		}
-	}
-
-	for (size_t i = _channels.size(); i-- > 0;)
-	{
-		_channels[i].removeUser(clientFd);
-		_channels[i].removeOperator(clientFd);
-		if (_channels[i].getUsers().empty())
-			_channels.erase(_channels.begin() + i);
-	}
 }
 
 void	Server::handleCommand(int clientFd, const std::string &command, const std::string &args)
@@ -113,7 +88,7 @@ void	Server::handleCommand(int clientFd, const std::string &command, const std::
 void	Server::handleClient(int clientFd)
 {
 	char	buffer[1024];
-	int		bytes = recv(clientFd, buffer, sizeof(buffer), 0);
+	int bytes = recv(clientFd, buffer, sizeof(buffer), 0);
 	if (bytes <= 0)
 	{
 		removeClient(clientFd);
@@ -122,6 +97,11 @@ void	Server::handleClient(int clientFd)
 
 	User	&caller = getUser(clientFd);
 	caller.setBuffer(caller.getBuffer() + std::string(buffer, bytes));
+	if (caller.getBuffer().size() > 4096)
+	{
+		removeClient(clientFd, "Buffer overflow");
+		return ;
+	}
 
 	while (true)
 	{
@@ -150,14 +130,12 @@ void	Server::handleClient(int clientFd)
 
 void	Server::handleEvents()
 {
-	for (size_t i = _pollFds.size(); i-- > 0;)
+	if (_pollFds[0].revents & POLLIN)
+		acceptClient();
+
+	for (size_t i = _pollFds.size(); i-- > 1;)
 	{
 		if (_pollFds[i].revents & POLLIN)
-		{
-			if (_pollFds[i].fd == _serverSocket)
-				acceptClient();
-			else
-				handleClient(_pollFds[i].fd);
-		}
+			handleClient(_pollFds[i].fd);
 	}
 }

@@ -31,6 +31,7 @@
 # include <sstream>
 # include <cstring>
 # include <cerrno>
+# include <fcntl.h>
 
 extern int	g_sig;
 
