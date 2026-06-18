@@ -6,7 +6,7 @@
 /*   By: humontas@student.42.fr <humontas>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 01:52:00 by humontas@st       #+#    #+#             */
-/*   Updated: 2026/06/17 22:09:40 by humontas@st      ###   ########.fr       */
+/*   Updated: 2026/06/18 09:27:55 by humontas@st      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,7 +104,7 @@ void	Bot::handleCommand(const std::string &line, const std::string &command, con
 	}
 	else if (command == "PRIVMSG")
 	{
-		handlePRIVMSG(getNickFromPrefix(line), args);
+		handlePrefixCommands(getNickFromPrefix(line), args);
 	}
 }
 
@@ -143,7 +143,7 @@ void	Bot::checkTimers()
 	{
 		if (time(NULL) - it->second->_lastMoveTime > 60)
 		{
-			sendMessage("PRIVMSG " + it->first + " :Game over! You took too long to play.\r\n");
+			sendMessage("PRIVMSG " + it->first + BotReply::timeout());
 
 			delete it->second;
 			_games.erase(it++);

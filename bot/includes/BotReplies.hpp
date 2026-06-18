@@ -6,7 +6,7 @@
 /*   By: humontas@student.42.fr <humontas>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/15 12:39:58 by humontas@st       #+#    #+#             */
-/*   Updated: 2026/06/15 13:19:30 by humontas@st      ###   ########.fr       */
+/*   Updated: 2026/06/18 09:26:31 by humontas@st      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,24 @@
 
 namespace BotReply
 {
+	/*HELP*/
+	inline std::string helpHeader()
+	{
+		return (" :Available commands:\r\n");
+	}
+	inline std::string helpPlay()
+	{
+		return (" :!play - Start a new TicTacToe game\r\n");
+	}
+	inline std::string helpMove()
+	{
+		return (" :!move <1-9> - Play a move\r\n");
+	}
+	inline std::string helpHelp()
+	{
+		return (" :!help - Show this help\r\n");
+	}
+
 	/* TICTACTOE */
 	inline std::string gameAlreadyInProgress()
 	{
@@ -69,6 +87,12 @@ namespace BotReply
 	inline std::string draw()
 	{
 		return (" :A draw! A rather... boring result.\r\n");
+	}
+
+	/*ERRORS*/
+	inline std::string timeout()
+	{
+		return (" :Game over! You took too long to play.\r\n");
 	}
 }
 

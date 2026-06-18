@@ -127,7 +127,7 @@ void	Server::kickCommand(int clientFd, const std::string &args)
 	std::string	targetNick = params[1];
 	std::string	reason = params.size() > 2 ? params[2] : "Kicked";
 
-	Channel *channel = checkChannelRequirements(clientFd, params[0], true);
+	Channel *channel = checkChannelRequirements(clientFd, params[0], NEED_OPERATOR);
 	if (!channel)
 		return ;
 
@@ -148,7 +148,7 @@ void	Server::inviteCommand(int clientFd, const std::string &args)
 	User		&caller = getUser(clientFd);
 	std::string	targetNick = params[0];
 
-	Channel	*channel = checkChannelRequirements(clientFd, params[1], true);
+	Channel	*channel = checkChannelRequirements(clientFd, params[1], NEED_OPERATOR);
 	if (!channel)
 		return ;
 
@@ -169,7 +169,7 @@ void	Server::topicCommand(int clientFd, const std::string &args)
 	User		&caller = getUser(clientFd);
 	std::string	channelName = params[0];
 
-	Channel *channel = checkChannelRequirements(clientFd, channelName, false);
+	Channel *channel = checkChannelRequirements(clientFd, channelName, NO_NEED_OPERATOR);
 	if (!channel)
 		return ;
 
@@ -197,7 +197,7 @@ void	Server::modeCommand(int clientFd, const std::string &args)
 
 	std::string	optionalParam = params.size() > 2 ? params[2] : "";
 
-	Channel	*channel = checkChannelRequirements(clientFd, params[0], true);
+	Channel	*channel = checkChannelRequirements(clientFd, params[0], NEED_OPERATOR);
 	if (!channel)
 		return ;
 
@@ -279,7 +279,7 @@ void	Server::partCommand(int clientFd, const std::string &args)
 	User		&caller = getUser(clientFd);
 	std::string	reason = (params.size() > 1) ? params[1] : "";
 
-	Channel	*channel = checkChannelRequirements(clientFd, params[0], false);
+	Channel	*channel = checkChannelRequirements(clientFd, params[0], NO_NEED_OPERATOR);
 	if (!channel)
 		return ;
 

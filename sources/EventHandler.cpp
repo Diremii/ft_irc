@@ -87,7 +87,7 @@ void	Server::handleCommand(int clientFd, const std::string &command, const std::
 
 void	Server::handleClient(int clientFd)
 {
-	char	buffer[1024];
+	char	buffer[RECV_BUFFER_SIZE];
 	int bytes = recv(clientFd, buffer, sizeof(buffer), 0);
 	if (bytes <= 0)
 	{
@@ -97,7 +97,7 @@ void	Server::handleClient(int clientFd)
 
 	User	&caller = getUser(clientFd);
 	caller.setBuffer(caller.getBuffer() + std::string(buffer, bytes));
-	if (caller.getBuffer().size() > 4096)
+	if (caller.getBuffer().size() > MAX_BUFFER_SIZE)
 	{
 		removeClient(clientFd, "Buffer overflow");
 		return ;

@@ -6,7 +6,7 @@
 /*   By: humontas@student.42.fr <humontas>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/13 01:53:59 by humontas@st       #+#    #+#             */
-/*   Updated: 2026/06/16 11:12:48 by humontas@st      ###   ########.fr       */
+/*   Updated: 2026/06/18 09:27:16 by humontas@st      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ class Bot
 		void	handleBot();
 		void	checkTimers();
 		void	handleCommand(const std::string &line, const std::string &command, const std::string &args);
-		void	handlePRIVMSG(const std::string &nick, const std::string &args);
+		void	handlePrefixCommands(const std::string &nick, const std::string &args);
 
 		/* COMMANDS */
 		void	helpCommand(const std::string &channel);

@@ -17,6 +17,12 @@
 # define MAX_NICK_LEN 63
 # define MAX_USER_LEN 10
 
+# define RECV_BUFFER_SIZE 512
+# define MAX_BUFFER_SIZE 4096
+
+# define NEED_OPERATOR true
+# define NO_NEED_OPERATOR false
+
 # include <iostream>
 # include <string>
 # include <sys/socket.h>
