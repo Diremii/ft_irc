@@ -43,6 +43,10 @@ namespace IrcReply
 		std::string ctrl(1, '\x01');
 		return (":" + nick + "!" + user + "@localhost PRIVMSG " + target + " :" + ctrl + "DCC SEND " + fileName + " " + ip + " " + port + " " + fileSize + ctrl + "\r\n");
 	}
+	inline std::string mode(const std::string &nick, const std::string &user, const std::string &channel, const std::string &flag, const std::string &target)
+	{
+		return (":" + nick + "!" + user + "@localhost MODE " + channel + " " + flag + " " + target + "\r\n");
+	}
 	inline std::string welcome(const std::string &nick, const std::string &user)
 	{
 		return (":server 001 " + nick + " :Welcome to the Internet Relay Network " + nick + "!" + user + "@localhost\r\n");

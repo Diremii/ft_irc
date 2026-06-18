@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   CommandUtils.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: humontas@student.42.fr <humontas>          +#+  +:+       +#+        */
+/*   By: humontas <humontas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/10 11:24:13 by humontas@st       #+#    #+#             */
-/*   Updated: 2026/06/17 12:06:04 by humontas@st      ###   ########.fr       */
+/*   Updated: 2026/06/18 14:49:30 by humontas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -135,6 +135,8 @@ void	Server::sendNamesList(int clientFd, Channel *channel)
 	{
 		if (i > 0)
 			usersList += " ";
+		if (channel->isOperator(users[i]))
+			usersList += "@";
 		usersList += getUser(users[i]).getNickname();
 	}
 	sendMessage(clientFd, IrcReply::namesList(nick, channel->getName(), usersList));

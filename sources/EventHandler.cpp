@@ -88,7 +88,7 @@ void	Server::handleCommand(int clientFd, const std::string &command, const std::
 void	Server::handleClient(int clientFd)
 {
 	char	buffer[RECV_BUFFER_SIZE];
-	int bytes = recv(clientFd, buffer, sizeof(buffer), 0);
+	int		bytes = recv(clientFd, buffer, sizeof(buffer), 0);
 	if (bytes <= 0)
 	{
 		removeClient(clientFd);
@@ -97,6 +97,7 @@ void	Server::handleClient(int clientFd)
 
 	User	&caller = getUser(clientFd);
 	caller.setBuffer(caller.getBuffer() + std::string(buffer, bytes));
+
 	if (caller.getBuffer().size() > MAX_BUFFER_SIZE)
 	{
 		removeClient(clientFd, "Buffer overflow");
@@ -107,7 +108,7 @@ void	Server::handleClient(int clientFd)
 	{
 		std::string	buf = caller.getBuffer();
 		size_t		delimLen = 2;
-		size_t		pos = buf.find("\r\n");
+		size_t		pos = buf.find("\r\n");	
 
 		if (pos == std::string::npos)
 		{
@@ -119,6 +120,9 @@ void	Server::handleClient(int clientFd)
 
 		std::string	line = buf.substr(0, pos);
 		caller.setBuffer(buf.substr(pos + delimLen));
+
+		if (line.size() > RECV_BUFFER_SIZE)
+			continue ;
 
 		std::pair<std::string, std::string> parsed = parseMessage(line);
 		handleCommand(clientFd, parsed.first, parsed.second);

@@ -232,6 +232,7 @@ void	Server::modeCommand(int clientFd, const std::string &args)
 			if (!target)
 				return ;
 			channel->setOperator(target->getFd(), activate);
+			broadcast(channel, IrcReply::mode(caller.getNickname(), caller.getUsername(), params[0], flag, target->getNickname()));
 			break;
 		}
 		case 'l':
