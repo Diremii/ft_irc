@@ -60,8 +60,8 @@ USER <username>
 | `USER <username>` | Set your username (required for registration) |
 | `QUIT [:<reason>]` | Disconnect from the server |
 | `PRIVMSG <target> :<message>` | Send a message to a user or channel |
-| `JOIN <#channel> [password]` | Join a channel |
-| `PART <#channel> [:<reason>]` | Leave a channel |
+| `JOIN #<channel> [password]` | Join a channel |
+| `PART #<channel> [:<reason>]` | Leave a channel |
  
 > Commands requiring registration: `PASS`, `NICK`, and `USER` must be completed before using any other command.  
 > **Note:** Everything after `:` is treated as a single trailing parameter and may contain spaces.  
