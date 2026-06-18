@@ -22,7 +22,6 @@
 
 class Server
 {
-	
 	private:
 		typedef void	(Server::*CommandHandler)(int, const std::string&);
 		struct	s_cmd
