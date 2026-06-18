@@ -82,6 +82,8 @@ USER <username>
 ```
 DCC SEND <nick> <filename> <port> <filesize>
 ```
+> `<filesize>` must be the exact byte count of the file. Use `wc -c <filename>` to get it.  
+> In practice, HexChat handles this automatically when using the built-in file transfer feature.  
  
 ### Bot Commands
  
