@@ -24,7 +24,6 @@ class Bot
 		std::string							_nickName;
 		std::string							_userName;
 		std::string							_buffer;
-		std::vector<std::string>			_channels;
 		std::map<std::string, TicTacToe*>	_games;
 
 		/* SERVER */
