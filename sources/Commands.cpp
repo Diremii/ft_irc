@@ -78,7 +78,7 @@ void	Server::joinChannel(int clientFd, const std::string &args)
 	std::string	channelName = params[0];
 	std::string	password = (params.size() > 1) ? params[1] : "";
 
-	if (channelName.empty() || channelName[0] != '#')
+	if (channelName[0] != '#')
 		return (sendMessage(clientFd, IrcReply::badChannelMask(caller.getNickname(), channelName)));
 
 	Channel	*channel = getChannel(channelName);
@@ -251,15 +251,17 @@ void	Server::privmsgCommand(int clientFd, const std::string &args)
 	if (params.size() < 2)
 		return (sendMessage(clientFd, IrcReply::notEnoughParams("PRIVMSG")));
 
-	User		&caller  = getUser(clientFd);
-	std::string	target   = params[0];
-	std::string	message  = params[1];
+	User		&caller = getUser(clientFd);
+	std::string	target = params[0];
+	std::string	message = params[1];
 
 	if (target[0] == '#')
 	{
 		Channel *channel = getChannel(target);
 		if (!channel)
-			return (sendMessage(clientFd, IrcReply::noSuchNick(caller.getNickname(), target)));
+			return (sendMessage(clientFd, IrcReply::noSuchChannel(caller.getNickname(), target)));
+		if (!channel->isUserExist(clientFd))
+			return (sendMessage(clientFd, IrcReply::notOnChannel(caller.getNickname(), target)));
 		broadcast(channel, IrcReply::privmsg(caller.getNickname(), caller.getUsername(), target, message), clientFd);
 	}
 	else

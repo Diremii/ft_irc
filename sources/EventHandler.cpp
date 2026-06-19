@@ -37,11 +37,7 @@ void	Server::acceptClient()
 	_users.push_back(User(clientSocket));
 }
 
-// --------------------
-//  Command Handling
-// --------------------
-
-const Server::s_cmd Server::_commandArray[] = {
+const Server::s_cmd	Server::_commandArray[] = {
 	{"PASS", &Server::passCommand, false},
 	{"NICK", &Server::nickCommand, false},
 	{"USER", &Server::userCommand, false},
