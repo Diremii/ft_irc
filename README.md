@@ -2,6 +2,8 @@
 
 # ft_irc — Internet Relay Chat
 
+![C++](https://img.shields.io/badge/C++-98-00599C?style=flat&logo=cplusplus&logoColor=white)
+
 A custom IRC server written in C++98, compatible with HexChat, 
 implementing the core operator commands of the IRC protocol (RFC 1459).
 
